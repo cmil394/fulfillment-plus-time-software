@@ -1,0 +1,20 @@
+{
+  "name": "fulfillment-plus-time-software",
+  "version": "1.0.0",
+  "description": "Time tracking software for Fulfillment Plus designed to track, manage and analyze data on customers, tasks and employees",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmil394/fulfillment-plus-time-software.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cmil394/fulfillment-plus-time-software/issues"
+  },
+  "homepage": "https://github.com/cmil394/fulfillment-plus-time-software#readme"
+}
