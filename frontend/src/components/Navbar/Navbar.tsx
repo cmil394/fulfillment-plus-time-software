@@ -1,13 +1,30 @@
+import { useState } from "react";
 import styles from "./Navbar.module.css";
 
 function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarBrand}>
         <span className={styles.brandText}>Fulfillment Plus</span>
       </div>
 
-      <ul className={styles.navbarLinks}>
+      <button
+        className={styles.hamburger}
+        onClick={toggleMenu}
+        aria-label="Toggle menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul className={`${styles.navbarLinks} ${isMenuOpen ? styles.open : ""}`}>
         <li>
           <a href="/overview" className={`${styles.navLink} ${styles.active}`}>
             Overview
