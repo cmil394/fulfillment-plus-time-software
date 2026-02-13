@@ -11,6 +11,11 @@ function Navbar() {
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarBrand}>
+        <img
+          src="/src/assets/icons/fulfillmentplus_icon_w.png"
+          alt="Fulfillment Plus Logo"
+          className={styles.logoIcon}
+        />
         <span className={styles.brandText}>Fulfillment Plus</span>
       </div>
 

@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #0c7ac4;
+  background-color: #0067B1;
   padding: 0 24px;
   height: 64px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -21,8 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 29px;
 }
 
 .brandText {
@@ -41,7 +40,7 @@
 
 .navbarLinks li {
   margin: 0;
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  border-right: 2px solid rgba(255, 255, 255, 0.692);
 }
 
 .navbarLinks li:last-child {
@@ -63,7 +62,7 @@
 }
 
 .navLink:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.158);
 }
 
 .navLink.active {

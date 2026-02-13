@@ -1,0 +1,27 @@
+.brand{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 60px;
+}
+
+.brandLogo {
+    width: 110px;
+    margin-bottom: 0px;
+}
+
+.plus{
+    color: #0067B1;
+}
+
+.title{
+    font-size: 38px;
+    color: #000000;
+}
+
+.subtitle{
+    font-size: 20px;
+    color: #000000c2;
+    margin-top: -12px;
+}
