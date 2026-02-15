@@ -10,7 +10,7 @@ function Home() {
       <Navbar />
       <div className={styles.brand}>
         <img
-          src="/src/assets/icons/fulfillmentplus_icon_b.png"
+          src="/src/assets/icons/image.png"
           alt="Fulfillment Plus Logo"
           className={styles.brandLogo}
         />

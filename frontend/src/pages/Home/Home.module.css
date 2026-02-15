@@ -7,15 +7,16 @@
 }
 
 .brandLogo {
-    width: 80px;
+    width: 100px;
     margin-bottom: 0px;
 }
 
 .plus{
-    color: #0067B1;
+    color: #1467ae;
 }
 
 .title{
+    margin-top: 0px;
     font-size: 40px;
     font-weight: 500;
     color: #000000;
@@ -40,7 +41,7 @@
 
 .tabs {
     display: flex;
-    background: #0067B1;
+    background: #1467ae;
     border-bottom: 2px solid rgba(255, 255, 255, 0.863);
 }
 
@@ -66,7 +67,7 @@
 }
 
 .activeTab {
-    background: #44AAF3;
+    background: #e0eeff;
 }
 
 .formContainer {
