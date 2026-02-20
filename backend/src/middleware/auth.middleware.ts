@@ -13,7 +13,7 @@ export const authMiddleware = (
   try {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!authHeader?.startsWith("Bearer ")) {
       return res.status(401).json({
         status: "error",
         message: "No token provided",
@@ -32,7 +32,7 @@ export const authMiddleware = (
 
     req.user = decoded;
     next();
-  } catch (error) {
+  } catch {
     return res.status(401).json({
       status: "error",
       message: "Authentication failed",
