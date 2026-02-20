@@ -3,8 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import authRoutes from "./routes/auth.routes";
+import { seedAdmin } from "./utils/seed.admin";
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
@@ -40,22 +40,23 @@ app.get("/api/db-test", async (req, res) => {
   }
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
-});
+// Startup
+const startServer = async () => {
+  try {
+    await prisma.$connect();
+    console.log("✅ Database connected");
 
-// Shutdown
-process.on("SIGINT", async () => {
-  console.log("\n🔌 Shutting down...");
-  await prisma.$disconnect();
-  process.exit(0);
-});
+    await seedAdmin();
 
-process.on("SIGTERM", async () => {
-  console.log("\n🔌 Shutting down gracefully...");
-  await prisma.$disconnect();
-  process.exit(0);
-});
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on http://localhost:${PORT}`);
+      console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+      console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
+    });
+  } catch (error) {
+    console.error("❌ Startup failure:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
