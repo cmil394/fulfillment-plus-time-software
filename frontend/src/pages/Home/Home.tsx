@@ -92,6 +92,26 @@ function Home() {
     }
   };
 
+  const handleDevLogin = async () => {
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
+    try {
+      const response = await authService.login({
+        email: import.meta.env.VITE_ADMIN_EMAIL,
+        password: import.meta.env.VITE_ADMIN_PASSWORD,
+      });
+      setAuth(response.data.user, response.data.token);
+      setSuccess("Logged in as Admin (Dev Only)");
+      setTimeout(() => navigate("/"), 1000);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Dev login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.home}>
       <Navbar />
@@ -137,6 +157,16 @@ function Home() {
         <div className={styles.formContainer}>
           {activeTab === "login" ? (
             <form className={styles.form} onSubmit={handleLoginSubmit}>
+              {/* Dev login button for quick access during development (delete later) */}
+              <button
+                type="button"
+                onClick={handleDevLogin}
+                className={styles.submitButton}
+                disabled={loading}
+              >
+                {loading ? "Logging in..." : "Dev Admin Login"}
+              </button>
+
               <label htmlFor="login-email">Email</label>
               <input
                 type="email"
