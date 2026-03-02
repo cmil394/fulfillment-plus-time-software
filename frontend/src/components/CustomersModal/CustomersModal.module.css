@@ -68,3 +68,64 @@
   border-radius: 6px;
   cursor: pointer;
 }
+
+/* Tablet */
+@media (max-width: 768px) {
+  .board {
+    width: 90vw;
+    padding: 16px;
+    max-height: 65vh;
+  }
+
+  .searchBar {
+    width: 90%;
+  }
+
+  .customerCard {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .customerName {
+    font-size: 20px;
+  }
+
+  .viewBtn {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .board {
+    width: 95vw;
+    padding: 12px;
+    max-height: 60vh;
+  }
+
+  .searchBar {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .customerCard {
+    width: 100%;
+    padding: 4px 10px;
+    box-sizing: border-box;
+  }
+
+  .customerName {
+    font-size: 16px;
+  }
+
+  .customerIcon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .viewBtn {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}
