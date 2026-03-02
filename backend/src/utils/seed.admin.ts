@@ -24,19 +24,26 @@ export const seedAdmin = async () => {
 
   const hashedPassword = await hashPassword(adminPassword);
 
-  await prisma.user.create({
-    data: {
-      email: adminEmail,
-      password: hashedPassword,
-      fullName: "System Administrator",
-      firstName: "System",
-      lastName: "Administrator",
-      role: "ADMIN",
-      status: "APPROVED",
-    },
-  });
-
-  console.log("🔥 Admin account created");
+  try {
+    await prisma.user.create({
+      data: {
+        email: adminEmail,
+        password: hashedPassword,
+        fullName: "System Administrator",
+        firstName: "System",
+        lastName: "Administrator",
+        role: "ADMIN",
+        status: "APPROVED",
+      },
+    });
+    console.log("Admin account created");
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      console.log("Admin already exists");
+    } else {
+      throw error;
+    }
+  }
 };
 
 seedAdmin()
