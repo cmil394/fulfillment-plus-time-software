@@ -8,6 +8,25 @@
   padding: 24px;
   width: fit-content;
   margin: 0 auto;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.searchBar {
+  width: 70%;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+  box-sizing: border-box;
+  outline: none;
+  background-color: #ffffff;
+  color: #000000;
+  margin-bottom: 15px;
+}
+
+.searchBar::placeholder {
+  color: #888888;
 }
 
 .customerCard {

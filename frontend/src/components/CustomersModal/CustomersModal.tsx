@@ -10,6 +10,7 @@ function CustomersModal() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -27,17 +28,28 @@ function CustomersModal() {
     fetchCustomers();
   }, []);
 
+  const filteredCustomers = customers.filter((c) =>
+    c.name.toLowerCase().includes(search.toLowerCase()),
+  );
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <div className={styles.board}>
-      {customers.length === 0 ? (
+      <input
+        type="text"
+        placeholder="Search customers..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className={styles.searchBar}
+      />
+      {filteredCustomers.length === 0 ? (
         <div className={styles.customerCard}>
           <p className={styles.customerName}>No existing customers.</p>
         </div>
       ) : (
-        customers.map((customer) => (
+        filteredCustomers.map((customer) => (
           <div key={customer.id} className={styles.customerCard}>
             <img src={AVATAR} alt="Customer" className={styles.customerIcon} />
             <p className={styles.customerName}>{customer.name}</p>
