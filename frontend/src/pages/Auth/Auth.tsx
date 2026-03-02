@@ -43,6 +43,7 @@ function Auth() {
     try {
       const response = await authService.login(loginData);
       setAuth(response.data.user, response.data.token);
+      console.log("Admin Token:", response.data.token);
       setSuccess(response.message);
 
       // Redirect after successful login
@@ -108,6 +109,7 @@ function Auth() {
         password: import.meta.env.VITE_ADMIN_PASSWORD,
       });
       setAuth(response.data.user, response.data.token);
+      console.log("Admin Token:", response.data.token);
       setSuccess("Logged in as Admin (Dev Only)");
       setTimeout(() => navigate("/"), 1000);
     } catch (err: any) {

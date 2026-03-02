@@ -32,13 +32,19 @@ function CustomersModal() {
 
   return (
     <div className={styles.board}>
-      {customers.map((customer) => (
-        <div key={customer.id} className={styles.customerCard}>
-          <img src={AVATAR} alt="Customer" className={styles.customerIcon} />
-          <p className={styles.customerName}>{customer.name}</p>
-          <button className={styles.viewBtn}>View</button>
+      {customers.length === 0 ? (
+        <div className={styles.customerCard}>
+          <p className={styles.customerName}>No existing customers.</p>
         </div>
-      ))}
+      ) : (
+        customers.map((customer) => (
+          <div key={customer.id} className={styles.customerCard}>
+            <img src={AVATAR} alt="Customer" className={styles.customerIcon} />
+            <p className={styles.customerName}>{customer.name}</p>
+            <button className={styles.viewBtn}>View</button>
+          </div>
+        ))
+      )}
     </div>
   );
 }
