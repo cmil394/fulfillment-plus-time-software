@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { taskService } from "../../services/task.service.ts";
 import type { Task } from "../../services/task.service.ts";
 import styles from "./TasksModal.module.css";
+import backarrow from "../../assets/icons/backarrow.svg";
 
 interface Props {
   customerId: string;
+  onBack: () => void;
 }
 
-function TasksModal({ customerId }: Props) {
+function TasksModal({ customerId, onBack }: Props) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,13 +40,19 @@ function TasksModal({ customerId }: Props) {
 
   return (
     <div className={styles.board}>
-      <input
-        type="text"
-        placeholder="Search tasks..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className={styles.searchBar}
-      />
+      <div className={styles.topRow}>
+        <button onClick={onBack} className={styles.backBtn}>
+          <img src={backarrow} alt="back" className={styles.backArrow} />
+          Back
+        </button>
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className={styles.searchBar}
+        />
+      </div>
       {filtered.length === 0 ? (
         <div className={styles.taskCard}>
           <p className={styles.taskTitle}>No tasks found.</p>

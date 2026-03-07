@@ -10,10 +10,37 @@
   margin: 0 auto;
   max-height: calc(100vh - 64px - 70px - 30px - 42px - 30px - 25px);
   overflow-y: auto;
+  position: relative;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.backArrow {
+  filter: invert(1);
 }
 
 .searchBar {
-  width: 70%;
+  flex: 1;
   padding: 10px 14px;
   border-radius: 6px;
   border: none;
@@ -22,7 +49,6 @@
   outline: none;
   background-color: #ffffff;
   color: #000000;
-  margin-bottom: 15px;
 }
 
 .searchBar::placeholder {

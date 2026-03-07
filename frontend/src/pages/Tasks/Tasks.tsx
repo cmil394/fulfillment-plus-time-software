@@ -13,15 +13,12 @@ function Tasks() {
     <div className={styles.landingContainer}>
       <Navbar />
       <div className={styles.header}>
-        <button
-          className={styles.backBtn}
-          onClick={() => navigate("/customers")}
-        >
-          ← Back
-        </button>
         <h1 className={styles.tasksTitle}>Tasks</h1>
       </div>
-      <TasksModal customerId={customerId} />
+      <TasksModal
+        customerId={customerId}
+        onBack={() => navigate("/customers")}
+      />
     </div>
   );
 }
