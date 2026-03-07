@@ -1,0 +1,68 @@
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  background-color: #1467ae;
+  border-radius: 12px;
+  padding: 24px;
+  width: fit-content;
+  margin: 0 auto;
+  max-height: calc(100vh - 64px - 70px - 30px - 42px - 30px - 25px);
+  overflow-y: auto;
+}
+
+.searchBar {
+  width: 70%;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+  box-sizing: border-box;
+  outline: none;
+  background-color: #ffffff;
+  color: #000000;
+  margin-bottom: 15px;
+}
+
+.searchBar::placeholder {
+  color: #888888;
+}
+
+.taskCard {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #eeeeee;
+  color: #000000;
+  border-radius: 8px;
+  padding: 8px 16px;
+  width: 620px;
+}
+
+.taskInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.taskTitle {
+  font-size: 22px;
+  margin: 0;
+}
+
+.taskDesc {
+  font-size: 14px;
+  color: #555;
+  margin: 2px 0 0;
+}
+
+.taskStatus {
+  padding: 6px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+  background: black;
+  color: white;
+  white-space: nowrap;
+}
