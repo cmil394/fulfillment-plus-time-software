@@ -19,7 +19,7 @@ router.delete("/:id", authMiddleware, adminMiddleware, deleteTask);
 
 // Read routes
 router.get("/", authMiddleware, getTasks);
-router.get("/:id", authMiddleware, getTaskById);
 router.get("/customer/:customerId", authMiddleware, getTasksByCustomer);
+router.get("/:id", authMiddleware, getTaskById);
 
 export default router;

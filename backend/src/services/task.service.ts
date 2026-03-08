@@ -3,6 +3,26 @@ import { CreateTaskInput, UpdateTaskInput } from "../validators/task.validator";
 import { NotFoundError } from "../utils/errors";
 import Decimal from "decimal.js";
 
+const taskSelect = {
+  id: true,
+  name: true,
+  description: true,
+  active: true,
+  customerId: true,
+  customer: {
+    select: { name: true },
+  },
+};
+
+const formatTask = (task: any) => ({
+  id: task.id,
+  name: task.name,
+  description: task.description,
+  active: task.active,
+  customerId: task.customerId,
+  customerName: task.customer.name,
+});
+
 export const createTask = async (data: CreateTaskInput) => {
   const customer = await prisma.customer.findUnique({
     where: { id: data.customerId },
@@ -42,22 +62,17 @@ export const deleteTask = async (id: string) => {
 };
 
 export const getTasks = async () => {
-  return prisma.task.findMany({
-    include: {
-      customer: true,
-    },
-  });
+  const tasks = await prisma.task.findMany({ select: taskSelect });
+  return tasks.map(formatTask);
 };
 
 export const getTaskById = async (id: string) => {
   const task = await prisma.task.findUnique({
     where: { id },
-    include: {
-      customer: true,
-    },
+    select: taskSelect,
   });
   if (!task) throw new NotFoundError("Task not found");
-  return task;
+  return formatTask(task);
 };
 
 export const getTasksByCustomer = async (customerId: string) => {
@@ -66,10 +81,9 @@ export const getTasksByCustomer = async (customerId: string) => {
   });
   if (!customer) throw new NotFoundError("Customer not found");
 
-  return prisma.task.findMany({
+  const tasks = await prisma.task.findMany({
     where: { customerId },
-    include: {
-      customer: true,
-    },
+    select: taskSelect,
   });
+  return tasks.map(formatTask);
 };

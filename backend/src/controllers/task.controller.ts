@@ -16,7 +16,7 @@ export const createTask = async (
     res.status(201).json({
       status: "success",
       message: "Task created successfully",
-      data: task,
+      task,
     });
   } catch (err) {
     next(err);
@@ -34,7 +34,7 @@ export const updateTask = async (
     res.status(200).json({
       status: "success",
       message: "Task updated successfully",
-      data: task,
+      task,
     });
   } catch (err) {
     next(err);
@@ -67,7 +67,7 @@ export const getTasks = async (
     res.status(200).json({
       status: "success",
       message: "Tasks retrieved successfully",
-      data: tasks,
+      tasks,
     });
   } catch (err) {
     next(err);
@@ -84,7 +84,7 @@ export const getTaskById = async (
     res.status(200).json({
       status: "success",
       message: "Task retrieved successfully",
-      data: task,
+      task,
     });
   } catch (err) {
     next(err);
@@ -103,7 +103,7 @@ export const getTasksByCustomer = async (
     res.status(200).json({
       status: "success",
       message: "Tasks retrieved successfully",
-      data: tasks,
+      tasks,
     });
   } catch (err) {
     next(err);
