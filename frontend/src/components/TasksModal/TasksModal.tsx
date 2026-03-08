@@ -32,7 +32,7 @@ function TasksModal({ customerId, onBack }: Props) {
   }, [customerId]);
 
   const filtered = tasks.filter((t) =>
-    t.title.toLowerCase().includes(search.toLowerCase()),
+    (t.name ?? "").toLowerCase().includes(search.toLowerCase()),
   );
 
   if (loading) return <p>Loading...</p>;
@@ -61,7 +61,7 @@ function TasksModal({ customerId, onBack }: Props) {
         filtered.map((task) => (
           <div key={task.id} className={styles.taskCard}>
             <div className={styles.taskInfo}>
-              <p className={styles.taskTitle}>{task.title}</p>
+              <p className={styles.taskTitle}>{task.name}</p>
               {task.description && (
                 <p className={styles.taskDesc}>{task.description}</p>
               )}
