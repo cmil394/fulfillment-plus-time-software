@@ -4,7 +4,6 @@ import {
   updateCustomerSchema,
 } from "../validators/customer.validator";
 import * as customerService from "../services/customer.service";
-import { sortObjectKeys } from "../utils/helpers";
 
 export const createCustomer = async (
   req: Request,

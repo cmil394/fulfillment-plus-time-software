@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { taskService } from "../../services/task.service.ts";
 import type { Task } from "../../services/task.service.ts";
 import styles from "./TasksModal.module.css";
@@ -14,6 +14,11 @@ function TasksModal({ customerId, onBack }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [activeTimers, setActiveTimers] = useState<Record<number, number>>({});
+  const [expandedDesc, setExpandedDesc] = useState<Record<number, boolean>>({});
+  const intervalRefs = useRef<Record<number, ReturnType<typeof setInterval>>>(
+    {},
+  );
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -29,7 +34,46 @@ function TasksModal({ customerId, onBack }: Props) {
     };
 
     fetchTasks();
+
+    return () => {
+      Object.values(intervalRefs.current).forEach(clearInterval);
+    };
   }, [customerId]);
+
+  const handleStart = (taskId: number) => {
+    setActiveTimers((prev) => ({ ...prev, [taskId]: 0 }));
+    intervalRefs.current[taskId] = setInterval(() => {
+      setActiveTimers((prev) => ({
+        ...prev,
+        [taskId]: (prev[taskId] ?? 0) + 1,
+      }));
+    }, 1000);
+  };
+
+  const handleStop = (taskId: number) => {
+    clearInterval(intervalRefs.current[taskId]);
+    delete intervalRefs.current[taskId];
+    setActiveTimers((prev) => {
+      const updated = { ...prev };
+      delete updated[taskId];
+      return updated;
+    });
+  };
+
+  const toggleDesc = (taskId: number) => {
+    setExpandedDesc((prev) => ({ ...prev, [taskId]: !prev[taskId] }));
+  };
+
+  const formatTime = (seconds: number) => {
+    const h = Math.floor(seconds / 3600)
+      .toString()
+      .padStart(2, "0");
+    const m = Math.floor((seconds % 3600) / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = (seconds % 60).toString().padStart(2, "0");
+    return `${h}:${m}:${s}`;
+  };
 
   const filtered = tasks.filter((t) =>
     (t.name ?? "").toLowerCase().includes(search.toLowerCase()),
@@ -53,6 +97,7 @@ function TasksModal({ customerId, onBack }: Props) {
           className={styles.searchBar}
         />
       </div>
+
       {filtered.length === 0 ? (
         <div className={styles.taskCard}>
           <p className={styles.taskTitle}>No tasks found.</p>
@@ -62,10 +107,44 @@ function TasksModal({ customerId, onBack }: Props) {
           <div key={task.id} className={styles.taskCard}>
             <div className={styles.taskInfo}>
               <p className={styles.taskTitle}>{task.name}</p>
-              {task.description && (
+              {expandedDesc[task.id] && task.description && (
                 <p className={styles.taskDesc}>{task.description}</p>
               )}
             </div>
+
+            <div className={styles.taskActions}>
+              {task.description && (
+                <button
+                  className={styles.descBtn}
+                  onClick={() => toggleDesc(task.id)}
+                  title="Toggle description"
+                >
+                  {expandedDesc[task.id] ? "▲" : "▼"}
+                </button>
+              )}
+
+              {activeTimers[task.id] !== undefined ? (
+                <>
+                  <span className={styles.timer}>
+                    {formatTime(activeTimers[task.id])}
+                  </span>
+                  <button
+                    className={styles.stopBtn}
+                    onClick={() => handleStop(task.id)}
+                  >
+                    Stop
+                  </button>
+                </>
+              ) : (
+                <button
+                  className={styles.startBtn}
+                  onClick={() => handleStart(task.id)}
+                >
+                  Start
+                </button>
+              )}
+            </div>
+
             <span className={styles.taskStatus}>{task.status}</span>
           </div>
         ))

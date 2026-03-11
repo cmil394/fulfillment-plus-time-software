@@ -65,6 +65,7 @@
   border-radius: 8px;
   padding: 8px 16px;
   width: 620px;
+  height: 60px;
 }
 
 .taskInfo {
@@ -91,4 +92,46 @@
   background: black;
   color: white;
   white-space: nowrap;
+}
+
+.taskActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.startBtn {
+  padding: 8px 16px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.stopBtn {
+  padding: 8px 16px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.descBtn {
+  padding: 8px 10px;
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.timer {
+  font-family: monospace;
+  font-size: 15px;
+  min-width: 70px;
 }

@@ -4,7 +4,6 @@ import {
   updateTaskSchema,
 } from "../validators/task.validator";
 import * as taskService from "../services/task.service";
-import { sortObjectKeys } from "../utils/helpers";
 
 export const createTask = async (
   req: Request,
