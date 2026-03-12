@@ -5,7 +5,9 @@ import Customers from "./Customers/Customers";
 import Tasks from "./Tasks/Tasks";
 
 function Home() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
 
   return (
     <Routes>
