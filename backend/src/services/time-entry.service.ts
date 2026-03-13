@@ -49,13 +49,21 @@ export const stopTimer = async (userId: string) => {
 };
 
 export const getActiveTimer = async (userId: string) => {
-  return prisma.timeEntry.findFirst({
+  const entry = await prisma.timeEntry.findFirst({
     where: { userId, endTime: null },
     include: {
       task: { select: { name: true } },
       customer: { select: { name: true } },
     },
   });
+
+  if (!entry) return null;
+
+  const elapsedSeconds = Math.floor(
+    (new Date().getTime() - entry.startTime.getTime()) / 1000,
+  );
+
+  return { ...entry, durationSeconds: elapsedSeconds };
 };
 
 export const getMyEntries = async (userId: string) => {

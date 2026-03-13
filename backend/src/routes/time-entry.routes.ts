@@ -10,12 +10,9 @@ router.get("/time-entries", timeEntryController.getMyEntries);
 router.post("/time-entries/start", timeEntryController.startTimer);
 router.get("/time-entries/active", timeEntryController.getActiveTimer);
 router.patch("/time-entries/active/stop", timeEntryController.stopTimer);
+router.get("/time-entries/:userId", timeEntryController.getEntriesByUser);
 router.get(
-  "/time-entries/by-user/:userId",
-  timeEntryController.getEntriesByUser,
-);
-router.get(
-  "/time-entries/by-customer/:customerId",
+  "/time-entries/:customerId",
   timeEntryController.getEntriesByCustomer,
 );
 
