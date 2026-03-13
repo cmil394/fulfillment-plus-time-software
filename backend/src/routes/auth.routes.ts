@@ -12,27 +12,27 @@ import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware";
 const router = express.Router();
 
 // Public routes
-router.post("/register", register);
-router.post("/login", login);
+router.post("/auth/register", register);
+router.post("/auth/login", login);
 
 // Protected routes
-router.get("/profile", authMiddleware, getProfile);
+router.get("/auth/profile", authMiddleware, getProfile);
 
 // Admin routes
 router.get(
-  "/admin/users/pending",
+  "/auth/admin/users/pending",
   authMiddleware,
   adminMiddleware,
   getPendingUsers,
 );
 router.patch(
-  "/admin/users/:id/approve",
+  "/auth/admin/users/:id/approve",
   authMiddleware,
   adminMiddleware,
   approveUser,
 );
 router.patch(
-  "/admin/users/:id/reject",
+  "/auth/admin/users/:id/reject",
   authMiddleware,
   adminMiddleware,
   rejectUser,

@@ -13,13 +13,13 @@ import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware";
 const router = express.Router();
 
 // Admin-only routes (create, update, delete)
-router.post("/", authMiddleware, adminMiddleware, createTask);
-router.patch("/:id", authMiddleware, adminMiddleware, updateTask);
-router.delete("/:id", authMiddleware, adminMiddleware, deleteTask);
+router.post("/tasks", authMiddleware, adminMiddleware, createTask);
+router.patch("/tasks/:id", authMiddleware, adminMiddleware, updateTask);
+router.delete("/tasks/:id", authMiddleware, adminMiddleware, deleteTask);
 
 // Read routes
-router.get("/", authMiddleware, getTasks);
-router.get("/customer/:customerId", authMiddleware, getTasksByCustomer);
-router.get("/:id", authMiddleware, getTaskById);
+router.get("/tasks/", authMiddleware, getTasks);
+router.get("/tasks/customer/:customerId", authMiddleware, getTasksByCustomer);
+router.get("/tasks/:id", authMiddleware, getTaskById);
 
 export default router;

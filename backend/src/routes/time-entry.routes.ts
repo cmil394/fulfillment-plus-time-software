@@ -6,13 +6,16 @@ const router = Router();
 
 router.use(authMiddleware);
 
-router.get("/", timeEntryController.getMyEntries);
-router.post("/start", timeEntryController.startTimer);
-router.get("/active", timeEntryController.getActiveTimer);
-router.patch("/active/stop", timeEntryController.stopTimer);
-router.get("/by-user/:userId", timeEntryController.getEntriesByUser);
+router.get("/time-entries", timeEntryController.getMyEntries);
+router.post("/time-entries/start", timeEntryController.startTimer);
+router.get("/time-entries/active", timeEntryController.getActiveTimer);
+router.patch("/time-entries/active/stop", timeEntryController.stopTimer);
 router.get(
-  "/by-customer/:customerId",
+  "/time-entries/by-user/:userId",
+  timeEntryController.getEntriesByUser,
+);
+router.get(
+  "/time-entries/by-customer/:customerId",
   timeEntryController.getEntriesByCustomer,
 );
 

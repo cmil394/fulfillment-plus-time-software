@@ -23,10 +23,10 @@ app.get("/api/health", (req, res) => {
 });
 
 // Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/customers", customerRoutes);
-app.use("/api/tasks", taskRoutes);
-app.use("/api/time-entries", timeEntryRoutes);
+app.use("/api", authRoutes);
+app.use("/api", customerRoutes);
+app.use("/api", taskRoutes);
+app.use("/api", timeEntryRoutes);
 
 // Test database connection
 app.get("/api/db-test", async (req, res) => {
