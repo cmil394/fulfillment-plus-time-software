@@ -152,3 +152,19 @@ export const getEntriesByCustomer = async (customerId: string) => {
 
   return Object.values(grouped);
 };
+
+export const deleteAllEntries = async () => {
+  return prisma.timeEntry.deleteMany({});
+};
+
+export const deleteEntriesByUser = async (userId: string) => {
+  return prisma.timeEntry.deleteMany({
+    where: { userId },
+  });
+};
+
+export const deleteEntriesByCustomer = async (customerId: string) => {
+  return prisma.timeEntry.deleteMany({
+    where: { customerId },
+  });
+};
