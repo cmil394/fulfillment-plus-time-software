@@ -21,16 +21,16 @@ function Home() {
         element={user ? <Customers /> : <Navigate to="/login" />}
       />
       <Route
+        path="/dashboard"
+        element={user ? <Dashboard /> : <Navigate to="/login" />}
+      />
+      <Route
         path="/tasks/:customerId"
         element={user ? <Tasks /> : <Navigate to="/login" />}
       />
       <Route
         path="*"
-        element={<Navigate to={user ? "/customers" : "/login"} />}
-      />
-      <Route
-        path="/dashboard"
-        element={user ? <Dashboard /> : <Navigate to="/login" />}
+        element={<Navigate to={user ? "/dashboard" : "/login"} />}
       />
     </Routes>
   );
