@@ -9,12 +9,12 @@
 .tabsRow {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
   margin-top: 0px;
   flex: 1;
   min-height: 0;
-  padding: 0px 8px 8px 8px;
+  padding: 0px 10px 10px 10px;
   box-sizing: border-box;
 }
 
@@ -29,7 +29,7 @@
 .rightStack {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   min-height: 0;
 }
 
@@ -42,7 +42,46 @@
   min-height: 0;
 }
 
-h2 {
-  text-align: center;
-  margin: 10px 0;
+/* ── Tablet (≤ 900px): collapse to 2 columns ── */
+@media (max-width: 900px) {
+  .tabsRow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* rightStack spans both columns and lays out horizontally */
+  .rightStack {
+    grid-column: 1 / -1;
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboardContainer {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .tabsRow {
+    grid-template-columns: 1fr;
+    flex: none;
+    padding: 0px 8px 8px 8px;
+  }
+
+  .rightStack {
+    grid-column: auto;
+    flex-direction: column;
+  }
+
+  .customersTab,
+  .historyTab,
+  .profileTab,
+  .reportsTab {
+    min-height: 120px;
+    flex: none;
+  }
+
+  h2 {
+    font-size: 1rem;
+    margin: 6px 0;
+  }
 }
