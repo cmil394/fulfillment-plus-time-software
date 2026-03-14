@@ -59,49 +59,53 @@ function CustomersModal({ compact = false, onSelectCustomer }: Props) {
         onChange={(e) => setSearch(e.target.value)}
         className={compact ? styles.searchBarCompact : styles.searchBar}
       />
-      {filteredCustomers.length === 0 ? (
-        <div
-          className={compact ? styles.customerCardCompact : styles.customerCard}
-        >
-          <p
-            className={
-              compact ? styles.customerNameCompact : styles.customerName
-            }
-          >
-            No existing customers.
-          </p>
-        </div>
-      ) : (
-        filteredCustomers.map((customer) => (
+      <div className={styles.customerList}>
+        {filteredCustomers.length === 0 ? (
           <div
-            key={customer.id}
             className={
               compact ? styles.customerCardCompact : styles.customerCard
             }
           >
-            <img
-              src={AVATAR}
-              alt="Customer"
-              className={
-                compact ? styles.customerIconCompact : styles.customerIcon
-              }
-            />
             <p
               className={
                 compact ? styles.customerNameCompact : styles.customerName
               }
             >
-              {customer.name}
+              No existing customers.
             </p>
-            <button
-              className={compact ? styles.viewBtnCompact : styles.viewBtn}
-              onClick={() => handleTasksClick(String(customer.id))}
-            >
-              Tasks
-            </button>
           </div>
-        ))
-      )}
+        ) : (
+          filteredCustomers.map((customer) => (
+            <div
+              key={customer.id}
+              className={
+                compact ? styles.customerCardCompact : styles.customerCard
+              }
+            >
+              <img
+                src={AVATAR}
+                alt="Customer"
+                className={
+                  compact ? styles.customerIconCompact : styles.customerIcon
+                }
+              />
+              <p
+                className={
+                  compact ? styles.customerNameCompact : styles.customerName
+                }
+              >
+                {customer.name}
+              </p>
+              <button
+                className={compact ? styles.viewBtnCompact : styles.viewBtn}
+                onClick={() => handleTasksClick(String(customer.id))}
+              >
+                Tasks
+              </button>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
