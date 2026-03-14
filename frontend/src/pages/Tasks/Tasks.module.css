@@ -4,18 +4,3 @@
   display: flex;
   flex-direction: column;
 }
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  margin-top: 70px;
-  margin-bottom: 30px;
-}
-
-.tasksTitle {
-  font-size: 42px;
-  margin: 0;
-  text-align: center;
-}

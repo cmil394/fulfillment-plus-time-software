@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar.tsx";
 import TasksModal from "../../components/TasksModal/TasksModal.tsx";
 import styles from "./Tasks.module.css";
+import titleStyles from "./../../components/CSS Components/titles.module.css";
 
 function Tasks() {
   const { customerId } = useParams<{ customerId: string }>();
@@ -12,9 +13,7 @@ function Tasks() {
   return (
     <div className={styles.landingContainer}>
       <Navbar />
-      <div className={styles.header}>
-        <h1 className={styles.tasksTitle}>Tasks</h1>
-      </div>
+      <h1 className={titleStyles.pageTitle1}>Tasks</h1>
       <TasksModal
         customerId={customerId}
         onBack={() => navigate("/customers")}
