@@ -47,15 +47,22 @@ function Navbar() {
             Reports
           </a>
         </li>
-        <li>
+        <li className={styles.noRightBorder}>
           <a href="/profile" className={styles.navLink}>
             Profile
           </a>
         </li>
+        {user && (
+          <li className={styles.logoutItem}>
+            <button className={styles.logOutBtn} onClick={logout}>
+              Log Out
+            </button>
+          </li>
+        )}
       </ul>
 
       {user && (
-        <button className={styles.logOutBtn} onClick={logout}>
+        <button className={styles.logOutBtnDesktop} onClick={logout}>
           Log Out
         </button>
       )}
