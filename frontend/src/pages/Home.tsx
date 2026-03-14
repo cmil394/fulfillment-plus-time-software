@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Auth from "./Auth/Auth";
+import Dashboard from "./Dashboard/Dashboard";
 import Customers from "./Customers/Customers";
 import Tasks from "./Tasks/Tasks";
 
@@ -26,6 +27,10 @@ function Home() {
       <Route
         path="*"
         element={<Navigate to={user ? "/customers" : "/login"} />}
+      />
+      <Route
+        path="/dashboard"
+        element={user ? <Dashboard /> : <Navigate to="/login" />}
       />
     </Routes>
   );

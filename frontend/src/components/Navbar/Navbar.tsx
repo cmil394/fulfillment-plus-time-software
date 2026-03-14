@@ -33,8 +33,8 @@ function Navbar() {
 
       <ul className={`${styles.navbarLinks} ${isMenuOpen ? styles.open : ""}`}>
         <li>
-          <a href="/overview" className={`${styles.navLink} ${styles.active}`}>
-            Overview
+          <a href="/Dashboard" className={`${styles.navLink} ${styles.active}`}>
+            Dashboard
           </a>
         </li>
         <li>
