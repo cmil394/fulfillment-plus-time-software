@@ -1,6 +1,7 @@
 import Navbar from "../../components/Navbar/Navbar";
 import styles from "./Dashboard.module.css";
 import titleStyles from "./../../components/CSS Components/titles.module.css";
+import CustomersModal from "./../../components/CustomersModal/CustomersModal";
 
 function Dashboard() {
   return (
@@ -10,6 +11,7 @@ function Dashboard() {
       <div className={styles.tabsRow}>
         <div className={styles.customersTab}>
           <h2 className={titleStyles.subheading1}>Customers</h2>
+          <CustomersModal compact />
         </div>
         <div className={styles.historyTab}>
           <h2 className={titleStyles.subheading1}>History</h2>
