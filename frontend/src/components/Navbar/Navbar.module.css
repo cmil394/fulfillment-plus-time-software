@@ -74,45 +74,47 @@
 }
 
 /* Desktop logout button */
+
+.logOutBtn,
 .logOutBtnDesktop {
-  background-color: white;
-  color: #0c7ac4;
+  width: 100px;
+  height: 40px;
+  background: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
   border: none;
-  padding: 10px 24px;
-  border-radius: 4px;
+  border-radius: 0.625em;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
 }
 
+.logOutBtn:hover,
 .logOutBtnDesktop:hover {
-  background-color: #f0f0f0;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: rgb(255, 255, 255);
 }
 
-.logOutBtnDesktop:active {
-  transform: translateY(0);
+.logOutBtn:after,
+.logOutBtnDesktop:after {
+  content: "";
+  background: rgb(0, 0, 0);
+  position: absolute;
+  z-index: -1;
+  left: -20%;
+  right: -20%;
+  top: 0;
+  bottom: 0;
+  transform: skewX(-45deg) scale(0, 1);
+  transition: all 0.5s;
 }
 
-/* Mobile logout button */
-.logOutBtn {
-  background-color: white;
-  color: #0c7ac4;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 4px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.logOutBtn:hover {
-  background-color: #f0f0f0;
+.logOutBtn:hover:after,
+.logOutBtnDesktop:hover:after {
+  transform: skewX(-45deg) scale(1, 1);
+  -webkit-transition: all 0.5s;
+  transition: all 0.5s;
 }
 
 /* Responsive design */

@@ -195,62 +195,51 @@
 }
 
 /* Buttons */
-.viewBtn {
-  padding: 8px 16px;
-  border: 2px solid #2c2c2c;
-  background-color: #1a1a1a;
-  color: #ffffff;
-  font-size: 18px;
+.viewBtn,
+.viewBtnCompact {
+  width: 100px;
+  height: 40px;
+  background: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 0.625em;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  border-radius: 30px;
-  transition: all 0.4s ease;
-  outline: none;
   position: relative;
+  z-index: 1;
   overflow: hidden;
-  font-weight: bold;
 }
 
 .viewBtnCompact {
-  padding: 6px 12px;
-  border: 2px solid #2c2c2c;
-  background-color: #1a1a1a;
-  color: #ffffff;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 30px;
-  transition: all 0.4s ease;
-  outline: none;
-  position: relative;
-  overflow: hidden;
-  font-weight: bold;
-}
-
-.viewBtn::after,
-.viewBtnCompact::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0) 70%
-  );
-  transform: scale(0);
-  transition: transform 0.5s ease;
-}
-
-.viewBtn:hover::after,
-.viewBtnCompact:hover::after {
-  transform: scale(4);
+  width: 80px;
+  height: 34px;
 }
 
 .viewBtn:hover,
 .viewBtnCompact:hover {
-  border-color: #666666;
-  background: #292929;
+  color: rgb(0, 0, 0);
+}
+
+.viewBtn:after,
+.viewBtnCompact:after {
+  content: "";
+  background: rgb(255, 255, 255);
+  position: absolute;
+  z-index: -1;
+  left: -20%;
+  right: -20%;
+  top: 0;
+  bottom: 0;
+  transform: skewX(-45deg) scale(0, 1);
+  transition: all 0.5s;
+}
+
+.viewBtn:hover:after,
+.viewBtnCompact:hover:after {
+  transform: skewX(-45deg) scale(1, 1);
+  -webkit-transition: all 0.5s;
+  transition: all 0.5s;
 }
 
 /* Tablet */
