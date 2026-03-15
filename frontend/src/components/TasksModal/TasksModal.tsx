@@ -102,7 +102,11 @@ function TasksModal({ customerId, onBack, compact = false }: Props) {
 
   return (
     <div className={compact ? styles.boardCompact : styles.board}>
-      {!compact && <h2 className={titleStyles.subheading1}>{customerName}</h2>}
+      {!compact && (
+        <h2 className={`${titleStyles.subheading1} ${styles.customerName}`}>
+          {customerName}
+        </h2>
+      )}
       <div className={styles.topRow}>
         <button onClick={onBack} className={styles.backBtn}>
           <img src={backarrow} alt="back" className={styles.backArrow} />

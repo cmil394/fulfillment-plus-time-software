@@ -34,10 +34,7 @@
 /* Customer Name */
 
 .customerName {
-  color: white;
-  font-size: 36px;
-  align-self: center;
-  margin: 4px 0px;
+  margin: 8px 0px;
 }
 
 /* Top Row  */
@@ -264,18 +261,17 @@
   font-size: 14px;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
   color: #ede5ff;
   transition: 0.2s;
 }
 
 .startBtn {
-  background-color: #1c3b0f;
+  background-color: #244d13;
 }
 
 .stopBtn {
-  background-color: #500707;
+  background-color: #580b0b;
 }
 
 .startBtn:hover {
