@@ -10,6 +10,8 @@ function Navbar() {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const isAdmin = user?.role === "ADMIN";
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarBrand}>
@@ -37,6 +39,13 @@ function Navbar() {
             Dashboard
           </a>
         </li>
+        {isAdmin && (
+          <li>
+            <a href="/admin" className={styles.navLink}>
+              Admin
+            </a>
+          </li>
+        )}
         <li>
           <a href="/customers" className={styles.navLink}>
             Customers
