@@ -108,6 +108,16 @@ export const getUserProfile = async (userId: string) => {
 };
 
 // Admin
+export const getAllUsers = async () => {
+  const users = await prisma.user.findMany({
+    where: { status: "APPROVED" },
+    select: publicUserSelect,
+    orderBy: { id: "asc" },
+  });
+
+  return { users, total: users.length };
+};
+
 export const getPendingUsers = async () => {
   const users = await prisma.user.findMany({
     where: { status: "PENDING" },

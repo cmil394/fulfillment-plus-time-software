@@ -6,6 +6,7 @@ import {
   getPendingUsers,
   approveUser,
   rejectUser,
+  getAllUsers,
 } from "../controllers/auth.controller";
 import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware";
 
@@ -19,6 +20,7 @@ router.post("/auth/login", login);
 router.get("/auth/profile", authMiddleware, getProfile);
 
 // Admin routes
+router.get("/auth/admin/users", authMiddleware, adminMiddleware, getAllUsers);
 router.get(
   "/auth/admin/users/pending",
   authMiddleware,
