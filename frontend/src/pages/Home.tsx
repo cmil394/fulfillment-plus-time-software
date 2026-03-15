@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import Auth from "./Auth/Auth";
 import Dashboard from "./Dashboard/Dashboard";
 import Customers from "./Customers/Customers";
-import Admin from "./Admin/Admin";
+import Employees from "./Admin/Employees/Employees";
 import Tasks from "./Tasks/Tasks";
 
 function Home() {
@@ -26,8 +26,10 @@ function Home() {
         element={user ? <Dashboard /> : <Navigate to="/login" />}
       />
       <Route
-        path="/admin"
-        element={user?.role === "ADMIN" ? <Admin /> : <Navigate to="/login" />}
+        path="/admin/employees"
+        element={
+          user?.role === "ADMIN" ? <Employees /> : <Navigate to="/login" />
+        }
       />
       <Route
         path="/tasks/:customerId"

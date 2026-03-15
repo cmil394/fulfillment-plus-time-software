@@ -1,16 +1,19 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.tsx";
 import styles from "./Navbar.module.css";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { logout, user } = useAuth();
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   const isAdmin = user?.role === "ADMIN";
+  const isInAdminSection = isAdmin && location.pathname.startsWith("/admin");
 
   return (
     <nav className={styles.navbar}>
@@ -34,33 +37,64 @@ function Navbar() {
       </button>
 
       <ul className={`${styles.navbarLinks} ${isMenuOpen ? styles.open : ""}`}>
-        <li>
-          <a href="/dashboard" className={`${styles.navLink} ${styles.active}`}>
-            Dashboard
-          </a>
-        </li>
-        {isAdmin && (
+        {isAdmin && !isInAdminSection && (
           <li>
-            <a href="/admin" className={styles.navLink}>
+            <a
+              href="/admin/employees"
+              className={`${styles.navLink} ${isInAdminSection ? styles.active : ""}`}
+            >
               Admin
             </a>
           </li>
         )}
         <li>
-          <a href="/customers" className={styles.navLink}>
-            Customers
+          <a
+            href="/dashboard"
+            className={`${styles.navLink} ${location.pathname === "/dashboard" ? styles.active : ""}`}
+          >
+            Dashboard
           </a>
         </li>
-        <li>
-          <a href="/reports" className={styles.navLink}>
-            Reports
-          </a>
-        </li>
-        <li className={styles.noRightBorder}>
-          <a href="/profile" className={styles.navLink}>
-            Profile
-          </a>
-        </li>
+
+        {isInAdminSection ? (
+          <>
+            <li>
+              <a
+                href="/admin/employees"
+                className={`${styles.navLink} ${location.pathname === "/admin/employees" ? styles.active : ""}`}
+              >
+                Employees
+              </a>
+            </li>
+            <li className={styles.noRightBorder}>
+              <a
+                href="/admin/customers"
+                className={`${styles.navLink} ${location.pathname === "/admin/customers" ? styles.active : ""}`}
+              >
+                Manage Customers
+              </a>
+            </li>
+          </>
+        ) : (
+          <>
+            <li>
+              <a href="/customers" className={styles.navLink}>
+                Customers
+              </a>
+            </li>
+            <li>
+              <a href="/reports" className={styles.navLink}>
+                Reports
+              </a>
+            </li>
+            <li className={styles.noRightBorder}>
+              <a href="/profile" className={styles.navLink}>
+                Profile
+              </a>
+            </li>
+          </>
+        )}
+
         {user && (
           <li className={styles.logoutItem}>
             <button className={styles.logOutBtn} onClick={logout}>
