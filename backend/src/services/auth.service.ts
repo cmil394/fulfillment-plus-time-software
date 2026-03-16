@@ -55,13 +55,7 @@ export const registerUser = async (data: RegisterInput) => {
     select: publicUserSelect,
   });
 
-  const token = generateToken({
-    userId: user.id,
-    email: user.email,
-    role: user.role,
-  });
-
-  return { user, token };
+  return { user };
 };
 
 export const loginUser = async (data: LoginInput) => {
