@@ -22,6 +22,14 @@ export interface User {
   createdAt: string;
 }
 
+export interface GetPendingUsersResponse {
+  status: string;
+  data: {
+    users: User[];
+    total: number;
+  };
+}
+
 export interface AuthResponse {
   status: string;
   message: string;
@@ -44,6 +52,11 @@ export const authService = {
 
   getProfile: async (): Promise<{ status: string; data: { user: User } }> => {
     const response = await api.get("/auth/profile");
+    return response.data;
+  },
+
+  getPendingUsers: async (): Promise<GetPendingUsersResponse> => {
+    const response = await api.get("/auth/admin/users/pending");
     return response.data;
   },
 

@@ -1,12 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../../../components/Navbar/Navbar";
 import styles from "./Employees.module.css";
 import tableStyles from "./../../../components/CSS Components/titles.module.css";
+import { authService } from "../../../services/auth.service";
+import type { User } from "../../../services/auth.service"; // adjust path
 
-type Tab = "employees" | "pending" | "stats";
+type Tab = "employees" | "pending";
 
 function Employees() {
   const [activeTab, setActiveTab] = useState<Tab>("employees");
+  const [pendingUsers, setPendingUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch pending users when the component mounts or activeTab changes
+  useEffect(() => {
+    if (activeTab === "pending") {
+      setLoading(true);
+
+      const fetchPendingUsers = async () => {
+        try {
+          const response = await authService.getPendingUsers();
+          setPendingUsers(response.data.users);
+        } catch (err) {
+          console.error("Failed to fetch pending users:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchPendingUsers();
+    }
+  }, [activeTab]);
 
   return (
     <div className={styles.employeesContainer}>
@@ -17,30 +41,26 @@ function Employees() {
           <h3 className={styles.tableCount}>
             {activeTab === "employees"
               ? "1 Employee"
-              : activeTab === "pending"
-                ? "3 Pending"
-                : "Employee Stats"}
+              : `${pendingUsers.length} Pending`}
           </h3>
         </div>
 
         <div className={styles.tabs}>
           <button
-            className={`${styles.tab} ${activeTab === "employees" ? styles.tabActive : ""}`}
+            className={`${styles.tab} ${
+              activeTab === "employees" ? styles.tabActive : ""
+            }`}
             onClick={() => setActiveTab("employees")}
           >
             Employees
           </button>
           <button
-            className={`${styles.tab} ${activeTab === "pending" ? styles.tabActive : ""}`}
+            className={`${styles.tab} ${
+              activeTab === "pending" ? styles.tabActive : ""
+            }`}
             onClick={() => setActiveTab("pending")}
           >
             Pending employees
-          </button>
-          <button
-            className={`${styles.tab} ${activeTab === "stats" ? styles.tabActive : ""}`}
-            onClick={() => setActiveTab("stats")}
-          >
-            Employee Stats
           </button>
         </div>
 
@@ -48,7 +68,7 @@ function Employees() {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>Id</th>
+                <th>#</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
@@ -84,42 +104,52 @@ function Employees() {
         )}
 
         {activeTab === "pending" && (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Date Registered</th>
-                <th>Status</th>
-                <th>Approve</th>
-                <th>Reject</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>2.</td>
-                <td>Nicolas</td>
-                <td>Yates</td>
-                <td>NickYates@gmail.com</td>
-                <td>
-                  <span className={styles.roleBadge}>Sorter</span>
-                </td>
-                <td>12/03/2025</td>
-                <td>
-                  <span>Pending</span>
-                </td>
-                <td>
-                  <button>Approve</button>
-                </td>
-                <td>
-                  <button>Reject</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div>
+            {loading ? (
+              <p>Loading pending users...</p>
+            ) : pendingUsers.length === 0 ? (
+              <p>No pending users</p>
+            ) : (
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Date Registered</th>
+                    <th>Status</th>
+                    <th>Approve</th>
+                    <th>Reject</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pendingUsers.map((user, index) => (
+                    <tr key={user.id}>
+                      <td>{index + 1}</td>
+                      <td>{user.firstName}</td>
+                      <td>{user.lastName}</td>
+                      <td>{user.email}</td>
+                      <td>
+                        <span className={styles.roleBadge}>{user.role}</span>
+                      </td>
+                      <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                      <td>
+                        <span>{user.status}</span>
+                      </td>
+                      <td>
+                        <button>Approve</button>
+                      </td>
+                      <td>
+                        <button>Reject</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         )}
       </div>
     </div>
