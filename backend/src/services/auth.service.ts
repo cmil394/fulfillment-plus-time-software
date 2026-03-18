@@ -36,9 +36,11 @@ export const registerUser = async (data: RegisterInput) => {
     throw new ConflictError("Email already registered");
   }
 
+  // TODO: Change prisma to include middle names
   const nameParts = data.fullname.trim().split(" ");
   const firstName = nameParts[0];
-  const lastName = nameParts.slice(1).join(" ") || nameParts[0];
+  const middleNames = nameParts.slice(1, -1).join(" ");
+  const lastName = nameParts[nameParts.length - 1];
 
   const hashedPassword = await hashPassword(data.password);
 

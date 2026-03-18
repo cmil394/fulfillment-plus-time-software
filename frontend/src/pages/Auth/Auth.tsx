@@ -174,6 +174,7 @@ function Auth() {
                 type="email"
                 id="login-email"
                 name="email"
+                placeholder="Enter your email"
                 className={styles.input}
                 value={loginData.email}
                 onChange={(e) =>
@@ -188,6 +189,7 @@ function Auth() {
                 type="password"
                 id="login-password"
                 name="password"
+                placeholder="Enter your username"
                 className={styles.input}
                 value={loginData.password}
                 onChange={(e) =>
@@ -212,6 +214,7 @@ function Auth() {
                 type="email"
                 id="register-email"
                 name="email"
+                placeholder="Enter your email"
                 className={styles.input}
                 value={registerData.email}
                 onChange={(e) =>
@@ -226,6 +229,7 @@ function Auth() {
                 type="text"
                 id="register-fullname"
                 name="fullname"
+                placeholder="Enter your full name"
                 className={styles.input}
                 value={registerData.fullname}
                 onChange={(e) =>
@@ -240,6 +244,7 @@ function Auth() {
                 type="password"
                 id="register-password"
                 name="password"
+                placeholder="Enter your password"
                 className={styles.input}
                 value={registerData.password}
                 onChange={(e) =>
@@ -254,6 +259,7 @@ function Auth() {
                 type="password"
                 id="register-confirm"
                 name="confirmPassword"
+                placeholder="Confirm password"
                 className={styles.input}
                 value={registerData.confirmPassword}
                 onChange={(e) =>
