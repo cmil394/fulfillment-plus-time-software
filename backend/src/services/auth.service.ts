@@ -8,6 +8,7 @@ import {
   NotFoundError,
   AppError,
 } from "../utils/errors";
+import { AdminUpdateUserInput } from "../validators/auth.validator";
 
 // Selects
 const publicUserSelect = {
@@ -143,4 +144,21 @@ export const updateUserStatus = async (
     data: { status },
     select: { ...publicUserSelect, updatedAt: true },
   });
+};
+
+export const adminUpdateUser = async (
+  id: string,
+  data: AdminUpdateUserInput,
+) => {
+  const user = await prisma.user.update({
+    where: { id },
+    data,
+    select: {
+      firstName: true,
+      lastName: true,
+      email: true,
+      role: true,
+    },
+  });
+  return user;
 };

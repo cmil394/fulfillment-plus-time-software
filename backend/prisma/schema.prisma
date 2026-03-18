@@ -92,3 +92,15 @@ enum UserStatus {
   APPROVED
   REJECTED
 }
+
+/* 
+
+Database Changes
+
+make first and lastname nonoptional fullname made up from those 2
+Last login - user
+More roles
+Remove rates
+Avatar for profile pictures - Customer and User
+
+*/

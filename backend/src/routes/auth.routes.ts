@@ -7,6 +7,7 @@ import {
   approveUser,
   rejectUser,
   getAllAcceptedUsers,
+  adminUpdateUser,
 } from "../controllers/auth.controller";
 import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware";
 
@@ -43,6 +44,12 @@ router.patch(
   authMiddleware,
   adminMiddleware,
   rejectUser,
+);
+router.patch(
+  "/auth/admin/users/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminUpdateUser,
 );
 
 export default router;

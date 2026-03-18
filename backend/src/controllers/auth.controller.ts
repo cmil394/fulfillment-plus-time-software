@@ -3,6 +3,7 @@ import { AuthRequest } from "../middleware/auth.middleware";
 import { registerSchema, loginSchema } from "../validators/auth.validator";
 import * as authService from "../services/auth.service";
 import { UnauthorizedError } from "../utils/errors";
+import { adminUpdateUserSchema } from "../validators/auth.validator";
 
 // Auth
 
@@ -117,6 +118,27 @@ export const rejectUser = async (
     res.status(200).json({
       status: "success",
       message: "User rejected",
+      data: { user },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const adminUpdateUser = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const data = adminUpdateUserSchema.parse(req.body);
+    const user = await authService.adminUpdateUser(
+      req.params.id as string,
+      data,
+    );
+    res.status(200).json({
+      status: "success",
+      message: "User updated successfully",
       data: { user },
     });
   } catch (err) {
