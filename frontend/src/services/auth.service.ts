@@ -30,6 +30,14 @@ export interface GetPendingUsersResponse {
   };
 }
 
+export interface GetAcceptedUsersResponse {
+  status: string;
+  data: {
+    users: User[];
+    total: number;
+  };
+}
+
 export interface AuthResponse {
   status: string;
   message: string;
@@ -60,7 +68,11 @@ export const authService = {
     return response.data;
   },
 
-  getAllAcceptedUsers: () => api.get("/auth/admin/users"),
+  getAllAcceptedUsers: async (): Promise<GetAcceptedUsersResponse> => {
+    const response = await api.get("/auth/admin/users");
+    return response.data;
+  },
+
   approveUser: (id: string) => api.patch(`/auth/admin/users/${id}/approve`),
   rejectUser: (id: string) => api.patch(`/auth/admin/users/${id}/reject`),
 

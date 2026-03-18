@@ -20,7 +20,7 @@ function Employees() {
       const fetchEmployees = async () => {
         try {
           const response = await authService.getAllAcceptedUsers();
-          setEmployees(response.data.data.users ?? response.data ?? []);
+          setEmployees(response.data.users ?? response.data ?? []);
         } catch (err) {
           console.error("Failed to fetch employees:", err);
         } finally {
