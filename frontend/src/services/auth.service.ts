@@ -60,6 +60,7 @@ export const authService = {
     return response.data;
   },
 
+  getAllAcceptedUsers: () => api.get("/auth/admin/users"),
   approveUser: (id: string) => api.patch(`/auth/admin/users/${id}/approve`),
   rejectUser: (id: string) => api.patch(`/auth/admin/users/${id}/reject`),
 

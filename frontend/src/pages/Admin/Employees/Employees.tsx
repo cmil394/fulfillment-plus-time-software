@@ -9,11 +9,27 @@ type Tab = "employees" | "pending";
 
 function Employees() {
   const [activeTab, setActiveTab] = useState<Tab>("employees");
+  const [employees, setEmployees] = useState<User[]>([]);
   const [pendingUsers, setPendingUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   useEffect(() => {
+    if (activeTab === "employees") {
+      setLoading(true);
+      const fetchEmployees = async () => {
+        try {
+          const response = await authService.getAllAcceptedUsers();
+          setEmployees(response.data.data.users ?? response.data ?? []);
+        } catch (err) {
+          console.error("Failed to fetch employees:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchEmployees();
+    }
+
     if (activeTab === "pending") {
       setLoading(true);
 
@@ -66,7 +82,7 @@ function Employees() {
           <h2 className={tableStyles.pageTitle1}>Employees</h2>
           <h3 className={styles.tableCount}>
             {activeTab === "employees"
-              ? "1 Employee"
+              ? `${employees.length} Employee${employees.length !== 1 ? "s" : ""}`
               : `${pendingUsers.length} Pending`}
           </h3>
         </div>
@@ -87,42 +103,52 @@ function Employees() {
         </div>
 
         {activeTab === "employees" && (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Date Registered</th>
-                <th>Hours This Week</th>
-                <th>Overview</th>
-                <th>Edit</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1.</td>
-                <td>Carson</td>
-                <td>Mills</td>
-                <td>Carsonkmills5@gmail.com</td>
-                <td>
-                  <span className={styles.roleBadge}>Picker</span>
-                </td>
-                <td>09/02/2004</td>
-                <td>
-                  <span className={styles.hours}>24h</span>
-                </td>
-                <td>
-                  <button>Overview</button>
-                </td>
-                <td>
-                  <button>Edit</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <>
+            {loading ? (
+              <p>Loading employees...</p>
+            ) : employees.length === 0 ? (
+              <p>No employees found</p>
+            ) : (
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Date Registered</th>
+                    <th>Overview</th>
+                    <th>Edit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {employees.map((employee, index) => (
+                    <tr key={employee.id}>
+                      <td>{index + 1}.</td>
+                      <td>{employee.firstName}</td>
+                      <td>{employee.lastName}</td>
+                      <td>{employee.email}</td>
+                      <td>
+                        <span className={styles.roleBadge}>
+                          {employee.role}
+                        </span>
+                      </td>
+                      <td>
+                        {new Date(employee.createdAt).toLocaleDateString()}
+                      </td>
+                      <td>
+                        <button>Overview</button>
+                      </td>
+                      <td>
+                        <button>Edit</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </>
         )}
 
         {activeTab === "pending" && (
