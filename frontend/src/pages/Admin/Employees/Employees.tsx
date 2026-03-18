@@ -4,6 +4,7 @@ import styles from "./Employees.module.css";
 import tableStyles from "./../../../components/CSS Components/titles.module.css";
 import { authService } from "../../../services/auth.service";
 import type { User } from "../../../services/auth.service";
+import { Eye, Pencil } from "lucide-react";
 
 type Tab = "employees" | "pending";
 type SortField =
@@ -278,7 +279,7 @@ function Employees() {
                     >
                       Date Registered
                     </SortableTh>
-                    <th>Overview</th>
+                    <th>View</th>
                     <th>Edit</th>
                   </tr>
                 </thead>
@@ -298,10 +299,14 @@ function Employees() {
                         {new Date(employee.createdAt).toLocaleDateString()}
                       </td>
                       <td>
-                        <button>Overview</button>
+                        <button className={styles.viewBtn}>
+                          <Eye size={16} />
+                        </button>
                       </td>
                       <td>
-                        <button>Edit</button>
+                        <button className={styles.editBtn}>
+                          <Pencil size={16} />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -392,6 +397,7 @@ function Employees() {
                         <button
                           onClick={() => handleApprove(user.id)}
                           disabled={actionLoading === user.id}
+                          className={styles.approveBtn}
                         >
                           {actionLoading === user.id ? "..." : "Approve"}
                         </button>
@@ -400,6 +406,7 @@ function Employees() {
                         <button
                           onClick={() => handleReject(user.id)}
                           disabled={actionLoading === user.id}
+                          className={styles.rejectBtn}
                         >
                           {actionLoading === user.id ? "..." : "Reject"}
                         </button>
