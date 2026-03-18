@@ -106,7 +106,7 @@ export const getAllAcceptedUsers = async () => {
   const users = await prisma.user.findMany({
     where: { status: "APPROVED" },
     select: publicUserSelect,
-    orderBy: { id: "asc" },
+    orderBy: [{ role: "asc" }, { createdAt: "asc" }],
   });
 
   return { users, total: users.length };

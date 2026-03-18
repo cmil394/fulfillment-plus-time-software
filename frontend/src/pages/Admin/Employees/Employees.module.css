@@ -60,3 +60,8 @@
   border-bottom: 2px solid #111;
   font-weight: 500;
 }
+
+.sortIcon {
+  font-weight: 800;
+  font-size: 18px;
+}
