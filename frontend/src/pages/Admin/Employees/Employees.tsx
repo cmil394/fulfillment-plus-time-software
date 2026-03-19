@@ -4,7 +4,7 @@ import styles from "./Employees.module.css";
 import tableStyles from "./../../../components/CSS Components/titles.module.css";
 import { authService } from "../../../services/auth.service";
 import type { User } from "../../../services/auth.service";
-import { Eye, Pencil, Check, X } from "lucide-react";
+import { Eye, Pencil, Check, X, AlertTriangle } from "lucide-react";
 
 type Tab = "employees" | "pending";
 type SortField =
@@ -43,6 +43,9 @@ function Employees() {
   const [currentUserId] = useState<string | null>(() =>
     authService.getCurrentUserId(),
   );
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingConfirmId, setPendingConfirmId] = useState<string | null>(null);
 
   const [empSortField, setEmpSortField] = useState<SortField>("index");
   const [empSortDir, setEmpSortDir] = useState<SortDir>("asc");
@@ -109,8 +112,17 @@ function Employees() {
     setSaveError(null);
   };
 
-  const handleConfirmEdit = async (userId: string) => {
-    if (!editDraft) return;
+  const handleRequestConfirm = (userId: string) => {
+    setPendingConfirmId(userId);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmModal = async () => {
+    if (!pendingConfirmId || !editDraft) return;
+    setShowConfirmModal(false);
+    const userId = pendingConfirmId;
+    setPendingConfirmId(null);
+
     setActionLoading(userId);
     setSaveError(null);
     try {
@@ -127,6 +139,11 @@ function Employees() {
     } finally {
       setActionLoading(null);
     }
+  };
+
+  const handleCancelModal = () => {
+    setShowConfirmModal(false);
+    setPendingConfirmId(null);
   };
 
   const handleDraftChange = (field: keyof EditDraft, value: string) => {
@@ -446,7 +463,9 @@ function Employees() {
                             <div className={styles.editActions}>
                               <button
                                 className={styles.confirmBtn}
-                                onClick={() => handleConfirmEdit(employee.id)}
+                                onClick={() =>
+                                  handleRequestConfirm(employee.id)
+                                }
                                 disabled={isSaving}
                                 title="Confirm"
                               >
@@ -582,6 +601,36 @@ function Employees() {
           </div>
         )}
       </div>
+
+      {/* Confirm Edit Modal */}
+      {showConfirmModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalIconWrap}>
+              <AlertTriangle size={22} className={styles.modalIcon} />
+            </div>
+            <p className={styles.modalTitle}>Save changes?</p>
+            <p className={styles.modalSubtitle}>
+              You're about to update this employee's details.
+            </p>
+            <p className={styles.modalSubtitle1}>Are you sure?</p>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.modalCancelBtn}
+                onClick={handleCancelModal}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.modalConfirmBtn}
+                onClick={handleConfirmModal}
+              >
+                Save changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
