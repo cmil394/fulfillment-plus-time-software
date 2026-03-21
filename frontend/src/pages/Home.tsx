@@ -4,6 +4,7 @@ import Auth from "./Auth/Auth";
 import Dashboard from "./Dashboard/Dashboard";
 import Customers from "./Customers/Customers";
 import Employees from "./Admin/Employees/Employees";
+import AdminCustomers from "./Admin/AdminCustomers/AdminCustomers";
 import Tasks from "./Tasks/Tasks";
 
 function Home() {
@@ -24,6 +25,12 @@ function Home() {
       <Route
         path="/dashboard"
         element={user ? <Dashboard /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/admin/customers"
+        element={
+          user?.role === "ADMIN" ? <AdminCustomers /> : <Navigate to="/login" />
+        }
       />
       <Route
         path="/admin/employees"
