@@ -31,7 +31,7 @@ model Customer {
   name      String
   ownerName String
   email     String?
-  phone     Int?
+  phone     String?
   avatarUrl  String?
   active    Boolean  @default(true)
   createdAt DateTime @default(now())

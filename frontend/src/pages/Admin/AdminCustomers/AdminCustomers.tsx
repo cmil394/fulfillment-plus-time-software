@@ -30,7 +30,7 @@ const EMPTY_CREATE: CustomerDto = {
   name: "",
   ownerName: "",
   email: "",
-  phone: undefined,
+  phone: "",
 };
 
 function AdminCustomers() {

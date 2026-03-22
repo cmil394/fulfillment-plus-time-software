@@ -12,7 +12,7 @@ export interface Customer {
 export interface CustomerDto {
   name: string;
   ownerName: string;
-  phone?: number;
+  phone?: string;
   email?: string;
 }
 

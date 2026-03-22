@@ -104,10 +104,10 @@
   cursor: not-allowed;
 }
 
-/* Columns: Date | View | Edit | Delete */
-.table td:nth-child(6),
+/* Columns: View | Edit | Delete */
 .table td:nth-child(7),
-.table td:nth-child(8) .table td:nth-child(9) {
+.table td:nth-child(8),
+.table td:nth-child(9) {
   text-align: center;
   width: 40px;
 }
