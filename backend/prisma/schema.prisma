@@ -13,14 +13,13 @@ model User {
   email      String     @unique
   password   String
   fullName   String
-  role       Role       @default(EMPLOYEE)
+  role       Role       @default(Employee)
   status     UserStatus @default(PENDING)
   firstName  String?
   lastName   String?
-  hourlyRate Decimal?   @db.Decimal(10, 2) // Optional for cost calculations
+  //hourlyRate Decimal?   @db.Decimal(10, 2)
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-
   timeEntries TimeEntry[]
 
   @@map("users")
@@ -30,6 +29,10 @@ model User {
 model Customer {
   id        String   @id @default(uuid())
   name      String
+  ownerName String
+  email     String?
+  phone     Int?
+  avatarUrl  String?
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -46,11 +49,10 @@ model Task {
   customerId  String
   name        String
   description String?
-  fixedRate   Decimal? @db.Decimal(10, 2) // Optional for per-task pricing
+  //fixedRate   Decimal? @db.Decimal(10, 2) 
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
   customer    Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
   timeEntries TimeEntry[]
 
@@ -83,8 +85,9 @@ model TimeEntry {
 }
 
 enum Role {
-  ADMIN
-  EMPLOYEE
+  Owner
+  Admin
+  Employee
 }
 
 enum UserStatus {
