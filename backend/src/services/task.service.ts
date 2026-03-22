@@ -8,7 +8,7 @@ const taskSelect = {
   id: true,
   name: true,
   description: true,
-  active: true,
+  // active: true,
   customerId: true,
   customer: {
     select: { name: true },
@@ -19,7 +19,7 @@ const formatTask = (task: any) => ({
   id: task.id,
   name: task.name,
   description: task.description,
-  active: task.active,
+  // active: task.active,
   customerId: task.customerId,
   customerName: task.customer.name,
 });
@@ -83,7 +83,7 @@ export const updateTask = async (id: string, data: UpdateTaskInput) => {
       name: data.name,
       description: data.description,
       // fixedRate: data.fixedRate ? new Decimal(data.fixedRate) : undefined,
-      active: data.active,
+      // active: data.active,
     },
   });
 };
