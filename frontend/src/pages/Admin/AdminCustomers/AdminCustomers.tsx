@@ -130,6 +130,7 @@ function AdminCustomers() {
       name: customer.name,
       ownerName: customer.ownerName,
       email: customer.email,
+      phone: customer.phone,
     });
     setSaveError(null);
   };
@@ -167,8 +168,6 @@ function AdminCustomers() {
             ? {
                 ...c,
                 ...editDraft,
-                phone:
-                  editDraft.phone != null ? String(editDraft.phone) : undefined,
               }
             : c,
         ),
