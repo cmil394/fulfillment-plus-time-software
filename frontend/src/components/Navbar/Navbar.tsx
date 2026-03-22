@@ -12,7 +12,7 @@ function Navbar() {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const isAdmin = user?.role === "ADMIN";
+  const isAdmin = user?.role === "Admin";
   const isInAdminSection = isAdmin && location.pathname.startsWith("/admin");
 
   return (

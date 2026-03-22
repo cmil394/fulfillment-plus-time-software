@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('ADMIN', 'EMPLOYEE');
+CREATE TYPE "Role" AS ENUM ('Owner', 'Admin', 'Employee');
 
 -- CreateEnum
 CREATE TYPE "UserStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
@@ -10,11 +10,10 @@ CREATE TABLE "users" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
-    "role" "Role" NOT NULL DEFAULT 'EMPLOYEE',
+    "role" "Role" NOT NULL DEFAULT 'Employee',
     "status" "UserStatus" NOT NULL DEFAULT 'PENDING',
     "firstName" TEXT,
     "lastName" TEXT,
-    "hourlyRate" DECIMAL(10,2),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -25,6 +24,10 @@ CREATE TABLE "users" (
 CREATE TABLE "customers" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "ownerName" TEXT NOT NULL,
+    "email" TEXT,
+    "phone" INTEGER,
+    "avatarUrl" TEXT,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -38,7 +41,6 @@ CREATE TABLE "tasks" (
     "customerId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "fixedRate" DECIMAL(10,2),
     "active" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

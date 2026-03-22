@@ -21,7 +21,7 @@ export const adminUpdateUserSchema = z.object({
   firstName: z.string().min(1).optional(),
   lastName: z.string().min(1).optional(),
   email: z.string().email().optional(),
-  role: z.enum(["ADMIN", "EMPLOYEE"]).optional(),
+  role: z.enum(["Admin", "Employee"]).optional(),
 });
 
 export type AdminUpdateUserInput = z.infer<typeof adminUpdateUserSchema>;

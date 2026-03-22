@@ -29,13 +29,13 @@ function Home() {
       <Route
         path="/admin/customers"
         element={
-          user?.role === "ADMIN" ? <AdminCustomers /> : <Navigate to="/login" />
+          user?.role === "Admin" ? <AdminCustomers /> : <Navigate to="/login" />
         }
       />
       <Route
         path="/admin/employees"
         element={
-          user?.role === "ADMIN" ? <Employees /> : <Navigate to="/login" />
+          user?.role === "Admin" ? <Employees /> : <Navigate to="/login" />
         }
       />
       <Route

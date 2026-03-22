@@ -432,8 +432,8 @@ function Employees() {
                                 isSaving || currentUserId === employee.id
                               }
                             >
-                              <option value="ADMIN">ADMIN</option>
-                              <option value="EMPLOYEE">EMPLOYEE</option>
+                              <option value="Admin">Admin</option>
+                              <option value="Employee">Employee</option>
                             </select>
                           ) : (
                             <span className={styles.roleBadge}>

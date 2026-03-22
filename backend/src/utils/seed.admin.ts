@@ -32,7 +32,7 @@ export const seedAdmin = async () => {
         fullName: "System Administrator",
         firstName: "System",
         lastName: "Administrator",
-        role: "ADMIN",
+        role: "Admin",
         status: "APPROVED",
       },
     });

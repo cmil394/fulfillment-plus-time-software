@@ -55,7 +55,7 @@ export const registerUser = async (data: RegisterInput) => {
       fullName: data.fullname,
       firstName,
       lastName,
-      role: "EMPLOYEE",
+      role: "Employee",
       status: "PENDING",
     },
     select: publicUserSelect,
