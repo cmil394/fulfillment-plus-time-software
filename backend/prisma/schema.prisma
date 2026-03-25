@@ -57,6 +57,17 @@ model Task {
   @@map("tasks")
 }
 
+// Task presets to copy to customers
+model TaskTemplate {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("task_templates")
+}
+
 // Time Entries
 model TimeEntry {
   id              String    @id @default(uuid())

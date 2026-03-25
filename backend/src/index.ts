@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes";
 import customerRoutes from "./routes/customer.routes";
 import taskRoutes from "./routes/task.routes";
 import timeEntryRoutes from "./routes/time-entry.routes";
+import taskTemplateRoutes from "./routes/task-template.routes";
 import { seedAdmin } from "./utils/seed.admin";
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use("/api", authRoutes);
 app.use("/api", customerRoutes);
 app.use("/api", taskRoutes);
 app.use("/api", timeEntryRoutes);
+app.use("/api", taskTemplateRoutes);
 
 // Test database connection
 app.get("/api/db-test", async (req, res) => {
