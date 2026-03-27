@@ -8,6 +8,7 @@ import type {
   CreateTaskTemplatePayload,
   UpdateTaskTemplatePayload,
 } from "../../../services/task-template.service";
+import { FilePlus, Pencil, AlertTriangle, Trash2 } from "lucide-react";
 
 // Types
 type ModalMode = "create" | "edit" | "delete" | null;
@@ -30,132 +31,6 @@ function SkeletonList() {
   );
 }
 
-// Modal
-interface TemplateModalProps {
-  mode: "create" | "edit";
-  initial: FormState;
-  saving: boolean;
-  onClose: () => void;
-  onSubmit: (form: FormState) => void;
-}
-
-function TemplateModal({
-  mode,
-  initial,
-  saving,
-  onClose,
-  onSubmit,
-}: TemplateModalProps) {
-  const [form, setForm] = useState<FormState>(initial);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
-
-  return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h2 className={styles.modalTitle}>
-          {mode === "create" ? "New Task Template" : "Edit Task Template"}
-        </h2>
-
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="name">
-            Name
-          </label>
-          <input
-            id="name"
-            name="name"
-            className={styles.input}
-            value={form.name}
-            onChange={handleChange}
-            placeholder="e.g. Onboarding checklist"
-            autoFocus
-          />
-        </div>
-
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="description">
-            Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            className={styles.textarea}
-            value={form.description}
-            onChange={handleChange}
-            placeholder="Optional description…"
-          />
-        </div>
-
-        <div className={styles.modalActions}>
-          <button
-            className={styles.btnGhost}
-            onClick={onClose}
-            disabled={saving}
-          >
-            Cancel
-          </button>
-          <button
-            className={styles.btnPrimary}
-            onClick={() => onSubmit(form)}
-            disabled={saving || !form.name.trim()}
-          >
-            {saving
-              ? "Saving…"
-              : mode === "create"
-                ? "Create Template"
-                : "Save Changes"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Confirm delete modal
-interface ConfirmDeleteModalProps {
-  template: TaskTemplate;
-  saving: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-}
-
-function ConfirmDeleteModal({
-  template,
-  saving,
-  onClose,
-  onConfirm,
-}: ConfirmDeleteModalProps) {
-  return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h2 className={styles.modalTitle}>Delete Template</h2>
-        <p className={styles.confirmText}>
-          Are you sure you want to delete <strong>{template.name}</strong>? This
-          action cannot be undone.
-        </p>
-        <div className={styles.modalActions}>
-          <button
-            className={styles.btnGhost}
-            onClick={onClose}
-            disabled={saving}
-          >
-            Cancel
-          </button>
-          <button
-            className={styles.btnDanger}
-            onClick={onConfirm}
-            disabled={saving}
-          >
-            {saving ? "Deleting…" : "Delete"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // Main page
 function AdminTasks() {
   const [templates, setTemplates] = useState<TaskTemplate[]>([]);
@@ -165,6 +40,7 @@ function AdminTasks() {
   const [modalMode, setModalMode] = useState<ModalMode>(null);
   const [selected, setSelected] = useState<TaskTemplate | null>(null);
   const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
 
   // Fetch
   const fetchTemplates = async () => {
@@ -186,11 +62,15 @@ function AdminTasks() {
 
   // Handlers
   const openCreate = () => {
+    setForm(EMPTY_FORM);
+    setError(null);
     setSelected(null);
     setModalMode("create");
   };
 
   const openEdit = (t: TaskTemplate) => {
+    setForm({ name: t.name, description: t.description ?? "" });
+    setError(null);
     setSelected(t);
     setModalMode("edit");
   };
@@ -203,10 +83,18 @@ function AdminTasks() {
   const closeModal = () => {
     setModalMode(null);
     setSelected(null);
+    setForm(EMPTY_FORM);
+    setError(null);
   };
 
-  const handleCreate = async (form: FormState) => {
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+
+  const handleCreate = async () => {
+    if (!form.name.trim()) return;
     setSaving(true);
+    setError(null);
     try {
       const payload: CreateTaskTemplatePayload = {
         name: form.name.trim(),
@@ -222,9 +110,10 @@ function AdminTasks() {
     }
   };
 
-  const handleUpdate = async (form: FormState) => {
-    if (!selected) return;
+  const handleUpdate = async () => {
+    if (!selected || !form.name.trim()) return;
     setSaving(true);
+    setError(null);
     try {
       const payload: UpdateTaskTemplatePayload = {
         name: form.name.trim(),
@@ -256,6 +145,8 @@ function AdminTasks() {
     }
   };
 
+  const isCreateOrEdit = modalMode === "create" || modalMode === "edit";
+
   return (
     <div className={styles.page}>
       <Navbar />
@@ -267,7 +158,9 @@ function AdminTasks() {
           </button>
         </div>
 
-        {error && <div className={styles.error}>{error}</div>}
+        {error && !isCreateOrEdit && (
+          <div className={styles.error}>{error}</div>
+        )}
 
         {loading ? (
           <SkeletonList />
@@ -290,13 +183,13 @@ function AdminTasks() {
                     className={styles.btnGhost}
                     onClick={() => openEdit(t)}
                   >
-                    Edit
+                    <Pencil size={17} />
                   </button>
                   <button
                     className={styles.btnDanger}
                     onClick={() => openDelete(t)}
                   >
-                    Delete
+                    <Trash2 size={17} />
                   </button>
                 </div>
               </div>
@@ -305,29 +198,107 @@ function AdminTasks() {
         )}
       </div>
 
-      {/* Create / Edit modal */}
-      {(modalMode === "create" || modalMode === "edit") && (
-        <TemplateModal
-          mode={modalMode}
-          initial={
-            modalMode === "edit" && selected
-              ? { name: selected.name, description: selected.description ?? "" }
-              : EMPTY_FORM
-          }
-          saving={saving}
-          onClose={closeModal}
-          onSubmit={modalMode === "create" ? handleCreate : handleUpdate}
-        />
+      {/* Create / Edit Modal */}
+      {isCreateOrEdit && (
+        <div className={styles.overlay} onClick={closeModal}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalIconWrap}>
+              {modalMode === "create" ? (
+                <FilePlus size={22} className={styles.modalIconCreate} />
+              ) : (
+                <Pencil size={22} className={styles.modalIconCreate} />
+              )}
+            </div>
+            <p className={styles.modalTitle}>
+              {modalMode === "create"
+                ? "New Task Template"
+                : "Edit Task Template"}
+            </p>
+
+            <div className={styles.createFormFields}>
+              <div className={styles.createFormField}>
+                <label className={styles.createFormLabel}>
+                  Name <span style={{ color: "#ef4444" }}>*</span>
+                </label>
+                <input
+                  name="name"
+                  className={styles.modalInput}
+                  value={form.name}
+                  onChange={handleFormChange}
+                  placeholder="e.g. Picking"
+                  disabled={saving}
+                  autoFocus
+                />
+              </div>
+              <div className={styles.createFormField}>
+                <label className={styles.createFormLabel}>Description</label>
+                <textarea
+                  name="description"
+                  className={styles.modalTextarea}
+                  value={form.description}
+                  onChange={handleFormChange}
+                  placeholder="Optional description…"
+                  disabled={saving}
+                />
+              </div>
+            </div>
+
+            {error && <p className={styles.error}>{error}</p>}
+
+            <div className={styles.modalActions}>
+              <button
+                className={styles.modalCancelBtn}
+                onClick={closeModal}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.modalConfirmBtn}
+                onClick={modalMode === "create" ? handleCreate : handleUpdate}
+                disabled={saving || !form.name.trim()}
+              >
+                {saving
+                  ? "Saving…"
+                  : modalMode === "create"
+                    ? "Create Template"
+                    : "Save Changes"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
-      {/* Delete confirm modal */}
+      {/* Delete Confirm Modal */}
       {modalMode === "delete" && selected && (
-        <ConfirmDeleteModal
-          template={selected}
-          saving={saving}
-          onClose={closeModal}
-          onConfirm={handleDelete}
-        />
+        <div className={styles.overlay} onClick={closeModal}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalIconWrapDelete}>
+              <AlertTriangle size={22} className={styles.modalIconDelete} />
+            </div>
+            <p className={styles.modalTitle}>Delete Template</p>
+            <p className={styles.modalSubtitle}>
+              You're about to delete <strong>{selected.name}</strong>. This
+              action cannot be undone.
+            </p>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.modalCancelBtn}
+                onClick={closeModal}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.modalConfirmDanger}
+                onClick={handleDelete}
+                disabled={saving}
+              >
+                {saving ? "Deleting…" : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
