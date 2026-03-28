@@ -13,6 +13,7 @@ import {
   LayoutTemplate,
   PencilLine,
   CheckCircle2,
+  Trash2,
 } from "lucide-react";
 import type { Customer } from "./../../services/admin-customer.service";
 import { taskService, type Task } from "./../../services/task.service";
@@ -46,6 +47,11 @@ function CustomerViewModal({ customer, onClose }: Props) {
   const [customDescription, setCustomDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Delete confirmation state
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const fetchTasks = useCallback(async () => {
     setTasksLoading(true);
@@ -118,6 +124,22 @@ function CustomerViewModal({ customer, onClose }: Props) {
       setSubmitError("Could not create task. Please try again.");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!taskToDelete) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await taskService.delete(taskToDelete.id);
+      await fetchTasks();
+      setTaskToDelete(null);
+    } catch (err) {
+      console.error("Failed to delete task:", err);
+      setDeleteError("Could not delete task. Please try again.");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -232,6 +254,7 @@ function CustomerViewModal({ customer, onClose }: Props) {
                         <th>#</th>
                         <th>Name</th>
                         <th>Description</th>
+                        <th>Delete</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -243,6 +266,18 @@ function CustomerViewModal({ customer, onClose }: Props) {
                             {task.description || (
                               <span className={styles.noDesc}>—</span>
                             )}
+                          </td>
+                          <td className={styles.deleteCell}>
+                            <button
+                              className={styles.deleteTaskBtn}
+                              onClick={() => {
+                                setDeleteError(null);
+                                setTaskToDelete(task);
+                              }}
+                              title="Delete task"
+                            >
+                              <Trash2 size={14} />
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -369,6 +404,44 @@ function CustomerViewModal({ customer, onClose }: Props) {
           </div>
         )}
       </div>
+
+      {/* Delete confirmation dialog */}
+      {taskToDelete && (
+        <div
+          className={styles.dialogOverlay}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className={styles.dialog}>
+            <h3 className={styles.dialogTitle}>Delete task?</h3>
+            <p className={styles.dialogBody}>
+              <strong>{taskToDelete.name}</strong> will be permanently removed
+              from this customer.
+            </p>
+            {deleteError && <p className={styles.errorMsg}>{deleteError}</p>}
+            <div className={styles.dialogActions}>
+              <button
+                className={styles.cancelBtn}
+                onClick={() => setTaskToDelete(null)}
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.deleteConfirmBtn}
+                onClick={handleDeleteConfirm}
+                disabled={deleting}
+              >
+                {deleting ? (
+                  <Loader2 size={14} className={styles.spin} />
+                ) : (
+                  <Trash2 size={14} />
+                )}
+                {deleting ? "Deleting…" : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

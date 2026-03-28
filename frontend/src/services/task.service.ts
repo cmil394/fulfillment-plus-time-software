@@ -26,4 +26,8 @@ export const taskService = {
     const response = await api.post("/tasks", payload);
     return response.data.data;
   },
+
+  delete: async (taskId: number): Promise<void> => {
+    await api.delete(`/tasks/${taskId}`);
+  },
 };
