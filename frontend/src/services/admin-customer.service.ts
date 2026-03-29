@@ -42,4 +42,13 @@ export const adminCustomerService = {
   delete: async (id: string): Promise<void> => {
     await api.delete(`/customers/${id}`);
   },
+
+  uploadAvatar: async (id: string, file: File): Promise<Customer> => {
+    const formData = new FormData();
+    formData.append("avatar", file);
+    const response = await api.patch(`/customers/${id}/avatar`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data.data;
+  },
 };

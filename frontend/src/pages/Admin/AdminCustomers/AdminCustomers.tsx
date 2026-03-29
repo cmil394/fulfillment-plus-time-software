@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Navbar from "../../../components/Navbar/Navbar";
 import styles from "./AdminCustomers.module.css";
 import tableStyles from "./../../../components/CSS Components/titles.module.css";
@@ -47,6 +47,10 @@ function AdminCustomers() {
     import.meta.env.VITE_API_BASE_URL?.replace("/api", "") ??
     "http://localhost:3001";
 
+  // Avatar upload
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatarLoading, setAvatarLoading] = useState(false);
+
   // Create form state
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [createDraft, setCreateDraft] = useState<CustomerDto>(EMPTY_CREATE);
@@ -89,6 +93,34 @@ function AdminCustomers() {
     };
     fetchCustomers();
   }, []);
+
+  // Avatar handlers
+  const handleAvatarClick = () => {
+    if (editingId) fileInputRef.current?.click();
+  };
+
+  const handleAvatarFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file || !editingId) return;
+
+    setAvatarLoading(true);
+    try {
+      const updated = await adminCustomerService.uploadAvatar(editingId, file);
+      setCustomers((prev) =>
+        prev.map((c) =>
+          c.id === editingId ? { ...c, avatarUrl: updated.avatarUrl } : c,
+        ),
+      );
+    } catch (err) {
+      console.error("Failed to upload avatar:", err);
+      setSaveError("Failed to upload avatar. Please try again.");
+    } finally {
+      setAvatarLoading(false);
+      e.target.value = "";
+    }
+  };
 
   // Create handlers
   const handleOpenCreate = () => {
@@ -287,6 +319,15 @@ function AdminCustomers() {
 
         {saveError && <p className={styles.errorMsg}>{saveError}</p>}
 
+        {/* Hidden file input for avatar upload */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          onChange={handleAvatarFileChange}
+        />
+
         {loading ? (
           <p>Loading customers...</p>
         ) : customers.length === 0 ? (
@@ -318,16 +359,29 @@ function AdminCustomers() {
                     className={isEditing ? styles.editingRow : ""}
                   >
                     <td>{customerOrder.get(customer.id)}.</td>
+
+                    {/* Avatar */}
                     <td>
-                      <img
-                        src={
-                          customer.avatarUrl
-                            ? `${BASE_URL}${customer.avatarUrl}`
-                            : defaultAvatar
-                        }
-                        alt={customer.name}
-                        className={styles.avatar}
-                      />
+                      <div
+                        className={`${styles.avatarWrap} ${isEditing ? styles.avatarEditable : ""}`}
+                        onClick={handleAvatarClick}
+                        title={isEditing ? "Click to change photo" : undefined}
+                      >
+                        <img
+                          src={
+                            customer.avatarUrl
+                              ? `${BASE_URL}${customer.avatarUrl}`
+                              : defaultAvatar
+                          }
+                          alt={customer.name}
+                          className={styles.avatar}
+                        />
+                        {isEditing && (
+                          <div className={styles.avatarOverlay}>
+                            {avatarLoading ? "..." : <Pencil size={12} />}
+                          </div>
+                        )}
+                      </div>
                     </td>
 
                     {/* Name */}
@@ -400,7 +454,7 @@ function AdminCustomers() {
                     {/* Date (not editable) */}
                     <td>{new Date(customer.createdAt).toLocaleDateString()}</td>
 
-                    {/* View ← UPDATED */}
+                    {/* View */}
                     <td>
                       <button
                         className={styles.viewBtn}
@@ -608,7 +662,7 @@ function AdminCustomers() {
         </div>
       )}
 
-      {/* View Customer Modal ← ADD */}
+      {/* View Customer Modal */}
       {viewingCustomer && (
         <CustomerViewModal
           customer={viewingCustomer}

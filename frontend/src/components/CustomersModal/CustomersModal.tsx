@@ -3,7 +3,7 @@ import { customerService } from "../../services/customer.service.ts";
 import type { Customer } from "../../services/customer.service.ts";
 import styles from "./CustomersModal.module.css";
 import { useNavigate } from "react-router-dom";
-import defaultAvatar from "./../../assets/icons/default.png";
+import defaultAvatar from "./../../assets/icons/default_pfp.png";
 
 interface Props {
   compact?: boolean;
