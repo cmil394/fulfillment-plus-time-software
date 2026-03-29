@@ -4,6 +4,7 @@ export interface Customer {
   id: string;
   name: string;
   email?: string;
+  avatarUrl?: string;
 }
 
 export const customerService = {
