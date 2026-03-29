@@ -7,6 +7,7 @@ export interface Customer {
   email?: string;
   phone?: string;
   createdAt: string;
+  avatarUrl?: string;
 }
 
 export interface CustomerDto {
@@ -14,6 +15,7 @@ export interface CustomerDto {
   ownerName: string;
   phone?: string;
   email?: string;
+  avatarUrl?: string;
 }
 
 export const adminCustomerService = {

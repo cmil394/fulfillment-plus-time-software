@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../../../components/Navbar/Navbar";
 import styles from "./AdminCustomers.module.css";
 import tableStyles from "./../../../components/CSS Components/titles.module.css";
+import defaultAvatar from "./../../../assets/icons/default_pfp.png";
 import {
   adminCustomerService,
   type Customer,
@@ -42,6 +43,9 @@ function AdminCustomers() {
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const BASE_URL =
+    import.meta.env.VITE_API_BASE_URL?.replace("/api", "") ??
+    "http://localhost:3001";
 
   // Create form state
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -61,7 +65,7 @@ function AdminCustomers() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
-  // View modal ← ADD
+  // View modal
   const [viewingCustomer, setViewingCustomer] = useState<Customer | null>(null);
 
   // Sort state
@@ -292,6 +296,7 @@ function AdminCustomers() {
             <thead>
               <tr>
                 <SortableTh field="index">#</SortableTh>
+                <th>Icon</th>
                 <SortableTh field="name">Company Name</SortableTh>
                 <SortableTh field="ownerName">Owners Name</SortableTh>
                 <SortableTh field="email">Email</SortableTh>
@@ -313,6 +318,17 @@ function AdminCustomers() {
                     className={isEditing ? styles.editingRow : ""}
                   >
                     <td>{customerOrder.get(customer.id)}.</td>
+                    <td>
+                      <img
+                        src={
+                          customer.avatarUrl
+                            ? `${BASE_URL}${customer.avatarUrl}`
+                            : defaultAvatar
+                        }
+                        alt={customer.name}
+                        className={styles.avatar}
+                      />
+                    </td>
 
                     {/* Name */}
                     <td>
@@ -414,7 +430,7 @@ function AdminCustomers() {
                             disabled={isSaving}
                             title="Cancel"
                           >
-                            <X size={16} />
+                            <X size={18} />
                           </button>
                         </div>
                       ) : (
@@ -423,7 +439,7 @@ function AdminCustomers() {
                           onClick={() => handleStartEdit(customer)}
                           disabled={!!editingId}
                         >
-                          <Pencil size={16} />
+                          <Pencil size={18} />
                         </button>
                       )}
                     </td>
@@ -436,7 +452,7 @@ function AdminCustomers() {
                         disabled={isEditing || !!actionLoading}
                         title="Delete"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={18} />
                       </button>
                     </td>
                   </tr>

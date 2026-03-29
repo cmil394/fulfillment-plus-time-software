@@ -105,11 +105,16 @@
 }
 
 /* Columns: View | Edit | Delete */
-.table td:nth-child(7),
 .table td:nth-child(8),
-.table td:nth-child(9) {
+.table td:nth-child(9),
+.table td:nth-child(10) {
   text-align: center;
   width: 40px;
+}
+
+.table td:nth-child(2) {
+  text-align: center;
+  width: 50px;
 }
 
 .editingRow td {
@@ -299,6 +304,14 @@
 
 .required {
   color: #ef4444;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ddd;
 }
 
 .tableWrapper {
