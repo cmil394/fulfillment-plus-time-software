@@ -42,6 +42,7 @@ export const createCustomer = async (data: CreateCustomerInput) => {
       ownerName: data.ownerName,
       email: data.email,
       phone: data.phone,
+      avatarUrl: data.avatarUrl,
     },
   });
 };

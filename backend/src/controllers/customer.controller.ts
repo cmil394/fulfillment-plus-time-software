@@ -53,7 +53,14 @@ export const createCustomer = async (
 ) => {
   try {
     const data = createCustomerSchema.parse(req.body);
-    const customer = await customerService.createCustomer(data);
+    const avatarUrl = req.file
+      ? `/uploads/avatars/${req.file.filename}`
+      : undefined;
+
+    const customer = await customerService.createCustomer({
+      ...data,
+      avatarUrl,
+    });
     res.status(201).json({
       status: "success",
       message: "Customer created successfully",
