@@ -154,3 +154,134 @@
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+@media (max-height: 900px) {
+  .brand {
+    margin-top: 36px;
+  }
+
+  .brandLogo {
+    width: 80px;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+
+  .subtitle {
+    font-size: 17px;
+    margin-top: -12px;
+  }
+}
+
+@media (max-height: 750px) {
+  .brand {
+    margin-top: 20px;
+  }
+
+  .brandLogo {
+    width: 60px;
+  }
+
+  .title {
+    font-size: 26px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    margin-top: -10px;
+  }
+
+  .authContainer {
+    margin-top: 6px;
+  }
+
+  .tab {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .formContainer {
+    padding: 16px 24px;
+    min-height: 300px;
+  }
+
+  .form label {
+    font-size: 13px;
+    margin-bottom: 4px;
+    margin-top: 4px;
+  }
+
+  .input {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .submitButton {
+    margin-top: 10px;
+    padding: 7px 18px;
+    font-size: 14px;
+  }
+}
+
+@media (max-height: 600px) {
+  .brand {
+    margin-top: 10px;
+    gap: 12px;
+  }
+
+  .brandLogo {
+    width: 50px;
+    margin-bottom: 0;
+  }
+
+  .title {
+    font-size: 20px;
+    margin: 0;
+    margin-top: -6px;
+  }
+
+  .subtitle {
+    margin-bottom: 5px;
+  }
+
+  .authContainer {
+    margin-top: 6px;
+  }
+
+  .tab {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .formContainer {
+    padding: 12px 20px;
+    min-height: 250px;
+  }
+
+  .form label {
+    font-size: 12px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+  }
+
+  .input {
+    padding: 6px 10px;
+    font-size: 13px;
+    margin-bottom: 3px;
+  }
+
+  .submitButton {
+    margin-top: 8px;
+    padding: 6px 16px;
+    font-size: 13px;
+    min-width: 100px;
+  }
+
+  .error,
+  .success {
+    padding: 7px 10px;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+}
