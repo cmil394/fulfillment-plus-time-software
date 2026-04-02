@@ -84,6 +84,7 @@ export const authService = {
     }
   },
 
+  deleteUser: (userId: string) => api.delete(`/auth/admin/users/${userId}`),
   updateUser: (id: string, data: Partial<User>) =>
     api.patch(`/auth/admin/users/${id}`, data),
   approveUser: (id: string) => api.patch(`/auth/admin/users/${id}/approve`),

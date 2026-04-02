@@ -4,7 +4,7 @@ import styles from "./Employees.module.css";
 import tableStyles from "./../../../components/CSS Components/titles.module.css";
 import { authService } from "../../../services/auth.service";
 import type { User } from "../../../services/auth.service";
-import { Eye, Pencil, Check, X, AlertTriangle } from "lucide-react";
+import { Eye, Pencil, Check, X, AlertTriangle, Trash2 } from "lucide-react";
 
 type Tab = "employees" | "pending";
 type SortField =
@@ -51,6 +51,9 @@ function Employees() {
   const [empSortDir, setEmpSortDir] = useState<SortDir>("asc");
   const [pendingSortField, setPendingSortField] = useState<SortField>("index");
   const [pendingSortDir, setPendingSortDir] = useState<SortDir>("asc");
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     if (activeTab === "employees") {
@@ -174,6 +177,32 @@ function Employees() {
     } finally {
       setActionLoading(null);
     }
+  };
+
+  const handleRequestDelete = (userId: string) => {
+    setPendingDeleteId(userId);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!pendingDeleteId) return;
+    setShowDeleteModal(false);
+    const userId = pendingDeleteId;
+    setPendingDeleteId(null);
+    setActionLoading(userId);
+    try {
+      await authService.deleteUser(userId);
+      setEmployees((prev) => prev.filter((u) => u.id !== userId));
+    } catch (err) {
+      console.error("Failed to delete user:", err);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+    setPendingDeleteId(null);
   };
 
   const makeHandleSort =
@@ -357,6 +386,7 @@ function Employees() {
                     </SortableTh>
                     <th>View</th>
                     <th>Edit</th>
+                    <th>Delete</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -489,6 +519,22 @@ function Employees() {
                               <Pencil size={16} />
                             </button>
                           )}
+                        </td>
+                        <td>
+                          <button
+                            className={styles.deleteBtn}
+                            onClick={() => handleRequestDelete(employee.id)}
+                            disabled={
+                              isEditing || isSaving || employee.role === "Admin"
+                            }
+                            title={
+                              employee.role === "Admin"
+                                ? "Admins cannot be deleted"
+                                : "Delete employee"
+                            }
+                          >
+                            <Trash2 size={16} />
+                          </button>
                         </td>
                       </tr>
                     );
@@ -628,6 +674,35 @@ function Employees() {
                 onClick={handleConfirmModal}
               >
                 Save changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalIconWrap}>
+              <AlertTriangle size={22} className={styles.modalIcon} />
+            </div>
+            <p className={styles.modalTitle}>Delete employee?</p>
+            <p className={styles.modalSubtitle}>
+              This action is permanent and cannot be undone.
+            </p>
+            <p className={styles.modalSubtitle1}>Are you sure?</p>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.modalCancelBtn}
+                onClick={handleCancelDelete}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.modalConfirmBtn}
+                onClick={handleConfirmDelete}
+              >
+                Delete
               </button>
             </div>
           </div>
