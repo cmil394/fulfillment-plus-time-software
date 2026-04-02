@@ -166,3 +166,11 @@ export const adminUpdateUser = async (
   });
   return user;
 };
+
+export const deleteUser = async (userId: string) => {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new NotFoundError("User not found");
+  if (user.role !== "Employee")
+    throw new ForbiddenError("Only employees can be deleted, please demote role before deletion");
+  return await prisma.user.delete({ where: { id: userId } });
+};

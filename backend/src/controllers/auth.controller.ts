@@ -148,3 +148,19 @@ export const adminUpdateUser = async (
     next(err);
   }
 };
+
+export const deleteUser = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    await authService.deleteUser(req.params.id as string);
+    res.status(200).json({
+      status: "success",
+      message: "User deleted successfully",
+    });
+  } catch (err) {
+    next(err);
+  }
+};

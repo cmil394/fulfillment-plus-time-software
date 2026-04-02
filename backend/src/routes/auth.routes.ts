@@ -1,4 +1,3 @@
-/* prettier-ignore-file */
 import express from "express";
 import {
   register,
@@ -9,6 +8,7 @@ import {
   approveUser,
   rejectUser,
   adminUpdateUser,
+  deleteUser
 } from "../controllers/auth.controller";
 import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware";
 
@@ -27,5 +27,6 @@ router.get("/auth/admin/users/pending", authMiddleware, adminMiddleware,getPendi
 router.patch("/auth/admin/users/:id/approve", authMiddleware, adminMiddleware, approveUser);
 router.patch("/auth/admin/users/:id/reject", authMiddleware, adminMiddleware, rejectUser);
 router.patch("/auth/admin/users/:id", authMiddleware, adminMiddleware, adminUpdateUser);
+router.delete("/auth/admin/users/:id", authMiddleware, adminMiddleware, deleteUser);
 
 export default router;
