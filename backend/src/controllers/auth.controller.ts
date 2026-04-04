@@ -134,10 +134,13 @@ export const adminUpdateUser = async (
   next: NextFunction,
 ) => {
   try {
+    if (!req.user?.userId) throw new UnauthorizedError();
     const data = adminUpdateUserSchema.parse(req.body);
     const user = await authService.adminUpdateUser(
+      req.user.userId,
       req.params.id as string,
       data,
+      req.user.role,
     );
     res.status(200).json({
       status: "success",

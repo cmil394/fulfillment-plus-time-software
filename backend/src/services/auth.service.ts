@@ -151,26 +151,49 @@ export const updateUserStatus = async (
 };
 
 export const adminUpdateUser = async (
-  id: string,
+  requesterId: string,
+  targetId: string,
   data: AdminUpdateUserInput,
+  requesterRole: string,
 ) => {
-  const user = await prisma.user.update({
-    where: { id },
+  const target = await prisma.user.findUnique({ where: { id: targetId } });
+  if (!target) throw new NotFoundError("User not found");
+
+  if (target.role === "Owner") {
+    throw new ForbiddenError("Owner role cannot be modified");
+  }
+
+  if (data.role) {
+    if (requesterRole === "Admin") {
+      if (target.role !== "Employee" || data.role !== "Admin") {
+        throw new ForbiddenError("Admins can only promote Employees to Admin");
+      }
+    } else if (requesterRole === "Owner") {
+      const validTransitions: Record<string, string[]> = {
+        Employee: ["Admin"],
+        Admin: ["Employee"],
+      };
+      if (!validTransitions[target.role]?.includes(data.role)) {
+        throw new ForbiddenError(
+          `Cannot change role from ${target.role} to ${data.role}`,
+        );
+      }
+    }
+  }
+
+  return prisma.user.update({
+    where: { id: targetId },
     data,
-    select: {
-      firstName: true,
-      lastName: true,
-      email: true,
-      role: true,
-    },
+    select: { firstName: true, lastName: true, email: true, role: true },
   });
-  return user;
 };
 
 export const deleteUser = async (userId: string) => {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) throw new NotFoundError("User not found");
   if (user.role !== "Employee")
-    throw new ForbiddenError("Only employees can be deleted, please demote role before deletion");
+    throw new ForbiddenError(
+      "Only employees can be deleted, please demote role before deletion",
+    );
   return await prisma.user.delete({ where: { id: userId } });
 };

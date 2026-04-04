@@ -99,6 +99,7 @@ function Auth() {
       });
       setAuth(response.data.user, response.data.token);
       console.log("Owner Token:", response.data.token);
+      console.log("Owner Last Name:", response.data.user.lastName);
       setSuccess("Logged in as Owner (Dev Only)");
       setTimeout(() => navigate("/"), 1000);
     } catch (err: any) {
