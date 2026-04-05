@@ -1,18 +1,102 @@
 import api from "./api";
 
+export interface TimeEntry {
+  id: string;
+  userId: string;
+  startTime: string;
+  endTime: string | null;
+  notes?: string;
+  durationSeconds?: number;
+  task: { name: string };
+  customer: { id?: string; name: string };
+}
+
+export interface GroupedByCustomer {
+  customer: { id: string; name: string };
+  totalSeconds: number;
+  entries: TimeEntry[];
+}
+
+export interface AdminCreateEntryPayload {
+  userId: string;
+  taskId: string;
+  startTime: string; // ISO string
+  endTime: string;   // ISO string
+  notes?: string;
+}
+
 export const timeEntryService = {
-  startTimer: async (taskId: number, notes?: string) => {
+  // Timer
+
+  startTimer: async (taskId: number, notes?: string): Promise<TimeEntry> => {
     const res = await api.post("/time-entries/start", { taskId, notes });
     return res.data.data;
   },
 
-  stopTimer: async () => {
+  stopTimer: async (): Promise<TimeEntry> => {
     const res = await api.patch("/time-entries/active/stop");
     return res.data.data;
   },
 
-  getActiveTimer: async () => {
+  getActiveTimer: async (): Promise<TimeEntry | null> => {
     const res = await api.get("/time-entries/active");
+    return res.data.data ?? null;
+  },
+
+  // User
+
+  getMyEntries: async (): Promise<TimeEntry[]> => {
+    const res = await api.get("/time-entries");
+    return res.data.data ?? [];
+  },
+
+  // Admin 
+  getEntriesByUser: async (userId: string): Promise<GroupedByCustomer[]> => {
+    const res = await api.get(`/time-entries/user/${userId}`);
+    return res.data.data ?? [];
+  },
+
+  getEntriesByCustomer: async (customerId: string): Promise<GroupedByCustomer[]> => {
+    const res = await api.get(`/time-entries/customer/${customerId}`);
+    return res.data.data ?? [];
+  },
+
+  adminCreateEntry: async (payload: AdminCreateEntryPayload): Promise<TimeEntry> => {
+    const res = await api.post("/time-entries/admin/create", payload);
     return res.data.data;
   },
+
+  deleteAllEntries: async (): Promise<void> => {
+    await api.delete("/time-entries");
+  },
+
+  deleteEntriesByUser: async (userId: string): Promise<void> => {
+    await api.delete(`/time-entries/user/${userId}`);
+  },
+
+  deleteEntriesByCustomer: async (customerId: string): Promise<void> => {
+    await api.delete(`/time-entries/customer/${customerId}`);
+  },
+
+  /**
+   * Delete a single entry by id.
+   *
+   * ⚠️  This route does NOT exist yet. Add to time-entry.router.ts:
+   *   router.delete("/time-entries/:entryId", adminMiddleware, timeEntryController.deleteEntry);
+   *
+   * Add to time-entry.controller.ts:
+   *   export const deleteEntry = async (req, res, next) => {
+   *     try {
+   *       await prisma.timeEntry.delete({ where: { id: req.params.entryId } });
+   *       res.status(200).json({ status: "success" });
+   *     } catch (err) { next(err); }
+   *   };
+   */
+  deleteEntry: async (entryId: string): Promise<void> => {
+    await api.delete(`/time-entries/${entryId}`);
+  },
 };
+
+/** Flatten grouped entries into a plain array for calendar display. */
+export const flattenGroupedEntries = (grouped: GroupedByCustomer[]): TimeEntry[] =>
+  grouped.flatMap((g) => g.entries);

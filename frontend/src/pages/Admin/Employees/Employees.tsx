@@ -5,6 +5,7 @@ import tableStyles from "./../../../components/CSS Components/titles.module.css"
 import { authService } from "../../../services/auth.service";
 import type { User } from "../../../services/auth.service";
 import { Eye, Pencil, Check, X, AlertTriangle, Trash2 } from "lucide-react";
+import EmployeeTimeCalendar from "../../../components/EmployeeTimeCalendar/EmployeeTimeCalendar";
 
 type Tab = "employees" | "pending";
 type SortField =
@@ -57,6 +58,9 @@ function Employees() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+
+  // Time calendar state
+  const [viewingEmployee, setViewingEmployee] = useState<User | null>(null);
 
   useEffect(() => {
     if (activeTab === "employees") {
@@ -492,16 +496,18 @@ function Employees() {
                           )}
                         </td>
 
-                        {/* Date (not editable) */}
+                        {/* Date */}
                         <td>
                           {new Date(employee.createdAt).toLocaleDateString()}
                         </td>
 
-                        {/* View */}
+                        {/* View — opens the time calendar */}
                         <td>
                           <button
                             className={styles.viewBtn}
+                            onClick={() => setViewingEmployee(employee)}
                             disabled={isEditing}
+                            title="View time entries"
                           >
                             <Eye size={16} />
                           </button>
@@ -732,6 +738,14 @@ function Employees() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Employee Time Calendar Panel */}
+      {viewingEmployee && (
+        <EmployeeTimeCalendar
+          employee={viewingEmployee}
+          onClose={() => setViewingEmployee(null)}
+        />
       )}
     </div>
   );

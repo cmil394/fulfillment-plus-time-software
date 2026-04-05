@@ -1,0 +1,576 @@
+import { useState, useRef, useEffect, useCallback } from "react";
+import { X, Clock, ChevronLeft, ChevronRight, Plus, Trash2 } from "lucide-react";
+import styles from "./EmployeeTimeCalendar.module.css";
+import {
+  timeEntryService,
+  flattenGroupedEntries,
+} from "../../services/time-entry.service";
+import { customerService } from "../../services/customer.service";
+import { taskService } from "../../services/task.service";
+import type { TimeEntry, GroupedByCustomer } from "../../services/time-entry.service";
+import type { Customer } from "../../services/customer.service";
+import type { Task } from "../../services/task.service";
+
+interface Employee {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+}
+
+interface Props {
+  employee: Employee;
+  onClose: () => void;
+}
+
+const HOUR_START = 7;
+const HOUR_END = 21;
+const TOTAL_HOURS = HOUR_END - HOUR_START;
+const SLOT_HEIGHT = 64; // px per hour
+
+function getWeekStart(date: Date): Date {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function formatHour(hour: number): string {
+  if (hour === 0) return "12 AM";
+  if (hour < 12) return `${hour} AM`;
+  if (hour === 12) return "12 PM";
+  return `${hour - 12} PM`;
+}
+
+function formatTime(date: Date): string {
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function formatDateHeader(date: Date): { day: string; num: string } {
+  return {
+    day: date.toLocaleDateString("en-US", { weekday: "short" }),
+    num: date.getDate().toString(),
+  };
+}
+
+function isToday(date: Date): boolean {
+  const today = new Date();
+  return (
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  );
+}
+
+export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
+  const [weekStart, setWeekStart] = useState<Date>(() => getWeekStart(new Date()));
+  const [entries, setEntries] = useState<TimeEntry[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Drag state
+  const [dragging, setDragging] = useState(false);
+  const [dragStart, setDragStart] = useState<{ col: number; y: number } | null>(null);
+  const [dragCurrent, setDragCurrent] = useState<{ col: number; y: number } | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // New entry form state
+  const [pendingEntry, setPendingEntry] = useState<{
+    dayIndex: number;
+    startHour: number;
+    startMin: number;
+    endHour: number;
+    endMin: number;
+  } | null>(null);
+  const [notes, setNotes] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Customer + task selection
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string>("");
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [selectedTaskId, setSelectedTaskId] = useState<string>("");
+  const [loadingCustomers, setLoadingCustomers] = useState(false);
+  const [loadingTasks, setLoadingTasks] = useState(false);
+
+  const weekDays = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    return d;
+  });
+
+  // Fetch entries
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const grouped: GroupedByCustomer[] = await timeEntryService.getEntriesByUser(employee.id);
+        setEntries(flattenGroupedEntries(grouped));
+      } catch (err: any) {
+        const msg =
+          err?.response?.data?.message ??
+          err?.message ??
+          "Failed to load time entries";
+        setError(msg);
+        console.error("getEntriesByUser error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [employee.id, weekStart]);
+
+  // Fetch customers once on mount
+  useEffect(() => {
+    const load = async () => {
+      setLoadingCustomers(true);
+      try {
+        const data = await customerService.getAll();
+        setCustomers(data);
+      } catch (err) {
+        console.error("Failed to load customers:", err);
+      } finally {
+        setLoadingCustomers(false);
+      }
+    };
+    load();
+  }, []);
+
+  // Fetch tasks when customer changes
+  useEffect(() => {
+    if (!selectedCustomerId) {
+      setTasks([]);
+      setSelectedTaskId("");
+      return;
+    }
+    const load = async () => {
+      setLoadingTasks(true);
+      try {
+        const data = await taskService.getByCustomer(selectedCustomerId);
+        setTasks(data);
+        setSelectedTaskId("");
+      } catch (err) {
+        console.error("Failed to load tasks:", err);
+      } finally {
+        setLoadingTasks(false);
+      }
+    };
+    load();
+  }, [selectedCustomerId]);
+
+  // Drag logic
+  const yToTime = useCallback((y: number): { hour: number; min: number } => {
+    const clamped = Math.max(0, Math.min(y, TOTAL_HOURS * SLOT_HEIGHT));
+    const totalMins = (clamped / SLOT_HEIGHT) * 60;
+    const snapped = Math.round(totalMins / 15) * 15;
+    const hour = HOUR_START + Math.floor(snapped / 60);
+    const min = snapped % 60;
+    return { hour: Math.min(hour, HOUR_END - 1), min };
+  }, []);
+
+  const getGridY = useCallback((clientY: number): number => {
+    if (!gridRef.current) return 0;
+    return clientY - gridRef.current.getBoundingClientRect().top;
+  }, []);
+
+  const handleMouseDown = (e: React.MouseEvent, colIndex: number) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    setDragging(true);
+    const y = getGridY(e.clientY);
+    setDragStart({ col: colIndex, y });
+    setDragCurrent({ col: colIndex, y });
+    setPendingEntry(null);
+    setSaveError(null);
+  };
+
+  useEffect(() => {
+    if (!dragging) return;
+    const onMove = (e: MouseEvent) => {
+      setDragCurrent({ col: dragStart!.col, y: getGridY(e.clientY) });
+    };
+    const onUp = (e: MouseEvent) => {
+      setDragging(false);
+      if (!dragStart) return;
+      const startY = Math.min(dragStart.y, getGridY(e.clientY));
+      const endY = Math.max(dragStart.y, getGridY(e.clientY));
+      const start = yToTime(startY);
+      const end = yToTime(endY);
+      if (end.hour * 60 + end.min - (start.hour * 60 + start.min) < 15) return;
+      setPendingEntry({
+        dayIndex: dragStart.col,
+        startHour: start.hour,
+        startMin: start.min,
+        endHour: end.hour,
+        endMin: end.min,
+      });
+      setNotes("");
+      setSelectedCustomerId("");
+      setSelectedTaskId("");
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, [dragging, dragStart, getGridY, yToTime]);
+
+  const ghostStyle = (() => {
+    if (!dragging || !dragStart || !dragCurrent) return null;
+    const top = Math.min(dragStart.y, dragCurrent.y);
+    const height = Math.abs(dragCurrent.y - dragStart.y);
+    return { top, height, left: 0, right: 0 };
+  })();
+
+  // Save entry
+  const handleSaveEntry = async () => {
+    if (!pendingEntry) return;
+
+    if (!selectedCustomerId) {
+      setSaveError("Please select a customer.");
+      return;
+    }
+    if (!selectedTaskId) {
+      setSaveError("Please select a task.");
+      return;
+    }
+
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const day = weekDays[pendingEntry.dayIndex];
+
+      const startTime = new Date(day);
+      startTime.setHours(pendingEntry.startHour, pendingEntry.startMin, 0, 0);
+
+      const endTime = new Date(day);
+      endTime.setHours(pendingEntry.endHour, pendingEntry.endMin, 0, 0);
+
+      const created = await timeEntryService.adminCreateEntry({
+        userId: employee.id,
+        taskId: selectedTaskId,
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+        notes,
+      });
+
+      setEntries((prev) => [...prev, created]);
+      setPendingEntry(null);
+      setSelectedCustomerId("");
+      setSelectedTaskId("");
+      setNotes("");
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message ??
+        err?.message ??
+        "Failed to create entry";
+      setSaveError(msg);
+      console.error("adminCreateEntry error:", err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Delete entry
+  const handleDeleteEntry = async (entryId: string) => {
+    try {
+      await timeEntryService.deleteEntry(entryId);
+      setEntries((prev) => prev.filter((e) => e.id !== entryId));
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message ??
+        err?.message ??
+        "Failed to delete entry";
+      console.error("deleteEntry error:", err);
+      alert(msg);
+    }
+  };
+
+  // Grid position helpers
+  const getEntryStyle = (entry: TimeEntry, dayDate: Date) => {
+    const start = new Date(entry.startTime);
+    const end = entry.endTime ? new Date(entry.endTime) : new Date(start.getTime() + 3_600_000);
+
+    if (
+      start.getDate() !== dayDate.getDate() ||
+      start.getMonth() !== dayDate.getMonth() ||
+      start.getFullYear() !== dayDate.getFullYear()
+    )
+      return null;
+
+    const startMins = (start.getHours() - HOUR_START) * 60 + start.getMinutes();
+    const endMins = (end.getHours() - HOUR_START) * 60 + end.getMinutes();
+    const top = (startMins / 60) * SLOT_HEIGHT;
+    const height = Math.max(((endMins - startMins) / 60) * SLOT_HEIGHT, 24);
+    return { top, height };
+  };
+
+  // Week navigation
+  const prevWeek = () => {
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() - 7);
+    setWeekStart(d);
+  };
+
+  const nextWeek = () => {
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() + 7);
+    setWeekStart(d);
+  };
+
+  const weekLabel = (() => {
+    const end = new Date(weekStart);
+    end.setDate(end.getDate() + 6);
+    return `${weekStart.toLocaleDateString("en-US", { month: "short", day: "numeric" })} – ${end.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+  })();
+
+  return (
+    <div className={styles.overlay}>
+      <div className={styles.panel}>
+        {/* Header */}
+        <div className={styles.header}>
+          <div className={styles.headerLeft}>
+            <div className={styles.avatar}>
+              {employee.firstName[0]}{employee.lastName[0]}
+            </div>
+            <div>
+              <h2 className={styles.name}>{employee.firstName} {employee.lastName}</h2>
+              <span className={styles.role}>{employee.role} · {employee.email}</span>
+            </div>
+          </div>
+          <button className={styles.closeBtn} onClick={onClose}>
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Week navigation */}
+        <div className={styles.weekNav}>
+          <button className={styles.navBtn} onClick={prevWeek}><ChevronLeft size={18} /></button>
+          <span className={styles.weekLabel}>{weekLabel}</span>
+          <button className={styles.navBtn} onClick={nextWeek}><ChevronRight size={18} /></button>
+          <button className={styles.todayBtn} onClick={() => setWeekStart(getWeekStart(new Date()))}>
+            Today
+          </button>
+        </div>
+
+        {/* Error banner */}
+        {error && <div className={styles.errorBanner}>{error}</div>}
+
+        {/* Hint */}
+        <p className={styles.hint}>
+          <Plus size={13} /> Drag on the calendar to create a time entry
+        </p>
+
+        {/* Calendar */}
+        <div className={styles.calendarOuter}>
+          {/* Day headers */}
+          <div className={styles.dayHeaders}>
+            <div className={styles.timeGutter} />
+            {weekDays.map((day, i) => {
+              const { day: dayName, num } = formatDateHeader(day);
+              return (
+                <div key={i} className={`${styles.dayHeader} ${isToday(day) ? styles.todayHeader : ""}`}>
+                  <span className={styles.dayName}>{dayName}</span>
+                  <span className={`${styles.dayNum} ${isToday(day) ? styles.todayNum : ""}`}>{num}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Scrollable grid */}
+          <div className={styles.gridScroll}>
+            <div className={styles.gridInner}>
+              {/* Time labels */}
+              <div className={styles.timeGutter}>
+                {Array.from({ length: TOTAL_HOURS }, (_, i) => (
+                  <div key={i} className={styles.timeLabel} style={{ top: i * SLOT_HEIGHT }}>
+                    {formatHour(HOUR_START + i)}
+                  </div>
+                ))}
+              </div>
+
+              {/* Day columns */}
+              <div className={styles.columnsWrapper} ref={gridRef}>
+                {weekDays.map((day, colIdx) => (
+                  <div
+                    key={colIdx}
+                    className={`${styles.dayColumn} ${isToday(day) ? styles.todayColumn : ""}`}
+                    onMouseDown={(e) => handleMouseDown(e, colIdx)}
+                  >
+                    {/* Hour lines */}
+                    {Array.from({ length: TOTAL_HOURS }, (_, i) => (
+                      <div key={i} className={styles.hourLine} style={{ top: i * SLOT_HEIGHT }} />
+                    ))}
+                    {/* Half-hour lines */}
+                    {Array.from({ length: TOTAL_HOURS }, (_, i) => (
+                      <div key={`h${i}`} className={styles.halfLine} style={{ top: i * SLOT_HEIGHT + SLOT_HEIGHT / 2 }} />
+                    ))}
+
+                    {/* Drag ghost */}
+                    {dragging && dragStart?.col === colIdx && ghostStyle && (
+                      <div className={styles.dragGhost} style={ghostStyle} />
+                    )}
+
+                    {/* Pending entry preview */}
+                    {pendingEntry && pendingEntry.dayIndex === colIdx && (() => {
+                      const top =
+                        ((pendingEntry.startHour - HOUR_START) * 60 + pendingEntry.startMin) /
+                        60 * SLOT_HEIGHT;
+                      const height =
+                        ((pendingEntry.endHour - pendingEntry.startHour) * 60 +
+                          (pendingEntry.endMin - pendingEntry.startMin)) /
+                        60 * SLOT_HEIGHT;
+                      return (
+                        <div className={styles.pendingBlock} style={{ top, height }}>
+                          <span>
+                            {formatHour(pendingEntry.startHour)}:{pendingEntry.startMin.toString().padStart(2, "0")}
+                            {" – "}
+                            {formatHour(pendingEntry.endHour)}:{pendingEntry.endMin.toString().padStart(2, "0")}
+                          </span>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Time entries */}
+                    {entries.map((entry) => {
+                      const pos = getEntryStyle(entry, day);
+                      if (!pos) return null;
+                      const start = new Date(entry.startTime);
+                      const end = entry.endTime ? new Date(entry.endTime) : null;
+                      return (
+                        <div
+                          key={entry.id}
+                          className={styles.entryBlock}
+                          style={{ top: pos.top, height: pos.height }}
+                        >
+                          <div className={styles.entryInner}>
+                            <span className={styles.entryTime}>
+                              {formatTime(start)}{end ? ` – ${formatTime(end)}` : ""}
+                            </span>
+                            <span className={styles.entryMeta}>
+                              {entry.task?.name}
+                              {entry.customer?.name ? ` · ${entry.customer.name}` : ""}
+                            </span>
+                            {entry.notes && (
+                              <span className={styles.entryDesc}>{entry.notes}</span>
+                            )}
+                          </div>
+                          <button
+                            className={styles.entryDelete}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteEntry(entry.id);
+                            }}
+                          >
+                            <Trash2 size={11} />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* New entry form */}
+        {pendingEntry && (
+          <div className={styles.newEntryForm}>
+            <div className={styles.formHeader}>
+              <Clock size={15} />
+              <strong>New Entry</strong>
+              <span className={styles.formTime}>
+                {weekDays[pendingEntry.dayIndex].toLocaleDateString("en-US", {
+                  weekday: "long",
+                  month: "short",
+                  day: "numeric",
+                })}
+                {" · "}
+                {formatHour(pendingEntry.startHour)}:{pendingEntry.startMin.toString().padStart(2, "0")}
+                {" – "}
+                {formatHour(pendingEntry.endHour)}:{pendingEntry.endMin.toString().padStart(2, "0")}
+              </span>
+            </div>
+
+            {saveError && <p className={styles.saveError}>{saveError}</p>}
+
+            <div className={styles.formSelects}>
+              {/* Customer dropdown */}
+              <select
+                className={styles.selectInput}
+                value={selectedCustomerId}
+                onChange={(e) => setSelectedCustomerId(e.target.value)}
+                disabled={loadingCustomers}
+              >
+                <option value="">
+                  {loadingCustomers ? "Loading customers…" : "Select customer…"}
+                </option>
+                {customers.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+
+              {/* Task dropdown — only shown once a customer is selected */}
+              {selectedCustomerId && (
+                <select
+                  className={styles.selectInput}
+                  value={selectedTaskId}
+                  onChange={(e) => setSelectedTaskId(e.target.value)}
+                  disabled={loadingTasks}
+                >
+                  <option value="">
+                    {loadingTasks
+                      ? "Loading tasks…"
+                      : tasks.length === 0
+                      ? "No tasks for this customer"
+                      : "Select task…"}
+                  </option>
+                  {tasks.map((t) => (
+                    <option key={t.id} value={String(t.id)}>{t.name}</option>
+                  ))}
+                </select>
+              )}
+            </div>
+
+            <div className={styles.formRow}>
+              <input
+                className={styles.descInput}
+                placeholder="Notes (optional)"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+              <button
+                className={styles.saveBtn}
+                onClick={handleSaveEntry}
+                disabled={saving || !selectedTaskId}
+              >
+                {saving ? "Saving…" : "Save"}
+              </button>
+              <button
+                className={styles.discardBtn}
+                onClick={() => {
+                  setPendingEntry(null);
+                  setSaveError(null);
+                  setSelectedCustomerId("");
+                  setSelectedTaskId("");
+                  setNotes("");
+                }}
+              >
+                Discard
+              </button>
+            </div>
+          </div>
+        )}
+
+        {loading && <div className={styles.loadingOverlay}>Loading entries…</div>}
+      </div>
+    </div>
+  );
+}
