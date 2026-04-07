@@ -19,7 +19,7 @@
   box-shadow: -24px 0 80px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   position: relative;
-  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  font-family: "DM Sans", "Segoe UI", sans-serif;
 }
 
 .header {
@@ -77,7 +77,9 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .closeBtn:hover {
@@ -103,7 +105,9 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .navBtn:hover {
@@ -144,7 +148,7 @@
   align-items: center;
   gap: 5px;
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .calendarOuter {
@@ -220,7 +224,7 @@
   background: transparent;
 }
 .gridScroll::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
 }
 
@@ -257,11 +261,11 @@
   flex: 1;
   position: relative;
   border-left: 1px solid rgba(255, 255, 255, 0.05);
-  min-height: calc(var(--total-hours, 14) * 64px);
+  min-height: calc(24 * 64px);
 }
 
 .columnsWrapper {
-  height: calc(14 * 64px); /* TOTAL_HOURS * SLOT_HEIGHT */
+  height: calc(24 * 64px);
 }
 
 .todayColumn {
@@ -319,7 +323,11 @@
   position: absolute;
   left: 3px;
   right: 3px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(59, 130, 246, 0.2));
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.25),
+    rgba(59, 130, 246, 0.2)
+  );
   border: 1px solid rgba(99, 102, 241, 0.4);
   border-left: 3px solid #6366f1;
   border-radius: 6px;
@@ -335,7 +343,11 @@
 
 .entryBlock:hover {
   border-color: rgba(99, 102, 241, 0.7);
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(59, 130, 246, 0.28));
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.35),
+    rgba(59, 130, 246, 0.28)
+  );
 }
 
 .entryInner {
@@ -466,7 +478,9 @@
   font-weight: 600;
   padding: 8px 16px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   white-space: nowrap;
 }
 

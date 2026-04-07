@@ -1,5 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { X, Clock, ChevronLeft, ChevronRight, Plus, Trash2 } from "lucide-react";
+import {
+  X,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import styles from "./EmployeeTimeCalendar.module.css";
 import {
   timeEntryService,
@@ -7,7 +14,10 @@ import {
 } from "../../services/time-entry.service";
 import { customerService } from "../../services/customer.service";
 import { taskService } from "../../services/task.service";
-import type { TimeEntry, GroupedByCustomer } from "../../services/time-entry.service";
+import type {
+  TimeEntry,
+  GroupedByCustomer,
+} from "../../services/time-entry.service";
 import type { Customer } from "../../services/customer.service";
 import type { Task } from "../../services/task.service";
 
@@ -24,8 +34,8 @@ interface Props {
   onClose: () => void;
 }
 
-const HOUR_START = 7;
-const HOUR_END = 21;
+const HOUR_START = 0;
+const HOUR_END = 24;
 const TOTAL_HOURS = HOUR_END - HOUR_START;
 const SLOT_HEIGHT = 64; // px per hour
 
@@ -66,15 +76,22 @@ function isToday(date: Date): boolean {
 }
 
 export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
-  const [weekStart, setWeekStart] = useState<Date>(() => getWeekStart(new Date()));
+  const [weekStart, setWeekStart] = useState<Date>(() =>
+    getWeekStart(new Date()),
+  );
   const [entries, setEntries] = useState<TimeEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Drag state
   const [dragging, setDragging] = useState(false);
-  const [dragStart, setDragStart] = useState<{ col: number; y: number } | null>(null);
-  const [dragCurrent, setDragCurrent] = useState<{ col: number; y: number } | null>(null);
+  const [dragStart, setDragStart] = useState<{ col: number; y: number } | null>(
+    null,
+  );
+  const [dragCurrent, setDragCurrent] = useState<{
+    col: number;
+    y: number;
+  } | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
   // New entry form state
@@ -109,7 +126,8 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
       setLoading(true);
       setError(null);
       try {
-        const grouped: GroupedByCustomer[] = await timeEntryService.getEntriesByUser(employee.id);
+        const grouped: GroupedByCustomer[] =
+          await timeEntryService.getEntriesByUser(employee.id);
         setEntries(flattenGroupedEntries(grouped));
       } catch (err: any) {
         const msg =
@@ -295,7 +313,9 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
   // Grid position helpers
   const getEntryStyle = (entry: TimeEntry, dayDate: Date) => {
     const start = new Date(entry.startTime);
-    const end = entry.endTime ? new Date(entry.endTime) : new Date(start.getTime() + 3_600_000);
+    const end = entry.endTime
+      ? new Date(entry.endTime)
+      : new Date(start.getTime() + 3_600_000);
 
     if (
       start.getDate() !== dayDate.getDate() ||
@@ -337,11 +357,16 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <div className={styles.avatar}>
-              {employee.firstName[0]}{employee.lastName[0]}
+              {employee.firstName[0]}
+              {employee.lastName[0]}
             </div>
             <div>
-              <h2 className={styles.name}>{employee.firstName} {employee.lastName}</h2>
-              <span className={styles.role}>{employee.role} · {employee.email}</span>
+              <h2 className={styles.name}>
+                {employee.firstName} {employee.lastName}
+              </h2>
+              <span className={styles.role}>
+                {employee.role} · {employee.email}
+              </span>
             </div>
           </div>
           <button className={styles.closeBtn} onClick={onClose}>
@@ -351,10 +376,17 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
 
         {/* Week navigation */}
         <div className={styles.weekNav}>
-          <button className={styles.navBtn} onClick={prevWeek}><ChevronLeft size={18} /></button>
+          <button className={styles.navBtn} onClick={prevWeek}>
+            <ChevronLeft size={18} />
+          </button>
           <span className={styles.weekLabel}>{weekLabel}</span>
-          <button className={styles.navBtn} onClick={nextWeek}><ChevronRight size={18} /></button>
-          <button className={styles.todayBtn} onClick={() => setWeekStart(getWeekStart(new Date()))}>
+          <button className={styles.navBtn} onClick={nextWeek}>
+            <ChevronRight size={18} />
+          </button>
+          <button
+            className={styles.todayBtn}
+            onClick={() => setWeekStart(getWeekStart(new Date()))}
+          >
             Today
           </button>
         </div>
@@ -375,9 +407,16 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
             {weekDays.map((day, i) => {
               const { day: dayName, num } = formatDateHeader(day);
               return (
-                <div key={i} className={`${styles.dayHeader} ${isToday(day) ? styles.todayHeader : ""}`}>
+                <div
+                  key={i}
+                  className={`${styles.dayHeader} ${isToday(day) ? styles.todayHeader : ""}`}
+                >
                   <span className={styles.dayName}>{dayName}</span>
-                  <span className={`${styles.dayNum} ${isToday(day) ? styles.todayNum : ""}`}>{num}</span>
+                  <span
+                    className={`${styles.dayNum} ${isToday(day) ? styles.todayNum : ""}`}
+                  >
+                    {num}
+                  </span>
                 </div>
               );
             })}
@@ -389,7 +428,11 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
               {/* Time labels */}
               <div className={styles.timeGutter}>
                 {Array.from({ length: TOTAL_HOURS }, (_, i) => (
-                  <div key={i} className={styles.timeLabel} style={{ top: i * SLOT_HEIGHT }}>
+                  <div
+                    key={i}
+                    className={styles.timeLabel}
+                    style={{ top: i * SLOT_HEIGHT }}
+                  >
                     {formatHour(HOUR_START + i)}
                   </div>
                 ))}
@@ -405,11 +448,19 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                   >
                     {/* Hour lines */}
                     {Array.from({ length: TOTAL_HOURS }, (_, i) => (
-                      <div key={i} className={styles.hourLine} style={{ top: i * SLOT_HEIGHT }} />
+                      <div
+                        key={i}
+                        className={styles.hourLine}
+                        style={{ top: i * SLOT_HEIGHT }}
+                      />
                     ))}
                     {/* Half-hour lines */}
                     {Array.from({ length: TOTAL_HOURS }, (_, i) => (
-                      <div key={`h${i}`} className={styles.halfLine} style={{ top: i * SLOT_HEIGHT + SLOT_HEIGHT / 2 }} />
+                      <div
+                        key={`h${i}`}
+                        className={styles.halfLine}
+                        style={{ top: i * SLOT_HEIGHT + SLOT_HEIGHT / 2 }}
+                      />
                     ))}
 
                     {/* Drag ghost */}
@@ -418,31 +469,46 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                     )}
 
                     {/* Pending entry preview */}
-                    {pendingEntry && pendingEntry.dayIndex === colIdx && (() => {
-                      const top =
-                        ((pendingEntry.startHour - HOUR_START) * 60 + pendingEntry.startMin) /
-                        60 * SLOT_HEIGHT;
-                      const height =
-                        ((pendingEntry.endHour - pendingEntry.startHour) * 60 +
-                          (pendingEntry.endMin - pendingEntry.startMin)) /
-                        60 * SLOT_HEIGHT;
-                      return (
-                        <div className={styles.pendingBlock} style={{ top, height }}>
-                          <span>
-                            {formatHour(pendingEntry.startHour)}:{pendingEntry.startMin.toString().padStart(2, "0")}
-                            {" – "}
-                            {formatHour(pendingEntry.endHour)}:{pendingEntry.endMin.toString().padStart(2, "0")}
-                          </span>
-                        </div>
-                      );
-                    })()}
+                    {pendingEntry &&
+                      pendingEntry.dayIndex === colIdx &&
+                      (() => {
+                        const top =
+                          (((pendingEntry.startHour - HOUR_START) * 60 +
+                            pendingEntry.startMin) /
+                            60) *
+                          SLOT_HEIGHT;
+                        const height =
+                          (((pendingEntry.endHour - pendingEntry.startHour) *
+                            60 +
+                            (pendingEntry.endMin - pendingEntry.startMin)) /
+                            60) *
+                          SLOT_HEIGHT;
+                        return (
+                          <div
+                            className={styles.pendingBlock}
+                            style={{ top, height }}
+                          >
+                            <span>
+                              {formatHour(pendingEntry.startHour)}:
+                              {pendingEntry.startMin
+                                .toString()
+                                .padStart(2, "0")}
+                              {" – "}
+                              {formatHour(pendingEntry.endHour)}:
+                              {pendingEntry.endMin.toString().padStart(2, "0")}
+                            </span>
+                          </div>
+                        );
+                      })()}
 
                     {/* Time entries */}
                     {entries.map((entry) => {
                       const pos = getEntryStyle(entry, day);
                       if (!pos) return null;
                       const start = new Date(entry.startTime);
-                      const end = entry.endTime ? new Date(entry.endTime) : null;
+                      const end = entry.endTime
+                        ? new Date(entry.endTime)
+                        : null;
                       return (
                         <div
                           key={entry.id}
@@ -451,14 +517,19 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                         >
                           <div className={styles.entryInner}>
                             <span className={styles.entryTime}>
-                              {formatTime(start)}{end ? ` – ${formatTime(end)}` : ""}
+                              {formatTime(start)}
+                              {end ? ` – ${formatTime(end)}` : ""}
                             </span>
                             <span className={styles.entryMeta}>
                               {entry.task?.name}
-                              {entry.customer?.name ? ` · ${entry.customer.name}` : ""}
+                              {entry.customer?.name
+                                ? ` · ${entry.customer.name}`
+                                : ""}
                             </span>
                             {entry.notes && (
-                              <span className={styles.entryDesc}>{entry.notes}</span>
+                              <span className={styles.entryDesc}>
+                                {entry.notes}
+                              </span>
                             )}
                           </div>
                           <button
@@ -493,9 +564,11 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                   day: "numeric",
                 })}
                 {" · "}
-                {formatHour(pendingEntry.startHour)}:{pendingEntry.startMin.toString().padStart(2, "0")}
+                {formatHour(pendingEntry.startHour)}:
+                {pendingEntry.startMin.toString().padStart(2, "0")}
                 {" – "}
-                {formatHour(pendingEntry.endHour)}:{pendingEntry.endMin.toString().padStart(2, "0")}
+                {formatHour(pendingEntry.endHour)}:
+                {pendingEntry.endMin.toString().padStart(2, "0")}
               </span>
             </div>
 
@@ -513,7 +586,9 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                   {loadingCustomers ? "Loading customers…" : "Select customer…"}
                 </option>
                 {customers.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
 
@@ -529,11 +604,13 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                     {loadingTasks
                       ? "Loading tasks…"
                       : tasks.length === 0
-                      ? "No tasks for this customer"
-                      : "Select task…"}
+                        ? "No tasks for this customer"
+                        : "Select task…"}
                   </option>
                   {tasks.map((t) => (
-                    <option key={t.id} value={String(t.id)}>{t.name}</option>
+                    <option key={t.id} value={String(t.id)}>
+                      {t.name}
+                    </option>
                   ))}
                 </select>
               )}
@@ -569,7 +646,9 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
           </div>
         )}
 
-        {loading && <div className={styles.loadingOverlay}>Loading entries…</div>}
+        {loading && (
+          <div className={styles.loadingOverlay}>Loading entries…</div>
+        )}
       </div>
     </div>
   );
