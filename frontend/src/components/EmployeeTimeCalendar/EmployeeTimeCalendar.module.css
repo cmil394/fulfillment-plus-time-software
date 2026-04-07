@@ -500,3 +500,45 @@
   color: #64748b;
   z-index: 20;
 }
+
+.selectInput {
+  flex: 1;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 13px;
+  padding: 8px 32px 8px 32px;
+  outline: none;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.15s;
+}
+
+.selectInput:focus {
+  border-color: rgba(99, 102, 241, 0.5);
+}
+
+.selectInput option {
+  background: #1a1d27;
+  color: #cbd5e1;
+}
+
+.entryMeta {
+  font-size: 11px;
+  font-weight: 600;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entryCustomer {
+  font-size: 11px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

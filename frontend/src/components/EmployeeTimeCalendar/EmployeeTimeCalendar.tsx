@@ -48,11 +48,11 @@ function getWeekStart(date: Date): Date {
   return d;
 }
 
-function formatHour(hour: number): string {
-  if (hour === 0) return "12 AM";
-  if (hour < 12) return `${hour} AM`;
-  if (hour === 12) return "12 PM";
-  return `${hour - 12} PM`;
+function formatHour(hour: number, min: number = 0): string {
+  const h = hour % 12 || 12;
+  const m = min.toString().padStart(2, "0");
+  const period = hour < 12 ? "AM" : "PM";
+  return `${h}:${m} ${period}`;
 }
 
 function formatTime(date: Date): string {
@@ -496,13 +496,15 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                             style={{ top, height }}
                           >
                             <span>
-                              {formatHour(pendingEntry.startHour)}:
-                              {pendingEntry.startMin
-                                .toString()
-                                .padStart(2, "0")}
+                              {formatHour(
+                                pendingEntry.startHour,
+                                pendingEntry.startMin,
+                              )}
                               {" – "}
-                              {formatHour(pendingEntry.endHour)}:
-                              {pendingEntry.endMin.toString().padStart(2, "0")}
+                              {formatHour(
+                                pendingEntry.endHour,
+                                pendingEntry.endMin,
+                              )}
                             </span>
                           </div>
                         );
@@ -529,10 +531,12 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                             </span>
                             <span className={styles.entryMeta}>
                               {entry.task?.name}
-                              {entry.customer?.name
-                                ? ` · ${entry.customer.name}`
-                                : ""}
                             </span>
+                            {entry.customer?.name && (
+                              <span className={styles.entryCustomer}>
+                                {entry.customer.name}
+                              </span>
+                            )}
                             {entry.notes && (
                               <span className={styles.entryDesc}>
                                 {entry.notes}
@@ -571,11 +575,9 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                   day: "numeric",
                 })}
                 {" · "}
-                {formatHour(pendingEntry.startHour)}:
-                {pendingEntry.startMin.toString().padStart(2, "0")}
+                {formatHour(pendingEntry.startHour, pendingEntry.startMin)}
                 {" – "}
-                {formatHour(pendingEntry.endHour)}:
-                {pendingEntry.endMin.toString().padStart(2, "0")}
+                {formatHour(pendingEntry.endHour, pendingEntry.endMin)}
               </span>
             </div>
 
