@@ -119,6 +119,24 @@ export const getEntriesByCustomer = async (
   }
 };
 
+export const getEntryById = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const entry = await timeEntryService.getEntryById(
+      req.params.entryId as string,
+    );
+    res.status(200).json({
+      status: "success",
+      data: entry,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const adminCreateEntry = async (
   req: AuthRequest,
   res: Response,

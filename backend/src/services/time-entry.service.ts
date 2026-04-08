@@ -160,6 +160,19 @@ export const getEntriesByCustomer = async (customerId: string) => {
   return Object.values(grouped);
 };
 
+export const getEntryById = async (entryId: string) => {
+  const entry = await prisma.timeEntry.findUnique({
+    where: { id: entryId },
+    include: {
+      task: { select: { name: true } },
+      customer: { select: { name: true } },
+      user: { select: { id: true, firstName: true, lastName: true } },
+    },
+  });
+  if (!entry) throw new NotFoundError("Time entry not found");
+  return entry;
+};
+
 export const adminCreateEntry = async (
   adminId: string,
   data: AdminCreateEntryInput,
