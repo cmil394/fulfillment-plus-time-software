@@ -21,8 +21,24 @@ export const adminCreateEntrySchema = z
     message: "endTime must be after startTime",
     path: ["endTime"],
   });
-  // Note: "startTime cannot be in the future" refine removed intentionally.
-  // Admins need to be able to backfill time entries for any past or future date.
 
+export const adminUpdateEntrySchema = z
+  .object({
+    taskId: z.string().uuid().optional(),
+    notes: z.string().optional(),
+    startTime: z.string().datetime().optional(),
+    endTime: z.string().datetime().optional(),
+  })
+  .refine(
+    (d) => {
+      if (d.startTime && d.endTime) {
+        return new Date(d.endTime) > new Date(d.startTime);
+      }
+      return true;
+    },
+    { message: "endTime must be after startTime", path: ["endTime"] },
+  );
+
+export type AdminUpdateEntryInput = z.infer<typeof adminUpdateEntrySchema>;
 export type StartTimerInput = z.infer<typeof startTimerSchema>;
 export type AdminCreateEntryInput = z.infer<typeof adminCreateEntrySchema>;

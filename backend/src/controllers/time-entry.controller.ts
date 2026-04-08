@@ -3,6 +3,7 @@ import { AuthRequest } from "../middleware/auth.middleware";
 import {
   startTimerSchema,
   adminCreateEntrySchema,
+  adminUpdateEntrySchema,
 } from "../validators/time-entry.validator";
 import * as timeEntryService from "../services/time-entry.service";
 import { UnauthorizedError } from "../utils/errors";
@@ -189,6 +190,42 @@ export const deleteEntriesByCustomer = async (
       status: "success",
       message: `Deleted ${result.count} time entries for customer`,
       data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+export const deleteEntry = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    await timeEntryService.deleteEntry(req.params.entryId as string);
+    res.status(200).json({
+      status: "success",
+      message: "Time entry deleted successfully",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateEntry = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const data = adminUpdateEntrySchema.parse(req.body);
+    const entry = await timeEntryService.updateEntry(
+      req.params.entryId as string,
+      data,
+    );
+    res.status(200).json({
+      status: "success",
+      message: "Time entry updated successfully",
+      data: entry,
     });
   } catch (err) {
     next(err);

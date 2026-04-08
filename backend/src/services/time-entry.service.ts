@@ -2,6 +2,7 @@ import { prisma } from "../lib/prisma";
 import {
   StartTimerInput,
   AdminCreateEntryInput,
+  AdminUpdateEntryInput,
 } from "../validators/time-entry.validator";
 import { NotFoundError, ConflictError } from "../utils/errors";
 
@@ -225,4 +226,71 @@ export const deleteEntriesByUser = async (userId: string) => {
 
 export const deleteEntriesByCustomer = async (customerId: string) => {
   return prisma.timeEntry.deleteMany({ where: { customerId } });
+};
+
+export const deleteEntry = async (entryId: string) => {
+  const entry = await prisma.timeEntry.findUnique({ where: { id: entryId } });
+  if (!entry) throw new NotFoundError("Time entry not found");
+
+  return prisma.timeEntry.delete({ where: { id: entryId } });
+};
+
+export const updateEntry = async (
+  entryId: string,
+  data: AdminUpdateEntryInput,
+) => {
+  const entry = await prisma.timeEntry.findUnique({ where: { id: entryId } });
+  if (!entry) throw new NotFoundError("Time entry not found");
+
+  // Resolve customerId if taskId is changing
+  let customerId = entry.customerId;
+  if (data.taskId && data.taskId !== entry.taskId) {
+    const task = await prisma.task.findUnique({ where: { id: data.taskId } });
+    if (!task) throw new NotFoundError("Task not found");
+    customerId = task.customerId;
+  }
+
+  const startTime = data.startTime ? new Date(data.startTime) : entry.startTime;
+  const endTime = data.endTime ? new Date(data.endTime) : entry.endTime;
+
+  const durationSeconds =
+    startTime && endTime
+      ? Math.floor((endTime.getTime() - startTime.getTime()) / 1000)
+      : entry.durationSeconds;
+
+  // Check for overlapping entries (exclude the current entry)
+  if (data.startTime || data.endTime) {
+    const overlap = await prisma.timeEntry.findFirst({
+      where: {
+        userId: entry.userId,
+        id: { not: entryId },
+        endTime: { not: null },
+        AND: [
+          { startTime: { lt: endTime ?? undefined } },
+          { endTime: { gt: startTime } },
+        ],
+      },
+    });
+    if (overlap) {
+      throw new ConflictError(
+        `This time range overlaps with an existing entry (${overlap.startTime.toISOString()} – ${overlap.endTime!.toISOString()})`,
+      );
+    }
+  }
+
+  return prisma.timeEntry.update({
+    where: { id: entryId },
+    data: {
+      ...(data.taskId && { taskId: data.taskId, customerId }),
+      ...(data.notes !== undefined && { notes: data.notes }),
+      ...(data.startTime && { startTime }),
+      ...(data.endTime && { endTime }),
+      ...(durationSeconds !== entry.durationSeconds && { durationSeconds }),
+    },
+    include: {
+      task: { select: { name: true } },
+      customer: { select: { name: true } },
+      user: { select: { id: true, firstName: true, lastName: true } },
+    },
+  });
 };

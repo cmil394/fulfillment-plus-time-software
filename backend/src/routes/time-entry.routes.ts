@@ -18,6 +18,8 @@ router.get("/time-entries", timeEntryController.getMyEntries);
 router.get("/time-entries/user/:userId", adminMiddleware, timeEntryController.getEntriesByUser);
 router.get("/time-entries/customer/:customerId", adminMiddleware, timeEntryController.getEntriesByCustomer);
 router.post("/time-entries/admin/create", adminMiddleware, timeEntryController.adminCreateEntry);
+router.patch("/time-entries/:entryId", adminMiddleware, timeEntryController.updateEntry);
+router.delete("/time-entries/:entryId", adminMiddleware, timeEntryController.deleteEntry);
 router.delete("/time-entries", adminMiddleware, timeEntryController.deleteAllEntries);
 router.delete("/time-entries/user/:userId", adminMiddleware, timeEntryController.deleteEntriesByUser);
 router.delete("/time-entries/customer/:customerId", adminMiddleware, timeEntryController.deleteEntriesByCustomer);
