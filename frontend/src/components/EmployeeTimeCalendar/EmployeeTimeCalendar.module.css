@@ -447,15 +447,17 @@
 
 .saveBtn {
   background: linear-gradient(135deg, #3b82f6, #6366f1);
-  border: none;
+  border: 1px solid transparent;
   border-radius: 8px;
   color: #fff;
   font-size: 13px;
   font-weight: 700;
-  padding: 8px 20px;
+  padding: 7px 18px;
   cursor: pointer;
   transition: opacity 0.15s;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 
 .saveBtn:hover:not(:disabled) {
@@ -469,22 +471,26 @@
 
 .discardBtn {
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-  color: #64748b;
+  color: #94a3b8;
   font-size: 13px;
   font-weight: 600;
-  padding: 6px 14px;
+  padding: 7px 18px;
   cursor: pointer;
   transition:
     background 0.15s,
-    color 0.15s;
+    color 0.15s,
+    border-color 0.15s;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 
 .discardBtn:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #94a3b8;
+  color: #cbd5e1;
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .loadingOverlay {
@@ -507,7 +513,7 @@
   border-radius: 8px;
   color: #ffffff;
   font-size: 13px;
-  padding: 8px 32px 8px 32px;
+  padding: 8px 32px 8px 12px;
   outline: none;
   cursor: pointer;
   background-repeat: no-repeat;
@@ -544,8 +550,6 @@
   z-index: 2;
 }
 
-/* ── Add these to the bottom of EmployeeTimeCalendar.module.css ── */
-
 .formHeaderActions {
   display: flex;
   align-items: center;
@@ -560,7 +564,7 @@
   color: #a5b4fc;
   font-size: 13px;
   font-weight: 600;
-  padding: 6px 14px;
+  padding: 7px 18px;
   cursor: pointer;
   display: flex;
   align-items: center;

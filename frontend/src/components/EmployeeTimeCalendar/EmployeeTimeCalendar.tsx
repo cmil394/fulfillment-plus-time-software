@@ -802,7 +802,7 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                     <option value="">
                       {loadingCustomers
                         ? "Loading customers…"
-                        : `Customer: ${viewingEntry.customer?.name ?? "none"}`}
+                        : "Change customer…"}
                     </option>
                     {customers.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -823,7 +823,7 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                           ? "Loading tasks…"
                           : editTasks.length === 0
                             ? "No tasks for this customer"
-                            : `Task: ${viewingEntry.task?.name ?? "none"}`}
+                            : "Change task…"}
                       </option>
                       {editTasks.map((t) => (
                         <option key={t.id} value={String(t.id)}>
@@ -910,7 +910,7 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                 ))}
               </select>
 
-              {/* Task dropdown — only shown once a customer is selected */}
+              {/* Task dropdown, only shown once a customer is selected */}
               {selectedCustomerId && (
                 <select
                   className={styles.selectInput}

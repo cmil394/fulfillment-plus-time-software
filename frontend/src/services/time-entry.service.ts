@@ -34,7 +34,6 @@ export interface UpdateEntryPayload {
 
 export const timeEntryService = {
   // Timer
-
   startTimer: async (taskId: number, notes?: string): Promise<TimeEntry> => {
     const res = await api.post("/time-entries/start", { taskId, notes });
     return res.data.data;
@@ -51,7 +50,6 @@ export const timeEntryService = {
   },
 
   // User
-
   getMyEntries: async (): Promise<TimeEntry[]> => {
     const res = await api.get("/time-entries");
     return res.data.data ?? [];
