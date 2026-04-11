@@ -56,6 +56,11 @@ function AdminCustomers() {
   const [createDraft, setCreateDraft] = useState<CustomerDto>(EMPTY_CREATE);
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+  const createAvatarRef = useRef<HTMLInputElement>(null);
+  const [createAvatarPreview, setCreateAvatarPreview] = useState<string | null>(
+    null,
+  );
+  const [createAvatarFile, setCreateAvatarFile] = useState<File | null>(null);
 
   // Inline edit state
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -99,6 +104,13 @@ function AdminCustomers() {
     if (editingId) fileInputRef.current?.click();
   };
 
+  const handleCreateAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCreateAvatarFile(file);
+    setCreateAvatarPreview(URL.createObjectURL(file));
+  };
+
   const handleAvatarFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -126,6 +138,8 @@ function AdminCustomers() {
   const handleOpenCreate = () => {
     setCreateDraft(EMPTY_CREATE);
     setCreateError(null);
+    setCreateAvatarFile(null);
+    setCreateAvatarPreview(null);
     setShowCreateForm(true);
   };
 
@@ -133,6 +147,8 @@ function AdminCustomers() {
     setShowCreateForm(false);
     setCreateDraft(EMPTY_CREATE);
     setCreateError(null);
+    setCreateAvatarFile(null);
+    setCreateAvatarPreview(null);
   };
 
   const handleCreateDraftChange = (field: keyof CustomerDto, value: string) => {
@@ -147,7 +163,15 @@ function AdminCustomers() {
     setCreateLoading(true);
     setCreateError(null);
     try {
-      const newCustomer = await adminCustomerService.create(createDraft);
+      const formData = new FormData();
+      formData.append("name", createDraft.name);
+      formData.append("ownerName", createDraft.ownerName ?? "");
+      formData.append("email", createDraft.email ?? "");
+      formData.append("phone", createDraft.phone ?? "");
+      if (createAvatarFile) formData.append("avatar", createAvatarFile);
+
+      const newCustomer =
+        await adminCustomerService.createWithFormData(formData);
       setCustomers((prev) => {
         const updated = [...prev, newCustomer];
         setCustomerOrder(new Map(updated.map((c, i) => [c.id, i + 1])));
@@ -155,6 +179,8 @@ function AdminCustomers() {
       });
       setShowCreateForm(false);
       setCreateDraft(EMPTY_CREATE);
+      setCreateAvatarFile(null);
+      setCreateAvatarPreview(null);
     } catch (err) {
       console.error("Failed to create customer:", err);
       setCreateError("Failed to create customer. Please try again.");
@@ -521,10 +547,44 @@ function AdminCustomers() {
       {showCreateForm && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
+            <input
+              ref={createAvatarRef}
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleCreateAvatarChange}
+            />
+
             <div className={styles.modalIconWrap}>
-              <UserPlus size={22} className={styles.modalIconCreate} />
+              {createAvatarPreview ? (
+                <div
+                  className={`${styles.avatarWrap} ${styles.avatarEditable}`}
+                  onClick={() => createAvatarRef.current?.click()}
+                >
+                  <img
+                    src={createAvatarPreview}
+                    alt="Avatar preview"
+                    className={styles.avatar}
+                  />
+                  <div className={styles.avatarOverlay}>
+                    <Pencil size={12} />
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className={styles.modalAvatarPlaceholder}
+                  onClick={() => createAvatarRef.current?.click()}
+                >
+                  <UserPlus size={30} className={styles.modalIconCreate} />
+                  <div className={styles.modalAvatarOverlay}>
+                    <Pencil size={12} />
+                  </div>
+                </div>
+              )}
             </div>
+
             <p className={styles.modalTitle}>New Customer</p>
+
             <div className={styles.createFormFields}>
               <div className={styles.createFormField}>
                 <label className={styles.createFormLabel}>
@@ -581,7 +641,9 @@ function AdminCustomers() {
                 />
               </div>
             </div>
+
             {createError && <p className={styles.errorMsg}>{createError}</p>}
+
             <div className={styles.modalActions}>
               <button
                 className={styles.modalCancelBtn}

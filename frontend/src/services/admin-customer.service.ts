@@ -34,6 +34,13 @@ export const adminCustomerService = {
     return response.data.data;
   },
 
+  createWithFormData: async (formData: FormData): Promise<Customer> => {
+    const response = await api.post("/customers", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data.data;
+  },
+
   update: async (id: string, data: CustomerDto): Promise<Customer> => {
     const response = await api.patch(`/customers/${id}`, data);
     return response.data.data;
