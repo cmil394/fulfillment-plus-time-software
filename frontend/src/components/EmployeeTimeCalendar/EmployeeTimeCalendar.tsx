@@ -346,11 +346,14 @@ interface FilterPopoverProps {
   tasks: Task[];
   filterCustomerId: string;
   filterTaskId: string;
+  filterMonthYear: string;
   onFilterCustomerChange: (id: string) => void;
   onFilterTaskChange: (id: string) => void;
+  onFilterMonthYearChange: (value: string) => void;
   onClear: () => void;
   onClose: () => void;
   loadingTasks: boolean;
+  activeTab: ViewTab;
 }
 
 function FilterPopover({
@@ -358,11 +361,14 @@ function FilterPopover({
   tasks,
   filterCustomerId,
   filterTaskId,
+  filterMonthYear,
   onFilterCustomerChange,
   onFilterTaskChange,
+  onFilterMonthYearChange,
   onClear,
   onClose,
   loadingTasks,
+  activeTab,
 }: FilterPopoverProps) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -374,7 +380,7 @@ function FilterPopover({
     return () => document.removeEventListener("mousedown", handler);
   }, [onClose]);
 
-  const hasFilter = !!filterCustomerId || !!filterTaskId;
+  const hasFilter = !!filterCustomerId || !!filterTaskId || !!filterMonthYear;
 
   return (
     <div ref={ref} className={styles.filterPopover}>
@@ -426,6 +432,18 @@ function FilterPopover({
                 </option>
               ))}
             </select>
+          </div>
+        )}
+
+        {activeTab === "list" && (
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Month & Year</label>
+            <input
+              type="month"
+              className={styles.monthInput}
+              value={filterMonthYear}
+              onChange={(e) => onFilterMonthYearChange(e.target.value)}
+            />
           </div>
         )}
       </div>
@@ -618,6 +636,7 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
   // Filter state
   const [filterCustomerId, setFilterCustomerId] = useState("");
   const [filterTaskId, setFilterTaskId] = useState("");
+  const [filterMonthYear, setFilterMonthYear] = useState(""); // "YYYY-MM"
   const [filterTasks, setFilterTasks] = useState<Task[]>([]);
   const [loadingFilterTasks, setLoadingFilterTasks] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -677,11 +696,20 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
   const filteredEntries = entries.filter((e) => {
     if (filterCustomerId && e.customer?.id !== filterCustomerId) return false;
     if (filterTaskId && e.task?.name !== filterTaskId) return false;
+    if (filterMonthYear) {
+      const d = new Date(e.startTime);
+      const entryMonthYear = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      if (entryMonthYear !== filterMonthYear) return false;
+    }
     return true;
   });
 
-  const hasActiveFilter = !!filterCustomerId || !!filterTaskId;
-  const activeFilterCount = (filterCustomerId ? 1 : 0) + (filterTaskId ? 1 : 0);
+  const hasActiveFilter =
+    !!filterCustomerId || !!filterTaskId || !!filterMonthYear;
+  const activeFilterCount =
+    (filterCustomerId ? 1 : 0) +
+    (filterTaskId ? 1 : 0) +
+    (filterMonthYear ? 1 : 0);
 
   // Fetch entries
   useEffect(() => {
@@ -1080,14 +1108,18 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                   tasks={filterTasks}
                   filterCustomerId={filterCustomerId}
                   filterTaskId={filterTaskId}
+                  filterMonthYear={filterMonthYear}
                   onFilterCustomerChange={setFilterCustomerId}
                   onFilterTaskChange={setFilterTaskId}
+                  onFilterMonthYearChange={setFilterMonthYear}
                   onClear={() => {
                     setFilterCustomerId("");
                     setFilterTaskId("");
+                    setFilterMonthYear("");
                   }}
                   onClose={() => setFilterOpen(false)}
                   loadingTasks={loadingFilterTasks}
+                  activeTab={activeTab}
                 />
               )}
             </div>
@@ -1133,11 +1165,20 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                   {filterTasks.find((t) => t.name === filterTaskId)!.name}
                 </span>
               )}
+            {filterMonthYear && (
+              <span className={styles.filterPill}>
+                {new Date(filterMonthYear + "-01").toLocaleDateString("en-US", {
+                  month: "long",
+                  year: "numeric",
+                })}
+              </span>
+            )}
             <button
               className={styles.filterActiveClear}
               onClick={() => {
                 setFilterCustomerId("");
                 setFilterTaskId("");
+                setFilterMonthYear("");
               }}
             >
               <X size={11} />
