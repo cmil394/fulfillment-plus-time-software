@@ -427,7 +427,7 @@ function FilterPopover({
                     : "All tasks"}
               </option>
               {tasks.map((t) => (
-                <option key={t.name} value={t.name}>
+                <option key={t.id} value={t.id}>
                   {t.name}
                 </option>
               ))}
@@ -1502,7 +1502,7 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                             : "Change task…"}
                       </option>
                       {editTasks.map((t) => (
-                        <option key={t.name} value={t.name}>
+                        <option key={t.id} value={t.id}>
                           {t.name}
                         </option>
                       ))}
@@ -1599,7 +1599,7 @@ export default function EmployeeTimeCalendar({ employee, onClose }: Props) {
                         : "Select task…"}
                   </option>
                   {tasks.map((t) => (
-                    <option key={t.name} value={t.name}>
+                    <option key={t.id} value={t.id}>
                       {t.name}
                     </option>
                   ))}
