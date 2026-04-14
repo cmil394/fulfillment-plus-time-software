@@ -1,5 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { Clock, Filter, X, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Clock,
+  Filter,
+  X,
+  ChevronDown,
+  ChevronUp,
+  RefreshCw,
+} from "lucide-react";
 import styles from "./HistoryModal.module.css";
 import {
   timeEntryService,
@@ -190,8 +197,7 @@ export default function HistoryModal() {
   const [entries, setEntries] = useState<TimeEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // How many months are currently visible (month-pagination mode only)
+  const [refreshing, setRefreshing] = useState(false);
   const [visibleMonths, setVisibleMonths] = useState(1);
 
   const [filterOpen, setFilterOpen] = useState(false);
@@ -203,6 +209,7 @@ export default function HistoryModal() {
   const [loadingFilterTasks, setLoadingFilterTasks] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     timeEntryService
       .getMyEntries()
       .then(setEntries)
@@ -235,6 +242,19 @@ export default function HistoryModal() {
   useEffect(() => {
     setVisibleMonths(1);
   }, [filterCustomerId, filterTaskId, filterMonthYear]);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const data = await timeEntryService.getMyEntries();
+      setEntries(data);
+      setError(null);
+    } catch (err: any) {
+      setError(err?.message ?? "Failed to load history");
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   // Filter logic
 
@@ -348,37 +368,51 @@ export default function HistoryModal() {
           )}
         </div>
 
-        <div className={styles.filterWrap}>
+        <div className={styles.topBarActions}>
           <button
-            className={`${styles.filterBtn} ${hasActiveFilter ? styles.filterBtnActive : ""}`}
-            onClick={() => setFilterOpen((v) => !v)}
+            className={styles.refreshBtn}
+            onClick={handleRefresh}
+            disabled={refreshing}
+            aria-label="Refresh entries"
           >
-            <Filter size={12} />
-            Filter
-            {activeFilterCount > 0 && (
-              <span className={styles.filterCount}>{activeFilterCount}</span>
-            )}
-            <ChevronDown
-              size={11}
-              className={filterOpen ? styles.filterChevronOpen : ""}
+            <RefreshCw
+              size={12}
+              className={refreshing ? styles.refreshSpinning : ""}
             />
           </button>
 
-          {filterOpen && (
-            <FilterPopover
-              customers={customers}
-              tasks={filterTasks}
-              filterCustomerId={filterCustomerId}
-              filterTaskId={filterTaskId}
-              filterMonthYear={filterMonthYear}
-              onFilterCustomerChange={setFilterCustomerId}
-              onFilterTaskChange={setFilterTaskId}
-              onFilterMonthYearChange={setFilterMonthYear}
-              onClear={clearFilters}
-              onClose={() => setFilterOpen(false)}
-              loadingTasks={loadingFilterTasks}
-            />
-          )}
+          <div className={styles.filterWrap}>
+            <button
+              className={`${styles.filterBtn} ${hasActiveFilter ? styles.filterBtnActive : ""}`}
+              onClick={() => setFilterOpen((v) => !v)}
+            >
+              <Filter size={12} />
+              Filter
+              {activeFilterCount > 0 && (
+                <span className={styles.filterCount}>{activeFilterCount}</span>
+              )}
+              <ChevronDown
+                size={11}
+                className={filterOpen ? styles.filterChevronOpen : ""}
+              />
+            </button>
+
+            {filterOpen && (
+              <FilterPopover
+                customers={customers}
+                tasks={filterTasks}
+                filterCustomerId={filterCustomerId}
+                filterTaskId={filterTaskId}
+                filterMonthYear={filterMonthYear}
+                onFilterCustomerChange={setFilterCustomerId}
+                onFilterTaskChange={setFilterTaskId}
+                onFilterMonthYearChange={setFilterMonthYear}
+                onClear={clearFilters}
+                onClose={() => setFilterOpen(false)}
+                loadingTasks={loadingFilterTasks}
+              />
+            )}
+          </div>
         </div>
       </div>
 
