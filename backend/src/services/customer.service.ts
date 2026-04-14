@@ -61,5 +61,8 @@ export const deleteCustomer = async (id: string) => {
   const existing = await prisma.customer.findUnique({ where: { id } });
   if (!existing) throw new NotFoundError("Customer not found");
 
-  await prisma.customer.delete({ where: { id } });
+  await prisma.$transaction([
+    prisma.timeEntry.deleteMany({ where: { customerId: id } }),
+    prisma.customer.delete({ where: { id } }),
+  ]);
 };
