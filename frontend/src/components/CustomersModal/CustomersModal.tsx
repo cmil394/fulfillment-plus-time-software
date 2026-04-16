@@ -4,6 +4,7 @@ import type { Customer } from "../../services/customer.service.ts";
 import styles from "./CustomersModal.module.css";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "./../../assets/icons/default_pfp.png";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3001";
 
 interface Props {
   compact?: boolean;
@@ -11,9 +12,6 @@ interface Props {
 }
 
 function CustomersModal({ compact = false, onSelectCustomer }: Props) {
-  const BASE_URL =
-    import.meta.env.VITE_API_BASE_URL?.replace("/api", "") ??
-    "http://localhost:3001";
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

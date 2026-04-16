@@ -18,6 +18,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import CustomerViewModal from "./../../../components/CustomerViewModal/CustomerViewModal";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3001";
 
 type SortField =
   | "index"
@@ -43,9 +44,6 @@ function AdminCustomers() {
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const BASE_URL =
-    import.meta.env.VITE_API_BASE_URL?.replace("/api", "") ??
-    "http://localhost:3001";
 
   // Avatar upload
   const fileInputRef = useRef<HTMLInputElement>(null);
