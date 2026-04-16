@@ -17,6 +17,12 @@ export const getCustomers = async () => {
     orderBy: { name: "asc" },
   });
 
+  customers.sort((a, b) => {
+    if (a.name === "Fulfilment Plus") return -1;
+    if (b.name === "Fulfilment Plus") return 1;
+    return a.name.localeCompare(b.name);
+  });
+
   return customers;
 };
 

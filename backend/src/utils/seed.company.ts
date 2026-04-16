@@ -21,6 +21,13 @@ export const seedCompany = async () => {
         email: "mikeappleton@fulfilmentplus.co.nz",
         phone: "+1234567890",
         avatarUrl: null,
+        tasks: {
+          create: [
+            {
+              name: "Break",
+            },
+          ],
+        },
       },
     });
     console.log("Company created");
