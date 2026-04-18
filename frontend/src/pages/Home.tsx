@@ -7,6 +7,7 @@ import Employees from "./Admin/Employees/Employees";
 import AdminCustomers from "./Admin/AdminCustomers/AdminCustomers";
 import Tasks from "./Tasks/Tasks";
 import AdminTasks from "./Admin/AdminTasks/AdminTasks";
+import Kiosk from "./Kiosk/Kiosk";
 
 function Home() {
   const { user, loading } = useAuth();
@@ -15,6 +16,7 @@ function Home() {
 
   return (
     <Routes>
+      <Route path="/kiosk" element={<Kiosk />} />
       <Route
         path="/login"
         element={!user ? <Auth /> : <Navigate to="/dashboard" />}

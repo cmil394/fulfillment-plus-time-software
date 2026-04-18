@@ -14,6 +14,31 @@ function Navbar() {
 
   const isAdmin = user?.role === "Admin" || user?.role === "Owner";
   const isInAdminSection = isAdmin && location.pathname.startsWith("/admin");
+  const isKioskPage = location.pathname === "/kiosk";
+  const isLoginPage = location.pathname === "/login";
+
+  if (isKioskPage) {
+    return (
+      <nav className={styles.navbar}>
+        <div className={styles.navbarBrand}>
+          <img
+            src="/src/assets/icons/fulfillmentplus_icon_w.png"
+            alt="Fulfillment Plus Logo"
+            className={styles.logoIcon}
+          />
+          <span className={styles.brandText}>Fulfillment Plus</span>
+        </div>
+
+        <ul className={styles.navbarLinks}>
+          <li>
+            <a href="/login" className={styles.navLink}>
+              Log In
+            </a>
+          </li>
+        </ul>
+      </nav>
+    );
+  }
 
   return (
     <nav className={styles.navbar}>
@@ -41,7 +66,9 @@ function Navbar() {
           <li>
             <a
               href="/admin/employees"
-              className={`${styles.navLink} ${isInAdminSection ? styles.active : ""}`}
+              className={`${styles.navLink} ${
+                isInAdminSection ? styles.active : ""
+              }`}
             >
               Admin
             </a>
@@ -50,7 +77,9 @@ function Navbar() {
         <li>
           <a
             href="/dashboard"
-            className={`${styles.navLink} ${location.pathname === "/dashboard" ? styles.active : ""}`}
+            className={`${styles.navLink} ${
+              location.pathname === "/dashboard" ? styles.active : ""
+            }`}
           >
             Dashboard
           </a>
@@ -61,7 +90,9 @@ function Navbar() {
             <li>
               <a
                 href="/admin/employees"
-                className={`${styles.navLink} ${location.pathname === "/admin/employees" ? styles.active : ""}`}
+                className={`${styles.navLink} ${
+                  location.pathname === "/admin/employees" ? styles.active : ""
+                }`}
               >
                 Employees
               </a>
@@ -69,7 +100,9 @@ function Navbar() {
             <li>
               <a
                 href="/admin/customers"
-                className={`${styles.navLink} ${location.pathname === "/admin/customers" ? styles.active : ""}`}
+                className={`${styles.navLink} ${
+                  location.pathname === "/admin/customers" ? styles.active : ""
+                }`}
               >
                 Manage Customers
               </a>
@@ -77,7 +110,9 @@ function Navbar() {
             <li className={styles.noRightBorder}>
               <a
                 href="/admin/tasks"
-                className={`${styles.navLink} ${location.pathname === "/admin/tasks" ? styles.active : ""}`}
+                className={`${styles.navLink} ${
+                  location.pathname === "/admin/tasks" ? styles.active : ""
+                }`}
               >
                 Manage Tasks
               </a>
@@ -95,12 +130,24 @@ function Navbar() {
                 Reports
               </a>
             </li>
-            <li className={styles.noRightBorder}>
+            <li className={user ? styles.noRightBorder : ""}>
               <a href="/profile" className={styles.navLink}>
                 Profile
               </a>
             </li>
           </>
+        )}
+
+        {/* Kiosk */}
+        {!user && isLoginPage && (
+          <li className={styles.noRightBorder}>
+            <a
+              href="/kiosk"
+              className={`${styles.navLink} ${styles.noRightBorder}`}
+            >
+              Kiosk
+            </a>
+          </li>
         )}
 
         {user && (
