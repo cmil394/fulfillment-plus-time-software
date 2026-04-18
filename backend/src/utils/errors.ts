@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
-
-// Custom typed errors so services can throw semantic errors
-// and the controller/handler can map them to HTTP status codes
+import { Prisma } from "../generated/prisma/client";
 
 export class AppError extends Error {
   constructor(
@@ -38,7 +36,7 @@ export class ForbiddenError extends AppError {
   }
 }
 
-// Global Express error middleware — register this last in index.ts
+// Global Express error middleware to handle all errors in a consistent way
 export const errorHandler = (
   err: unknown,
   req: Request,
@@ -55,6 +53,15 @@ export const errorHandler = (
         message: e.message,
       })),
     });
+  }
+
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err.code === "P2002") {
+      return res.status(409).json({
+        status: "error",
+        message: "Value already in use",
+      });
+    }
   }
 
   if (err instanceof AppError) {
