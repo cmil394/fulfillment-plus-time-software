@@ -6,6 +6,7 @@ export const registerSchema = z
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
     fullname: z.string().min(2, "Full name must be at least 2 characters"),
+    pin: z.string().regex(/^\d{5}$/).optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -22,7 +23,7 @@ export const adminUpdateUserSchema = z.object({
   lastName: z.string().min(1).optional(),
   email: z.string().email().optional(),
   role: z.enum(["Admin", "Employee"]).optional(),
-  pin: z.number().int().min(10000).max(99999).optional(),
+  pin: z.string().regex(/^\d{5}$/).optional(),
 });
 
 export type AdminUpdateUserInput = z.infer<typeof adminUpdateUserSchema>;

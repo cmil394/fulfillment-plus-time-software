@@ -34,6 +34,7 @@ export const seedOwner = async () => {
         lastName: "Owner",
         role: "Owner",
         status: "APPROVED",
+        pin: "00427",
       },
     });
     console.log("Owner account created");

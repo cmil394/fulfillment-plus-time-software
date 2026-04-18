@@ -15,7 +15,7 @@ model User {
   fullName   String
   firstName  String?
   lastName   String?
-  pin        Int?    @unique
+  pin        String?    @unique
   role       Role       @default(Employee)
   status     UserStatus @default(PENDING)
   //hourlyRate Decimal?   @db.Decimal(10, 2)

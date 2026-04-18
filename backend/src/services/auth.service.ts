@@ -50,7 +50,9 @@ export const registerUser = async (data: RegisterInput) => {
   const lastName = nameParts[nameParts.length - 1];
 
   const hashedPassword = await hashPassword(data.password);
-  const generatedPin = Math.floor(10000 + Math.random() * 90000);
+  const generatedPin = Math.floor(Math.random() * 100000)
+    .toString()
+    .padStart(5, "0");
 
   const user = await prisma.user.create({
     data: {

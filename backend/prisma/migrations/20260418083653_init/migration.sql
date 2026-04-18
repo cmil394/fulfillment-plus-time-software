@@ -12,7 +12,7 @@ CREATE TABLE "users" (
     "fullName" TEXT NOT NULL,
     "firstName" TEXT,
     "lastName" TEXT,
-    "pin" INTEGER,
+    "pin" TEXT,
     "role" "Role" NOT NULL DEFAULT 'Employee',
     "status" "UserStatus" NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
