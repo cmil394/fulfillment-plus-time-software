@@ -20,6 +20,7 @@ const publicUserSelect = {
   fullName: true,
   firstName: true,
   lastName: true,
+  pin: true,
   role: true,
   status: true,
   createdAt: true,
@@ -190,7 +191,13 @@ export const adminUpdateUser = async (
   return prisma.user.update({
     where: { id: targetId },
     data,
-    select: { firstName: true, lastName: true, email: true, role: true },
+    select: {
+      firstName: true,
+      lastName: true,
+      email: true,
+      role: true,
+      pin: true,
+    },
   });
 };
 
