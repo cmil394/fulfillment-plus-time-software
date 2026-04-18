@@ -10,10 +10,11 @@ CREATE TABLE "users" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
-    "role" "Role" NOT NULL DEFAULT 'Employee',
-    "status" "UserStatus" NOT NULL DEFAULT 'PENDING',
     "firstName" TEXT,
     "lastName" TEXT,
+    "pin" INTEGER,
+    "role" "Role" NOT NULL DEFAULT 'Employee',
+    "status" "UserStatus" NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -47,6 +48,17 @@ CREATE TABLE "tasks" (
 );
 
 -- CreateTable
+CREATE TABLE "task_templates" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "task_templates_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "time_entries" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
@@ -64,6 +76,9 @@ CREATE TABLE "time_entries" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_pin_key" ON "users"("pin");
 
 -- CreateIndex
 CREATE INDEX "time_entries_userId_idx" ON "time_entries"("userId");

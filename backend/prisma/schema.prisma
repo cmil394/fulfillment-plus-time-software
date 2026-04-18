@@ -13,10 +13,11 @@ model User {
   email      String     @unique
   password   String
   fullName   String
-  role       Role       @default(Employee)
-  status     UserStatus @default(PENDING)
   firstName  String?
   lastName   String?
+  pin        Int?    @unique
+  role       Role       @default(Employee)
+  status     UserStatus @default(PENDING)
   //hourlyRate Decimal?   @db.Decimal(10, 2)
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
