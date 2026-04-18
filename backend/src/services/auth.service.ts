@@ -172,7 +172,7 @@ export const adminUpdateUser = async (
     throw new ForbiddenError("Owner role cannot be modified");
   }
 
-  if (data.role) {
+  if (data.role && data.role !== target.role) {
     if (requesterRole === "Admin") {
       if (target.role !== "Employee" || data.role !== "Admin") {
         throw new ForbiddenError("Admins can only promote Employees to Admin");
