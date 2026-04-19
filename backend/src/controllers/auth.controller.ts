@@ -4,9 +4,11 @@ import {
   registerSchema,
   loginSchema,
   adminUpdateUserSchema,
+  pinLoginSchema,
 } from "../validators/auth.validator";
 import * as authService from "../services/auth.service";
 import { UnauthorizedError } from "../utils/errors";
+import { generateToken } from "../utils/auth";
 
 // Auth
 export const register = async (
@@ -35,6 +37,24 @@ export const login = async (
   try {
     const data = loginSchema.parse(req.body);
     const result = await authService.loginUser(data);
+    res.status(200).json({
+      status: "success",
+      message: "Login successful",
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const loginWithPin = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { pin } = pinLoginSchema.parse(req.body);
+    const result = await authService.loginWithPin(pin);
     res.status(200).json({
       status: "success",
       message: "Login successful",

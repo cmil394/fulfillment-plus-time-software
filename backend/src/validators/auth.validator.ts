@@ -26,6 +26,11 @@ export const adminUpdateUserSchema = z.object({
   pin: z.string().regex(/^\d{5}$/).optional(),
 });
 
+export const pinLoginSchema = z.object({
+  pin: z.string().min(4).max(8).regex(/^\d+$/, "PIN must be numeric"),
+});
+ 
+
 export type AdminUpdateUserInput = z.infer<typeof adminUpdateUserSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

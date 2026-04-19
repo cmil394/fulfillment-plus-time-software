@@ -8,7 +8,8 @@ import {
   approveUser,
   rejectUser,
   adminUpdateUser,
-  deleteUser
+  deleteUser,
+  loginWithPin
 } from "../controllers/auth.controller";
 import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware";
 import { readLimiter, writeLimiter} from "../middleware/rate-limiting.middleware";
@@ -18,6 +19,7 @@ const router = express.Router();
 //  Public
 router.post("/auth/register", writeLimiter, register);
 router.post("/auth/login", writeLimiter, login);
+router.post("/auth/login/pin", writeLimiter, loginWithPin);
 
 // Protected
 router.get("/auth/profile", authMiddleware, readLimiter, getProfile);

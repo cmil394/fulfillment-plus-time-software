@@ -1,0 +1,325 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap");
+
+.root {
+  min-height: 100vh;
+  background: #f8f8f6;
+  font-family: "Geist", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.subheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 2.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e8e8e4;
+}
+
+.subheaderTitle {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #1a3a6b;
+}
+
+.subheaderMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #888880;
+  font-family: "Geist Mono", monospace;
+}
+
+.sessionDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d0d0ca;
+}
+
+.sessionDotActive {
+  background: #2a7a2a;
+  box-shadow: 0 0 0 2px rgba(42, 122, 42, 0.2);
+}
+
+.content {
+  flex: 1;
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tableCard {
+  background: #ffffff;
+  border: 1px solid #e8e8e4;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.thead {
+  background: #f3f3f0;
+  border-bottom: 1px solid #e8e8e4;
+}
+
+.th {
+  padding: 0.65rem 1.25rem;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #888880;
+  font-family: "Geist Mono", monospace;
+}
+
+.thSeq {
+  width: 56px;
+  text-align: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.thActions {
+  width: 180px;
+  text-align: right;
+}
+
+.cell {
+  padding: 0.9rem 1.25rem;
+  font-size: 14px;
+  color: #2c2c28;
+  border-bottom: 1px solid #f0f0ec;
+  vertical-align: middle;
+}
+
+.cellSeq {
+  text-align: center;
+  width: 56px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.cellFirst {
+  font-weight: 500;
+  color: #111110;
+}
+
+.cellLast {
+  color: #555550;
+}
+
+.cellPlaceholder {
+  color: #c8c8c2;
+  font-family: "Geist Mono", monospace;
+  font-size: 13px;
+}
+
+.cellActions {
+  text-align: right;
+  width: 180px;
+}
+
+.seqNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #1a3a6b;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: "Geist Mono", monospace;
+}
+
+.userRow {
+  transition: background 0.1s;
+}
+
+.userRow:hover {
+  background: #fafaf8;
+}
+
+.userRowEnter {
+  animation: slideIn 0.2s ease forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.btn {
+  font-family: "Geist", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btnStart {
+  background: #eaf4ea;
+  border-color: #b8dcb8;
+  color: #1e661e;
+}
+
+.btnStart:hover:not(:disabled) {
+  background: #d4ecd4;
+  border-color: #8ec88e;
+}
+
+.btnStop {
+  background: #faeaea;
+  border-color: #f0b8b8;
+  color: #841c1c;
+}
+
+.btnStop:hover:not(:disabled) {
+  background: #f5d4d4;
+  border-color: #e08888;
+}
+
+.pinRow {
+  background: #fafaf8;
+}
+
+.pinRow .cell {
+  border-bottom: none;
+}
+
+.pinWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pinLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: #aaa89e;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  font-family: "Geist Mono", monospace;
+}
+
+.pinInput {
+  background: #ffffff;
+  border: 1.5px solid #d8d8d2;
+  border-radius: 7px;
+  color: #111110;
+  font-family: "Geist Mono", monospace;
+  font-size: 16px;
+  letter-spacing: 0.25em;
+  padding: 0.45rem 0.75rem;
+  width: 130px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.pinInput::placeholder {
+  letter-spacing: 0.04em;
+  color: #c0c0b8;
+  font-size: 12px;
+}
+
+.pinInput:focus {
+  border-color: #1a3a6b;
+  box-shadow: 0 0 0 3px rgba(26, 58, 107, 0.1);
+}
+
+.pinInputError {
+  border-color: #c0302e !important;
+  box-shadow: 0 0 0 3px rgba(192, 48, 46, 0.1) !important;
+  animation: shake 0.28s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.pinError {
+  font-size: 12px;
+  color: #c0302e;
+  font-family: "Geist Mono", monospace;
+}
+
+.btnConfirm {
+  background: #1a3a6b;
+  border-color: #1a3a6b;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0.45rem 1.1rem;
+}
+
+.btnConfirm:hover:not(:disabled) {
+  background: #152f58;
+  border-color: #152f58;
+}
+
+.btnConfirm:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btnConfirm:disabled {
+  background: #c8cdd8;
+  border-color: #c8cdd8;
+  color: #ffffff;
+  opacity: 1;
+}
+
+.seqPlus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1.5px dashed #d0d0c8;
+  color: #c0c0b8;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.emptyHint {
+  padding: 0.6rem 1.25rem 1rem;
+  font-size: 12px;
+  color: #b0b0a8;
+  font-family: "Geist Mono", monospace;
+  border-bottom: none;
+}

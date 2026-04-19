@@ -59,6 +59,11 @@ export const authService = {
     return response.data;
   },
 
+  loginWithPin: async (pin: string): Promise<AuthResponse> => {
+    const response = await api.post("/auth/login/pin", { pin });
+    return response.data;
+  },
+
   getProfile: async (): Promise<{ status: string; data: { user: User } }> => {
     const response = await api.get("/auth/profile");
     return response.data;

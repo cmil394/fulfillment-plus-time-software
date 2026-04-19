@@ -103,6 +103,39 @@ export const loginUser = async (data: LoginInput) => {
   return { user: userWithoutPassword, token };
 };
 
+export const loginWithPin = async (pin: string) => {
+  const user = await prisma.user.findUnique({
+    where: { pin },
+  });
+ 
+  if (!user) {
+    throw new AppError(401,"Invalid PIN");
+  }
+ 
+  if (user.status !== "APPROVED") {
+    throw new AppError(403,"Account not approved");
+  }
+ 
+  const token = generateToken({
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+  });
+ 
+  return {
+    token,
+    user: {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+    },
+  };
+};
+ 
+
 // User
 export const getUserProfile = async (userId: string) => {
   const user = await prisma.user.findUnique({
