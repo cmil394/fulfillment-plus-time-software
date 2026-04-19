@@ -377,7 +377,7 @@ export default function Kiosk() {
     try {
       const authedApi = createAuthedApi(session.token);
       await authedApi.post("/time-entries/start", {
-        taskId: Number(session.selectedTaskId),
+        taskId: session.selectedTaskId,
       });
       setSessions((prev) =>
         prev.map((s) =>
