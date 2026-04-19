@@ -27,7 +27,7 @@ export const adminUpdateUserSchema = z.object({
 });
 
 export const pinLoginSchema = z.object({
-  pin: z.string().min(4).max(8).regex(/^\d+$/, "PIN must be numeric"),
+  pin: z.string().min(5).max(5).regex(/^\d+$/, "PIN must be numeric"),
 });
  
 
