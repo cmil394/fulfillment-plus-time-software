@@ -3,6 +3,9 @@ import type { KeyboardEvent } from "react";
 import styles from "./Kiosk.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import { authService } from "../../services/auth.service";
+import { customerService, type Customer } from "../../services/customer.service";
+import { taskService, type Task } from "../../services/task.service";
+import { timeEntryService } from "../../services/time-entry.service";
 
 interface LoggedInUser {
   id: string;
@@ -11,11 +14,23 @@ interface LoggedInUser {
   token: string;
 }
 
-interface PinInputProps {
-  onSuccess: (user: LoggedInUser) => void;
+interface UserSession extends LoggedInUser {
+  customers: Customer[];
+  selectedCustomerId: string;
+  tasks: Task[];
+  selectedTaskId: string;
+  loadingCustomers: boolean;
+  loadingTasks: boolean;
+  timerRunning: boolean;
+  timerStartTime: Date | null;
+  elapsed: number;
 }
 
 type PinState = "idle" | "loading" | "error";
+
+interface PinInputProps {
+  onSuccess: (user: LoggedInUser) => void;
+}
 
 function PinInput({ onSuccess }: PinInputProps) {
   const [pin, setPin] = useState("");
@@ -110,26 +125,50 @@ function PinInput({ onSuccess }: PinInputProps) {
   );
 }
 
-interface UserRowProps {
-  user: LoggedInUser;
-  index: number;
-  onClockOut: (userId: string) => void;
+function formatElapsed(seconds: number) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  return [h, m, s].map((v) => String(v).padStart(2, "0")).join(":");
 }
 
-function UserRow({ user, index, onClockOut }: UserRowProps) {
-  const [loading, setLoading] = useState(false);
+interface UserRowProps {
+  session: UserSession;
+  index: number;
+  onClockOut: (userId: string) => void;
+  onCustomerChange: (userId: string, customerId: string) => void;
+  onTaskChange: (userId: string, taskId: string) => void;
+  onStart: (userId: string) => void;
+  onStop: (userId: string) => void;
+}
+
+function UserRow({
+  session,
+  index,
+  onClockOut,
+  onCustomerChange,
+  onTaskChange,
+  onStart,
+  onStop,
+}: UserRowProps) {
+  const [clockingOut, setClockingOut] = useState(false);
 
   const handleClockOut = async () => {
-    setLoading(true);
+    setClockingOut(true);
     try {
-      await authService.clockOut(user.token);
-      onClockOut(user.id);
+      await authService.clockOut(session.token);
+      onClockOut(session.id);
     } catch {
-      // surface an error toast/alert here if you have one
+      // surface error toast here if available
     } finally {
-      setLoading(false);
+      setClockingOut(false);
     }
   };
+
+  const canStart =
+    !session.timerRunning &&
+    session.selectedCustomerId !== "" &&
+    session.selectedTaskId !== "";
 
   return (
     <tr className={`${styles.userRow} ${styles.userRowEnter}`}>
@@ -137,30 +176,89 @@ function UserRow({ user, index, onClockOut }: UserRowProps) {
         <span className={styles.seqNum}>{index + 1}</span>
       </td>
       <td className={`${styles.cell} ${styles.cellFirst}`}>
-        {user.firstName}
+        {session.firstName}
       </td>
       <td className={`${styles.cell} ${styles.cellLast}`}>
-        {user.lastName}
+        {session.lastName}
       </td>
-      <td className={`${styles.cell} ${styles.cellPlaceholder}`}>—</td>
-      <td className={`${styles.cell} ${styles.cellPlaceholder}`}>—</td>
+
+      {/* Customer */}
+      <td className={styles.cell}>
+        {session.loadingCustomers ? (
+          <span className={styles.loadingHint}>Loading…</span>
+        ) : (
+          <select
+            className={styles.select}
+            value={session.selectedCustomerId}
+            onChange={(e) => onCustomerChange(session.id, e.target.value)}
+            disabled={session.timerRunning}
+          >
+            <option value="">Select customer</option>
+            {session.customers.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        )}
+      </td>
+
+      {/* Task */}
+      <td className={styles.cell}>
+        {session.selectedCustomerId === "" ? (
+          <span className={styles.loadingHint}>Select a customer</span>
+        ) : session.loadingTasks ? (
+          <span className={styles.loadingHint}>Loading…</span>
+        ) : (
+          <select
+            className={styles.select}
+            value={session.selectedTaskId}
+            onChange={(e) => onTaskChange(session.id, e.target.value)}
+            disabled={session.timerRunning}
+          >
+            <option value="">Select task</option>
+            {session.tasks.map((t) => (
+              <option key={t.id} value={String(t.id)}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+        )}
+      </td>
+
+      {/* Start / Stop + elapsed */}
       <td className={`${styles.cell} ${styles.cellActions}`}>
         <div className={styles.actions}>
-          <button className={`${styles.btn} ${styles.btnStart}`} disabled>
+          {session.timerRunning && (
+            <span className={styles.elapsed}>
+              {formatElapsed(session.elapsed)}
+            </span>
+          )}
+          <button
+            className={`${styles.btn} ${styles.btnStart}`}
+            onClick={() => onStart(session.id)}
+            disabled={!canStart}
+          >
             Start
           </button>
-          <button className={`${styles.btn} ${styles.btnStop}`} disabled>
+          <button
+            className={`${styles.btn} ${styles.btnStop}`}
+            onClick={() => onStop(session.id)}
+            disabled={!session.timerRunning}
+          >
             Stop
           </button>
         </div>
       </td>
+
+      {/* Clock out */}
       <td className={`${styles.cell} ${styles.cellClockOut}`}>
         <button
           className={`${styles.btn} ${styles.btnClockOut}`}
           onClick={handleClockOut}
-          disabled={loading}
+          disabled={clockingOut || session.timerRunning}
         >
-          {loading ? "Clocking out…" : "Clock Out"}
+          {clockingOut ? "Clocking out…" : "Clock Out"}
         </button>
       </td>
     </tr>
@@ -168,20 +266,145 @@ function UserRow({ user, index, onClockOut }: UserRowProps) {
 }
 
 export default function Kiosk() {
-  const [loggedInUsers, setLoggedInUsers] = useState<LoggedInUser[]>([]);
+  const [sessions, setSessions] = useState<UserSession[]>([]);
 
-  const handlePinSuccess = (user: LoggedInUser) => {
-    setLoggedInUsers((prev) => {
-      if (prev.find((u) => u.id === user.id)) return prev;
-      return [...prev, user];
-    });
+  // Tick all running timers every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.timerRunning && s.timerStartTime
+            ? {
+                ...s,
+                elapsed: Math.floor(
+                  (Date.now() - s.timerStartTime.getTime()) / 1000,
+                ),
+              }
+            : s,
+        ),
+      );
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handlePinSuccess = async (user: LoggedInUser) => {
+    if (sessions.find((s) => s.id === user.id)) return;
+
+    setSessions((prev) => [
+      ...prev,
+      {
+        ...user,
+        customers: [],
+        selectedCustomerId: "",
+        tasks: [],
+        selectedTaskId: "",
+        loadingCustomers: true,
+        loadingTasks: false,
+        timerRunning: false,
+        timerStartTime: null,
+        elapsed: 0,
+      },
+    ]);
+
+    try {
+      const customers = await customerService.getAll();
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.id === user.id ? { ...s, customers, loadingCustomers: false } : s,
+        ),
+      );
+    } catch {
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.id === user.id ? { ...s, loadingCustomers: false } : s,
+        ),
+      );
+    }
+  };
+
+  const handleCustomerChange = async (userId: string, customerId: string) => {
+    setSessions((prev) =>
+      prev.map((s) =>
+        s.id === userId
+          ? {
+              ...s,
+              selectedCustomerId: customerId,
+              selectedTaskId: "",
+              tasks: [],
+              loadingTasks: customerId !== "",
+            }
+          : s,
+      ),
+    );
+
+    if (!customerId) return;
+
+    try {
+      const tasks = await taskService.getByCustomer(customerId);
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.id === userId ? { ...s, tasks, loadingTasks: false } : s,
+        ),
+      );
+    } catch {
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.id === userId ? { ...s, loadingTasks: false } : s,
+        ),
+      );
+    }
+  };
+
+  const handleTaskChange = (userId: string, taskId: string) => {
+    setSessions((prev) =>
+      prev.map((s) =>
+        s.id === userId ? { ...s, selectedTaskId: taskId } : s,
+      ),
+    );
+  };
+
+  const handleStart = async (userId: string) => {
+    const session = sessions.find((s) => s.id === userId);
+    if (!session || !session.selectedTaskId) return;
+
+    try {
+      // taskService uses number IDs, so parse before passing
+      await timeEntryService.startTimer(Number(session.selectedTaskId));
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.id === userId
+            ? { ...s, timerRunning: true, timerStartTime: new Date(), elapsed: 0 }
+            : s,
+        ),
+      );
+    } catch {
+      // surface error toast here if available
+    }
+  };
+
+  const handleStop = async (userId: string) => {
+    const session = sessions.find((s) => s.id === userId);
+    if (!session) return;
+
+    try {
+      await timeEntryService.stopTimer();
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.id === userId
+            ? { ...s, timerRunning: false, timerStartTime: null, elapsed: 0 }
+            : s,
+        ),
+      );
+    } catch {
+      // surface error toast here if available
+    }
   };
 
   const handleClockOut = (userId: string) => {
-    setLoggedInUsers((prev) => prev.filter((u) => u.id !== userId));
+    setSessions((prev) => prev.filter((s) => s.id !== userId));
   };
 
-  const activeCount = loggedInUsers.length;
+  const activeCount = sessions.length;
 
   return (
     <div className={styles.root}>
@@ -214,16 +437,20 @@ export default function Kiosk() {
               </tr>
             </thead>
             <tbody>
-              {loggedInUsers.map((user, i) => (
+              {sessions.map((session, i) => (
                 <UserRow
-                  key={user.id}
-                  user={user}
+                  key={session.id}
+                  session={session}
                   index={i}
                   onClockOut={handleClockOut}
+                  onCustomerChange={handleCustomerChange}
+                  onTaskChange={handleTaskChange}
+                  onStart={handleStart}
+                  onStop={handleStop}
                 />
               ))}
               <PinInput onSuccess={handlePinSuccess} />
-              {loggedInUsers.length === 0 && (
+              {sessions.length === 0 && (
                 <tr>
                   <td colSpan={7} className={styles.emptyHint}>
                     Enter your PIN above to clock in
