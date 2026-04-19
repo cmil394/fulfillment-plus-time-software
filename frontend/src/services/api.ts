@@ -9,6 +9,12 @@ export const api = axios.create({
   },
 });
 
+export const createAuthedApi = (token: string) =>
+  axios.create({
+    baseURL: api.defaults.baseURL,
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
 // Add token to requests if available
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");

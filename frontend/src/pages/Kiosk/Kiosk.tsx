@@ -3,9 +3,9 @@ import type { KeyboardEvent } from "react";
 import styles from "./Kiosk.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import { authService } from "../../services/auth.service";
-import { customerService, type Customer } from "../../services/customer.service";
-import { taskService, type Task } from "../../services/task.service";
-import { timeEntryService } from "../../services/time-entry.service";
+import { createAuthedApi } from "../../services/api";
+import type { Customer } from "../../services/customer.service";
+import type { Task } from "../../services/task.service";
 
 interface LoggedInUser {
   id: string;
@@ -307,7 +307,9 @@ export default function Kiosk() {
     ]);
 
     try {
-      const customers = await customerService.getAll();
+      const authedApi = createAuthedApi(user.token);
+      const response = await authedApi.get("/customers");
+      const customers = response.data.data;
       setSessions((prev) =>
         prev.map((s) =>
           s.id === user.id ? { ...s, customers, loadingCustomers: false } : s,
@@ -339,8 +341,13 @@ export default function Kiosk() {
 
     if (!customerId) return;
 
+    const session = sessions.find((s) => s.id === userId);
+    if (!session) return;
+
     try {
-      const tasks = await taskService.getByCustomer(customerId);
+      const authedApi = createAuthedApi(session.token);
+      const response = await authedApi.get(`/tasks/customer/${customerId}`);
+      const tasks = Array.isArray(response.data.data) ? response.data.data : [];
       setSessions((prev) =>
         prev.map((s) =>
           s.id === userId ? { ...s, tasks, loadingTasks: false } : s,
@@ -368,8 +375,10 @@ export default function Kiosk() {
     if (!session || !session.selectedTaskId) return;
 
     try {
-      // taskService uses number IDs, so parse before passing
-      await timeEntryService.startTimer(Number(session.selectedTaskId));
+      const authedApi = createAuthedApi(session.token);
+      await authedApi.post("/time-entries/start", {
+        taskId: Number(session.selectedTaskId),
+      });
       setSessions((prev) =>
         prev.map((s) =>
           s.id === userId
@@ -378,7 +387,6 @@ export default function Kiosk() {
         ),
       );
     } catch {
-      // surface error toast here if available
     }
   };
 
@@ -387,7 +395,8 @@ export default function Kiosk() {
     if (!session) return;
 
     try {
-      await timeEntryService.stopTimer();
+      const authedApi = createAuthedApi(session.token);
+      await authedApi.patch("/time-entries/active/stop");
       setSessions((prev) =>
         prev.map((s) =>
           s.id === userId
@@ -396,7 +405,6 @@ export default function Kiosk() {
         ),
       );
     } catch {
-      // surface error toast here if available
     }
   };
 
