@@ -8,12 +8,12 @@ const router = Router();
 router.use(authMiddleware);
 
 // Timer(auth)
-router.post("/time-entries/start", writeLimiter, timeEntryController.startTimer);
-router.patch("/time-entries/active/stop", writeLimiter, timeEntryController.stopTimer);
-router.get("/time-entries/active", readLimiter, timeEntryController.getActiveTimer);
+router.post("/time-entries/start",authMiddleware, writeLimiter, timeEntryController.startTimer);
+router.patch("/time-entries/active/stop", authMiddleware, writeLimiter, timeEntryController.stopTimer);
+router.get("/time-entries/active", authMiddleware, readLimiter, timeEntryController.getActiveTimer);
 
 // User(auth)
-router.get("/time-entries", readLimiter, timeEntryController.getMyEntries);
+router.get("/time-entries", authMiddleware, readLimiter, timeEntryController.getMyEntries);
 
 // Admin
 router.get("/time-entries/user/:userId", adminMiddleware, readLimiter, timeEntryController.getEntriesByUser);
