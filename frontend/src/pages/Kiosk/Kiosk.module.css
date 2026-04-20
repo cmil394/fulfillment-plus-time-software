@@ -57,8 +57,9 @@
 .tableCard {
   background: #ffffff;
   border: 1px solid #e8e8e4;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.02);
 }
 
 .table {
@@ -96,7 +97,7 @@
 }
 
 .cell {
-  padding: 0.9rem 1.25rem;
+  padding: 1rem 1.25rem;
   font-size: 14px;
   color: #2c2c28;
   border-bottom: 1px solid #f0f0ec;
@@ -175,10 +176,10 @@
 
 .btn {
   font-family: "Geist", sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
-  border-radius: 6px;
-  padding: 0.35rem 0.85rem;
+  border-radius: 7px;
+  padding: 0.5rem 1rem;
   cursor: pointer;
   border: 1px solid transparent;
   transition: all 0.12s;
@@ -231,7 +232,8 @@
 }
 
 .pinRow {
-  background: #fafaf8;
+  background: #f5f7fc;
+  border-top: 1px solid #e4eaf5;
 }
 
 .pinRow .cell {
@@ -344,22 +346,47 @@
 
 .select {
   width: 100%;
-  padding: 6px 8px;
-  border: 1px solid var(--border, #e2e8f0);
-  border-radius: 6px;
-  background: var(--surface, #fff);
-  color: var(--text, #1a202c);
-  font-size: 0.875rem;
+  padding: 7px 10px;
+  border: 1.5px solid #d8d8d2;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #2c2c28;
+  font-family: "Geist", sans-serif;
+  font-size: 13px;
   cursor: pointer;
   outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888880' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
 }
 
 .select:focus {
-  border-color: var(--primary, #3b82f6);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+  border-color: #1a3a6b;
+  box-shadow: 0 0 0 3px rgba(26, 58, 107, 0.1);
 }
 
 .select:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.elapsed {
+  font-family: "Geist Mono", monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a3a6b;
+  background: rgba(26, 58, 107, 0.07);
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  letter-spacing: 0.04em;
+}
+
+.loadingHint {
+  font-size: 12px;
+  color: #b0b0a8;
+  font-family: "Geist Mono", monospace;
+  font-style: italic;
 }
