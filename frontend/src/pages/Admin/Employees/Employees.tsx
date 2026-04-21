@@ -204,7 +204,12 @@ function Employees() {
     setActionLoading(userId);
     setSaveError(null);
     try {
-      await authService.updateUser(userId, editDraft);
+      const employee = employees.find((u) => u.id === userId);
+      const payload =
+        employee?.role === "Owner"
+          ? (({ role: _role, ...rest }) => rest)(editDraft as Record<string, unknown>)
+          : editDraft;
+      await authService.updateUser(userId, payload as Partial<typeof editDraft>);
       // Update local state so the table reflects changes immediately
       setEmployees((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, ...editDraft } : u)),

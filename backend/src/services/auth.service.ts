@@ -43,7 +43,6 @@ export const registerUser = async (data: RegisterInput) => {
     throw new ConflictError("Email already registered");
   }
 
-  // TODO: Update Prisma schema to support middle names
   const firstName = data.firstname.trim();
   const lastName = data.lastname.trim();
   const fullname = firstName + lastName;
@@ -206,8 +205,8 @@ export const adminUpdateUser = async (
   const target = await prisma.user.findUnique({ where: { id: targetId } });
   if (!target) throw new NotFoundError("User not found");
 
-  if (target.role === "Owner") {
-    throw new ForbiddenError("Owner role cannot be modified");
+  if (target.role === "Owner" && data.role) {
+    throw new ForbiddenError("Owner role cannot be changed");
   }
 
   if (data.role && data.role !== target.role) {
