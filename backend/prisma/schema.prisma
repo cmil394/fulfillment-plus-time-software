@@ -9,18 +9,18 @@ datasource db {
 
 // Users/Authentication
 model User {
-  id         String     @id @default(uuid())
-  email      String     @unique
-  password   String
-  fullName   String
-  firstName  String?
-  lastName   String?
-  pin        String?    @unique
-  role       Role       @default(Employee)
-  status     UserStatus @default(PENDING)
+  id          String      @id @default(uuid())
+  email       String      @unique
+  password    String
+  fullName    String
+  firstName   String
+  lastName    String
+  pin         String?     @unique
+  role        Role        @default(Employee)
+  status      UserStatus  @default(PENDING)
   //hourlyRate Decimal?   @db.Decimal(10, 2)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   timeEntries TimeEntry[]
 
   @@map("users")
@@ -33,7 +33,7 @@ model Customer {
   ownerName String
   email     String?
   phone     String?
-  avatarUrl  String?
+  avatarUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -45,13 +45,13 @@ model Customer {
 
 // Tasks (belongs to customer)
 model Task {
-  id          String   @id @default(uuid())
+  id          String      @id @default(uuid())
   customerId  String
   name        String
   description String?
   //fixedRate   Decimal? @db.Decimal(10, 2) 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   customer    Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
   timeEntries TimeEntry[]
 
@@ -106,15 +106,12 @@ enum UserStatus {
   REJECTED
 }
 
-/* 
-
-Database Changes
-
-make first and lastname nonoptional fullname made up from those 2
-Last login - user
-More roles
-Remove rates
-Avatar for profile pictures - Customer and User
-More fields for Customers like email, phone number, owner name
-
-*/
+/**
+ * Database Changes
+ * make first and lastname nonoptional fullname made up from those 2
+ * Last login - user
+ * More roles
+ * Remove rates
+ * Avatar for profile pictures - Customer and User
+ * More fields for Customers like email, phone number, owner name
+ */

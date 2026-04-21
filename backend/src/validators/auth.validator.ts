@@ -5,7 +5,8 @@ export const registerSchema = z
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
-    fullname: z.string().min(2, "Full name must be at least 2 characters"),
+    firstname: z.string().min(2, "First name must be at least 2 charcters"),
+    lastname: z.string().min(2, "Last name must be at least 2 charcters"),
     pin: z.string().regex(/^\d{5}$/).optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -29,7 +30,7 @@ export const adminUpdateUserSchema = z.object({
 export const pinLoginSchema = z.object({
   pin: z.string().min(5).max(5).regex(/^\d+$/, "PIN must be numeric"),
 });
- 
+
 
 export type AdminUpdateUserInput = z.infer<typeof adminUpdateUserSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;

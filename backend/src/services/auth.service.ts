@@ -44,10 +44,9 @@ export const registerUser = async (data: RegisterInput) => {
   }
 
   // TODO: Update Prisma schema to support middle names
-  const nameParts = data.fullname.trim().split(" ");
-  const firstName = nameParts[0];
-  const middleNames = nameParts.slice(1, -1).join(" ");
-  const lastName = nameParts[nameParts.length - 1];
+  const firstName = data.firstname.trim();
+  const lastName = data.lastname.trim();
+  const fullname = firstName + lastName;
 
   const hashedPassword = await hashPassword(data.password);
   const generatedPin = Math.floor(Math.random() * 100000)
@@ -58,9 +57,9 @@ export const registerUser = async (data: RegisterInput) => {
     data: {
       email: email,
       password: hashedPassword,
-      fullName: data.fullname,
-      firstName,
-      lastName,
+      firstName: data.firstname,
+      lastName: data.lastname,
+      fullName: fullname,
       pin: generatedPin,
       role: "Employee",
       status: "PENDING",
@@ -107,21 +106,21 @@ export const loginWithPin = async (pin: string) => {
   const user = await prisma.user.findUnique({
     where: { pin },
   });
- 
+
   if (!user) {
-    throw new AppError(401,"Invalid PIN");
+    throw new AppError(401, "Invalid PIN");
   }
- 
+
   if (user.status !== "APPROVED") {
-    throw new AppError(403,"Account not approved");
+    throw new AppError(403, "Account not approved");
   }
- 
+
   const token = generateToken({
     userId: user.id,
     email: user.email,
     role: user.role,
   });
- 
+
   return {
     token,
     user: {
@@ -140,7 +139,7 @@ export const clockOut = async (userId: string) => {
   if (!user) throw new AppError(404, "User not found");
   return { userId };
 };
- 
+
 
 // User
 export const getUserProfile = async (userId: string) => {
