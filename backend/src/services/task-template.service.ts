@@ -4,7 +4,7 @@ import {
   UpdateTaskTemplateInput,
   AssignTaskTemplateInput,
 } from "../validators/task-template.validator";
-import { NotFoundError } from "../utils/errors";
+import { NotFoundError, ConflictError } from "../utils/errors";
 
 // Selects & Formatters
 const templateSelect = {
@@ -78,6 +78,11 @@ export const assignTaskTemplate = async (
     where: { id: data.customerId },
   });
   if (!customer) throw new NotFoundError("Customer not found");
+
+  const existing = await prisma.task.findFirst({
+    where: { customerId: data.customerId, name: template.name },
+  });
+  if (existing) throw new ConflictError(`Task "${template.name}" already exists for this customer`);
 
   const task = await prisma.task.create({
     data: {

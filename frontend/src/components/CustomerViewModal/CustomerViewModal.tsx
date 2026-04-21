@@ -96,9 +96,11 @@ function CustomerViewModal({ customer, onClose }: Props) {
       });
       await fetchTasks();
       setView("details");
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Failed to assign template:", err);
-      setSubmitError("Could not assign preset. Please try again.");
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setSubmitError(message ?? "Could not assign preset. Please try again.");
     } finally {
       setSubmitting(false);
     }
