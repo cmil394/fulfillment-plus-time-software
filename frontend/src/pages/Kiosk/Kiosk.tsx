@@ -33,22 +33,24 @@ interface PinInputProps {
 }
 
 function PinInput({ onSuccess }: PinInputProps) {
+  const [employeeCode, setEmployeeCode] = useState("");
   const [pin, setPin] = useState("");
   const [state, setState] = useState<PinState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const codeRef = useRef<HTMLInputElement>(null);
+  const pinRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    codeRef.current?.focus();
   }, []);
 
   const handleSubmit = async () => {
-    if (pin.length !== 5) return;
+    if (!employeeCode.trim() || pin.length !== 5) return;
     setState("loading");
     setErrorMsg("");
 
     try {
-      const result = await authService.loginWithPin(pin);
+      const result = await authService.loginWithPin(employeeCode.trim().toUpperCase(), pin);
       const { user, token } = result.data;
 
       onSuccess({
@@ -58,31 +60,38 @@ function PinInput({ onSuccess }: PinInputProps) {
         token,
       });
 
+      setEmployeeCode("");
       setPin("");
       setState("idle");
-      inputRef.current?.focus();
+      codeRef.current?.focus();
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? "Invalid PIN";
+          ?.message ?? "Invalid employee code or PIN";
       setState("error");
       setErrorMsg(message);
       setPin("");
-      inputRef.current?.focus();
+      codeRef.current?.focus();
     }
   };
 
-  const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleSubmit();
+  const handleCodeChange = (v: string) => {
+    setEmployeeCode(v.toUpperCase().slice(0, 10));
+    if (state === "error") { setState("idle"); setErrorMsg(""); }
   };
 
-  const handleChange = (v: string) => {
-    const numeric = v.replace(/\D/g, "").slice(0, 8);
+  const handlePinChange = (v: string) => {
+    const numeric = v.replace(/\D/g, "").slice(0, 5);
     setPin(numeric);
-    if (state === "error") {
-      setState("idle");
-      setErrorMsg("");
-    }
+    if (state === "error") { setState("idle"); setErrorMsg(""); }
+  };
+
+  const handleCodeKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") pinRef.current?.focus();
+  };
+
+  const handlePinKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleSubmit();
   };
 
   return (
@@ -90,19 +99,36 @@ function PinInput({ onSuccess }: PinInputProps) {
       <td className={`${styles.cell} ${styles.cellSeq}`}>
         <span className={styles.seqPlus}>+</span>
       </td>
-      <td className={styles.cell} colSpan={2}>
+      <td className={styles.cell}>
+        <div className={styles.pinWrap}>
+          <span className={styles.pinLabel}>Code</span>
+          <input
+            ref={codeRef}
+            type="text"
+            autoComplete="off"
+            value={employeeCode}
+            onChange={(e) => handleCodeChange(e.target.value)}
+            onKeyDown={handleCodeKey}
+            placeholder="Employee code"
+            className={`${styles.pinInput} ${state === "error" ? styles.pinInputError : ""}`}
+            disabled={state === "loading"}
+            aria-label="Employee code"
+          />
+        </div>
+      </td>
+      <td className={styles.cell}>
         <div className={styles.pinWrap}>
           <span className={styles.pinLabel}>PIN</span>
           <input
-            ref={inputRef}
+            ref={pinRef}
             type="password"
             inputMode="numeric"
             pattern="[0-9]*"
             autoComplete="off"
             value={pin}
-            onChange={(e) => handleChange(e.target.value)}
-            onKeyDown={handleKey}
-            placeholder="Enter PIN"
+            onChange={(e) => handlePinChange(e.target.value)}
+            onKeyDown={handlePinKey}
+            placeholder="5-digit PIN"
             className={`${styles.pinInput} ${state === "error" ? styles.pinInputError : ""}`}
             disabled={state === "loading"}
             aria-label="Employee PIN"
@@ -116,7 +142,7 @@ function PinInput({ onSuccess }: PinInputProps) {
         <button
           className={`${styles.btn} ${styles.btnConfirm}`}
           onClick={handleSubmit}
-          disabled={pin.length !== 5 || state === "loading"}
+          disabled={!employeeCode.trim() || pin.length !== 5 || state === "loading"}
         >
           {state === "loading" ? "Verifying…" : "Clock In →"}
         </button>

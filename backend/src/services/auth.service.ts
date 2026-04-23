@@ -20,6 +20,7 @@ const publicUserSelect = {
   fullName: true,
   firstName: true,
   lastName: true,
+  employeeCode: true,
   pin: true,
   role: true,
   status: true,
@@ -51,6 +52,10 @@ export const registerUser = async (data: RegisterInput) => {
   const generatedPin = Math.floor(Math.random() * 100000)
     .toString()
     .padStart(5, "0");
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const generatedEmployeeCode = Array.from({ length: 4 }, () =>
+    chars[Math.floor(Math.random() * chars.length)],
+  ).join("");
 
   const user = await prisma.user.create({
     data: {
@@ -59,6 +64,7 @@ export const registerUser = async (data: RegisterInput) => {
       firstName: data.firstname,
       lastName: data.lastname,
       fullName: fullname,
+      employeeCode: generatedEmployeeCode,
       pin: generatedPin,
       role: "Employee",
       status: "PENDING",
@@ -101,13 +107,13 @@ export const loginUser = async (data: LoginInput) => {
   return { user: userWithoutPassword, token };
 };
 
-export const loginWithPin = async (pin: string) => {
+export const loginWithPin = async (employeeCode: string, pin: string) => {
   const user = await prisma.user.findUnique({
-    where: { pin },
+    where: { employeeCode },
   });
 
-  if (!user) {
-    throw new AppError(401, "Invalid PIN");
+  if (!user || user.pin !== pin) {
+    throw new AppError(401, "Invalid employee code or PIN");
   }
 
   if (user.status !== "APPROVED") {

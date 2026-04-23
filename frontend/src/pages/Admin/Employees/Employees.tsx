@@ -32,6 +32,7 @@ interface EditDraft {
   lastName: string;
   email: string;
   role: string;
+  employeeCode: string;
   pin: string;
 }
 
@@ -179,6 +180,7 @@ function Employees() {
       lastName: employee.lastName,
       email: employee.email,
       role: employee.role,
+      employeeCode: employee.employeeCode ?? "",
       pin: employee.pin ?? "",
     });
     setSaveError(null);
@@ -207,7 +209,7 @@ function Employees() {
       const employee = employees.find((u) => u.id === userId);
       const payload =
         employee?.role === "Owner"
-          ? (({ role: _role, ...rest }) => rest)(editDraft as Record<string, unknown>)
+          ? (({ role: _role, ...rest }) => rest)(editDraft as unknown as Record<string, unknown>)
           : editDraft;
       await authService.updateUser(userId, payload as Partial<typeof editDraft>);
       // Update local state so the table reflects changes immediately
@@ -292,14 +294,14 @@ function Employees() {
       currentDir: SortDir,
       setDir: (d: SortDir) => void,
     ) =>
-    (field: SortField) => {
-      if (currentField === field) {
-        setDir(currentDir === "asc" ? "desc" : "asc");
-      } else {
-        setField(field);
-        setDir("asc");
-      }
-    };
+      (field: SortField) => {
+        if (currentField === field) {
+          setDir(currentDir === "asc" ? "desc" : "asc");
+        } else {
+          setField(field);
+          setDir("asc");
+        }
+      };
 
   const handleEmpSort = makeHandleSort(
     empSortField,
@@ -468,7 +470,7 @@ function Employees() {
                     >
                       Role
                     </SortableTh>
-                    <th className={styles.pinCol}>PIN</th>
+                    <th className={styles.pinCol}>Code</th>
                     <SortableTh
                       field="createdAt"
                       activeField={empSortField}
@@ -582,33 +584,28 @@ function Employees() {
                           )}
                         </td>
 
-                        {/* PIN */}
-                        <td className={styles.pinCol}>
+                        {/* Employee Code */}
+                        <td>
                           {isEditing ? (
                             <input
                               className={styles.editInput}
                               type="text"
-                              inputMode="numeric"
-                              maxLength={5}
-                              value={editDraft!.pin}
+                              maxLength={4}
+                              value={editDraft!.employeeCode}
                               onChange={(e) =>
                                 handleDraftChange(
-                                  "pin",
-                                  e.target.value.replace(/\D/g, ""),
+                                  "employeeCode",
+                                  e.target.value.toUpperCase(),
                                 )
                               }
                               disabled={isSaving}
-                              placeholder="PIN"
+                              placeholder="Code"
                               style={{ width: "100%" }}
                             />
-                          ) : employee.pin ? (
-                            "•••••"
                           ) : (
-                            <span
-                              style={{ color: "var(--color-text-muted, #aaa)" }}
-                            >
-                              —
-                            </span>
+                            employee.employeeCode ?? (
+                              <span style={{ color: "var(--color-text-muted, #aaa)" }}>—</span>
+                            )
                           )}
                         </td>
 
@@ -675,7 +672,7 @@ function Employees() {
                             }
                             title={
                               employee.role === "Admin" ||
-                              employee.role === "Owner"
+                                employee.role === "Owner"
                                 ? "Admins cannot be deleted"
                                 : "Delete employee"
                             }

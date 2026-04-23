@@ -53,8 +53,8 @@ export const loginWithPin = async (
   next: NextFunction,
 ) => {
   try {
-    const { pin } = pinLoginSchema.parse(req.body);
-    const result = await authService.loginWithPin(pin);
+    const { employeeCode, pin } = pinLoginSchema.parse(req.body);
+    const result = await authService.loginWithPin(employeeCode, pin);
     res.status(200).json({
       status: "success",
       message: "Login successful",

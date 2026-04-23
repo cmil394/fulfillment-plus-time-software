@@ -19,6 +19,7 @@ export interface User {
   firstName: string;
   lastName: string;
   role: string;
+  employeeCode?: string;
   pin?: string;
   status: string;
   createdAt: string;
@@ -60,8 +61,8 @@ export const authService = {
     return response.data;
   },
 
-  loginWithPin: async (pin: string): Promise<AuthResponse> => {
-    const response = await api.post("/auth/login/pin", { pin });
+  loginWithPin: async (employeeCode: string, pin: string): Promise<AuthResponse> => {
+    const response = await api.post("/auth/login/pin", { employeeCode, pin });
     return response.data;
   },
 

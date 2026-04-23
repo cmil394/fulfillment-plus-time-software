@@ -9,19 +9,20 @@ datasource db {
 
 // Users/Authentication
 model User {
-  id          String      @id @default(uuid())
-  email       String      @unique
-  password    String
-  fullName    String
-  firstName   String
-  lastName    String
-  pin         String?     @unique
-  role        Role        @default(Employee)
-  status      UserStatus  @default(PENDING)
+  id           String      @id @default(uuid())
+  email        String      @unique
+  password     String
+  fullName     String
+  firstName    String
+  lastName     String
+  employeeCode String?     @unique
+  pin          String?
+  role         Role        @default(Employee)
+  status       UserStatus  @default(PENDING)
   //hourlyRate Decimal?   @db.Decimal(10, 2)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  timeEntries TimeEntry[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  timeEntries  TimeEntry[]
 
   @@map("users")
 }

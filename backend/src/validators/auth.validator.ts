@@ -24,10 +24,12 @@ export const adminUpdateUserSchema = z.object({
   lastName: z.string().min(1).optional(),
   email: z.string().email().optional(),
   role: z.enum(["Admin", "Employee"]).optional(),
+  employeeCode: z.string().min(1).max(10).optional(),
   pin: z.string().regex(/^\d{5}$/).optional(),
 });
 
 export const pinLoginSchema = z.object({
+  employeeCode: z.string().min(1, "Employee code is required"),
   pin: z.string().min(5).max(5).regex(/^\d+$/, "PIN must be numeric"),
 });
 

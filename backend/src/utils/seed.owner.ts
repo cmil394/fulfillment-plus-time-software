@@ -34,6 +34,7 @@ export const seedOwner = async () => {
         lastName: "Owner",
         role: "Owner",
         status: "APPROVED",
+        employeeCode: "2712",
         pin: "00427",
       },
     });
