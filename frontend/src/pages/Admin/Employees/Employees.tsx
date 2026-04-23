@@ -32,8 +32,6 @@ interface EditDraft {
   lastName: string;
   email: string;
   role: string;
-  employeeCode: string;
-  pin: string;
 }
 
 function formatElapsed(seconds: number): string {
@@ -180,8 +178,6 @@ function Employees() {
       lastName: employee.lastName,
       email: employee.email,
       role: employee.role,
-      employeeCode: employee.employeeCode ?? "",
-      pin: employee.pin ?? "",
     });
     setSaveError(null);
   };
@@ -586,26 +582,8 @@ function Employees() {
 
                         {/* Employee Code */}
                         <td>
-                          {isEditing ? (
-                            <input
-                              className={styles.editInput}
-                              type="text"
-                              maxLength={4}
-                              value={editDraft!.employeeCode}
-                              onChange={(e) =>
-                                handleDraftChange(
-                                  "employeeCode",
-                                  e.target.value.toUpperCase(),
-                                )
-                              }
-                              disabled={isSaving}
-                              placeholder="Code"
-                              style={{ width: "100%" }}
-                            />
-                          ) : (
-                            employee.employeeCode ?? (
-                              <span style={{ color: "var(--color-text-muted, #aaa)" }}>—</span>
-                            )
+                          {employee.employeeCode ?? (
+                            <span style={{ color: "var(--color-text-muted, #aaa)" }}>—</span>
                           )}
                         </td>
 

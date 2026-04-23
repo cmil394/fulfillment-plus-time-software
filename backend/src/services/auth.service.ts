@@ -236,7 +236,6 @@ export const adminUpdateUser = async (
       lastName: true,
       email: true,
       role: true,
-      pin: true,
     },
   });
 };
