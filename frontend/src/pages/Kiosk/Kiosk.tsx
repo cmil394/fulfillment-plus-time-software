@@ -67,7 +67,7 @@ function PinInput({ onSuccess }: PinInputProps) {
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? "Invalid employee code or PIN";
+          ?.message ?? "Login failed";
       setState("error");
       setErrorMsg(message);
       setPin("");
@@ -76,12 +76,12 @@ function PinInput({ onSuccess }: PinInputProps) {
   };
 
   const handleCodeChange = (v: string) => {
-    setEmployeeCode(v.toUpperCase().slice(0, 10));
+    setEmployeeCode(v.replace(/\D/g, "").slice(0, 4));
     if (state === "error") { setState("idle"); setErrorMsg(""); }
   };
 
   const handlePinChange = (v: string) => {
-    const numeric = v.replace(/\D/g, "").slice(0, 5);
+    const numeric = v.replace(/\D/g, "").slice(0, 4);
     setPin(numeric);
     if (state === "error") { setState("idle"); setErrorMsg(""); }
   };

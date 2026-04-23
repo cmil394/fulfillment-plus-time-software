@@ -109,11 +109,11 @@ export const loginWithPin = async (employeeCode: string, pin: string) => {
   });
 
   if (!user) {
-    throw new AppError(401, "Invalid employee code or PIN");
+    throw new AppError(401, "Invalid employee code");
   }
   const pinValid = user.pin ? await comparePassword(pin, user.pin) : false;
   if (!pinValid) {
-    throw new AppError(401, "Invalid employee code or PIN");
+    throw new AppError(401, "Incorrect PIN");
   }
 
   if (user.status !== "APPROVED") {
