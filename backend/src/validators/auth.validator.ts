@@ -7,7 +7,7 @@ export const registerSchema = z
     confirmPassword: z.string(),
     firstname: z.string().min(2, "First name must be at least 2 charcters"),
     lastname: z.string().min(2, "Last name must be at least 2 charcters"),
-    pin: z.string().regex(/^\d{5}$/).optional(),
+    pin: z.string().regex(/^\d{4}$/).optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -25,12 +25,12 @@ export const adminUpdateUserSchema = z.object({
   email: z.string().email().optional(),
   role: z.enum(["Admin", "Employee"]).optional(),
   employeeCode: z.string().min(1).max(10).optional(),
-  pin: z.string().regex(/^\d{5}$/).optional(),
+  pin: z.string().regex(/^\d{4}$/).optional(),
 });
 
 export const pinLoginSchema = z.object({
-  employeeCode: z.string().min(1, "Employee code is required"),
-  pin: z.string().min(5).max(5).regex(/^\d+$/, "PIN must be numeric"),
+  employeeCode: z.string().min(4).max(4).regex(/^\d+$/, "PIN must be numeric"),
+  pin: z.string().min(4).max(4).regex(/^\d+$/, "PIN must be numeric"),
 });
 
 

@@ -23,6 +23,7 @@ export const seedOwner = async () => {
   }
 
   const hashedPassword = await hashPassword(ownerPassword);
+  const hashedPin = await hashPassword("0427");
 
   try {
     await prisma.user.create({
@@ -35,7 +36,7 @@ export const seedOwner = async () => {
         role: "Owner",
         status: "APPROVED",
         employeeCode: "2712",
-        pin: "00427",
+        pin: hashedPin,
       },
     });
     console.log("Owner account created");

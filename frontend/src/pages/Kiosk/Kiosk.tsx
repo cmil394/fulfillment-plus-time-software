@@ -45,7 +45,7 @@ function PinInput({ onSuccess }: PinInputProps) {
   }, []);
 
   const handleSubmit = async () => {
-    if (!employeeCode.trim() || pin.length !== 5) return;
+    if (employeeCode.length != 4 || pin.length !== 4) return;
     setState("loading");
     setErrorMsg("");
 
@@ -128,7 +128,7 @@ function PinInput({ onSuccess }: PinInputProps) {
             value={pin}
             onChange={(e) => handlePinChange(e.target.value)}
             onKeyDown={handlePinKey}
-            placeholder="5-digit PIN"
+            placeholder="4-digit PIN"
             className={`${styles.pinInput} ${state === "error" ? styles.pinInputError : ""}`}
             disabled={state === "loading"}
             aria-label="Employee PIN"
@@ -142,7 +142,7 @@ function PinInput({ onSuccess }: PinInputProps) {
         <button
           className={`${styles.btn} ${styles.btnConfirm}`}
           onClick={handleSubmit}
-          disabled={!employeeCode.trim() || pin.length !== 5 || state === "loading"}
+          disabled={employeeCode.length != 4 || pin.length !== 4 || state === "loading"}
         >
           {state === "loading" ? "Verifying…" : "Clock In →"}
         </button>
@@ -301,11 +301,11 @@ export default function Kiosk() {
         prev.map((s) =>
           s.timerRunning && s.timerStartTime
             ? {
-                ...s,
-                elapsed: Math.floor(
-                  (Date.now() - s.timerStartTime.getTime()) / 1000,
-                ),
-              }
+              ...s,
+              elapsed: Math.floor(
+                (Date.now() - s.timerStartTime.getTime()) / 1000,
+              ),
+            }
             : s,
         ),
       );
@@ -355,12 +355,12 @@ export default function Kiosk() {
       prev.map((s) =>
         s.id === userId
           ? {
-              ...s,
-              selectedCustomerId: customerId,
-              selectedTaskId: "",
-              tasks: [],
-              loadingTasks: customerId !== "",
-            }
+            ...s,
+            selectedCustomerId: customerId,
+            selectedTaskId: "",
+            tasks: [],
+            loadingTasks: customerId !== "",
+          }
           : s,
       ),
     );
