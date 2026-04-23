@@ -46,7 +46,7 @@ export const registerUser = async (data: RegisterInput) => {
 
   const firstName = data.firstname.trim();
   const lastName = data.lastname.trim();
-  const fullname = firstName + lastName;
+  const fullname = firstName + " " + lastName;
 
   const hashedPassword = await hashPassword(data.password);
   const generatedEmployeeCode = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
