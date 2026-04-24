@@ -62,6 +62,7 @@
   grid-template-rows: 16px 0;
   grid-gap: 22px;
   color: white;
+  margin: 20px 0px;
 }
 
 .subheading1::before,
@@ -70,6 +71,15 @@
   display: block;
   border-bottom: 2px solid #ccc;
   background-color: none;
+}
+
+@media (max-height: 900px) {
+  .subheading1 {
+    font-size: 24px;
+    grid-template-rows: 12px 0;
+    grid-gap: 16px;
+    margin: 15px 0px;
+  }
 }
 
 @media (max-height: 700px) {

@@ -60,7 +60,7 @@ const startServer = async () => {
 
     await seedOwner();
 
-    app.listen(PORT, /*"0.0.0.0",*/() => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server running on http://localhost:${PORT}`);
       console.log(`Health check: http://localhost:${PORT}/api/health`);
       console.log(`Auth endpoints: http://localhost:${PORT}/api/auth`);
