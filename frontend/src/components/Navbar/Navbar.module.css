@@ -9,16 +9,6 @@
   position: relative;
 }
 
-.navbarLinks {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  gap: 0;
-}
 .navbarBrand {
   display: flex;
   align-items: center;
@@ -31,9 +21,6 @@
 }
 
 .logoIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 29px;
 }
 
@@ -41,13 +28,16 @@
   white-space: nowrap;
 }
 
+/* Nav Links Desktop Base */
 .navbarLinks {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   list-style: none;
   margin: 0;
   padding: 0;
   gap: 0;
-  flex: 1;
   justify-content: center;
 }
 
@@ -65,7 +55,8 @@
 }
 
 .navLink {
-  display: block;
+  display: flex;
+  align-items: center;
   padding: 20px 32px;
   color: white;
   text-decoration: none;
@@ -74,8 +65,6 @@
   transition: background-color 0.2s ease;
   border-bottom: 3px solid transparent;
   height: 64px;
-  display: flex;
-  align-items: center;
 }
 
 .navLink:hover {
@@ -92,8 +81,8 @@
 .logOutBtnDesktop {
   width: 100px;
   height: 40px;
-  background: rgb(255, 255, 255);
-  color: rgb(0, 0, 0);
+  background: white;
+  color: black;
   border: none;
   border-radius: 0.625em;
   font-size: 16px;
@@ -106,13 +95,13 @@
 
 .logOutBtn:hover,
 .logOutBtnDesktop:hover {
-  color: rgb(255, 255, 255);
+  color: white;
 }
 
 .logOutBtn:after,
 .logOutBtnDesktop:after {
   content: "";
-  background: rgb(0, 0, 0);
+  background: black;
   position: absolute;
   z-index: -1;
   left: -20%;
@@ -126,19 +115,20 @@
 .logOutBtn:hover:after,
 .logOutBtnDesktop:hover:after {
   transform: skewX(-45deg) scale(1, 1);
-  -webkit-transition: all 0.5s;
-  transition: all 0.5s;
+}
+
+.hamburger {
+  display: none;
 }
 
 /* Responsive design */
 @media (max-width: 846px) {
   .navbar {
     padding: 0 16px;
-    position: relative;
   }
 
   .navbarBrand {
-    flex: 1;
+    flex: 0;
   }
 
   .hamburger {
@@ -149,8 +139,8 @@
     border: none;
     cursor: pointer;
     padding: 8px;
+    margin-left: auto;
     z-index: 1001;
-    margin-right: 8px;
   }
 
   .hamburger span {
@@ -158,19 +148,20 @@
     height: 3px;
     background-color: white;
     border-radius: 2px;
-    transition: all 0.3s ease;
   }
 
-  /* Hide desktop logout on mobile */
+  /* hide desktop logout */
   .logOutBtnDesktop {
     display: none;
   }
 
+  /* MOBILE DROPDOWN MENU */
   .navbarLinks {
     position: fixed;
     top: 64px;
     left: 0;
     right: 0;
+    transform: none;
     flex-direction: column;
     background-color: #0c7ac4;
     max-height: 0;
@@ -195,14 +186,12 @@
 
   .navLink {
     padding: 16px 24px;
-    font-size: 16px;
     height: auto;
     border-bottom: none;
   }
 
   .navLink.active {
     background-color: rgba(255, 255, 255, 0.1);
-    border-bottom: none;
   }
 
   .brandText {
