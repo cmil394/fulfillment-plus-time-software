@@ -43,6 +43,9 @@ Thumbs.db
 # Frontend specific (Vite)
 *.local
 
+# Claude Code local settings
+.claude/settings.local.json
+
 # Testing
 coverage/
 *.tsbuildinfo

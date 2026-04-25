@@ -37,7 +37,15 @@
   min-height: 0;
 }
 
-.profileTab,
+.profileTab {
+  background-color: #1467ae;
+  border-radius: 5px;
+  padding: 10px 15px;
+  padding-top: 0px;
+  flex: 1;
+  min-height: 0;
+}
+
 .reportsTab {
   background-color: #1467ae;
   border-radius: 5px;
@@ -45,6 +53,8 @@
   padding-top: 0px;
   flex: 1;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ≤ 900px = collapse to 2 columns */

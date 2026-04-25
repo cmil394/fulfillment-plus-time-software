@@ -6,6 +6,13 @@ import * as reportController from "../controllers/report.controller";
 const router = Router();
 
 router.get(
+  "/reports/employee/me/summary",
+  authMiddleware,
+  readLimiter,
+  reportController.getEmployeeReportSummary,
+);
+
+router.get(
   "/reports/employee/me",
   authMiddleware,
   readLimiter,

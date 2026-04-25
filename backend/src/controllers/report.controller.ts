@@ -224,6 +224,35 @@ export const getEmployeeReport = async (
   }
 };
 
+export const getEmployeeReportSummary = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user!.userId;
+    const startDate =
+      typeof req.query.startDate === "string" ? req.query.startDate : undefined;
+    const endDate =
+      typeof req.query.endDate === "string" ? req.query.endDate : undefined;
+
+    const data = await reportService.getEmployeeReport(
+      userId,
+      startDate,
+      endDate,
+    );
+    res.json({
+      employeeName: data.employeeName,
+      totalSeconds: data.totalSeconds,
+      customers: data.customers,
+      start: data.start,
+      end: data.end,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getCustomerReport = async (
   req: AuthRequest,
   res: Response,

@@ -1,6 +1,37 @@
 import api from "./api";
 
+export type EmployeeTaskSummary = {
+  taskId: string;
+  taskName: string;
+  seconds: number;
+};
+export type EmployeeCustomerSummary = {
+  customerId: string;
+  customerName: string;
+  totalSeconds: number;
+  tasks: EmployeeTaskSummary[];
+};
+export type EmployeeReportSummary = {
+  employeeName: string;
+  totalSeconds: number;
+  customers: EmployeeCustomerSummary[];
+  start: string;
+  end: string;
+};
+
 export const reportService = {
+  getEmployeeReportSummary: async (
+    startDate?: string,
+    endDate?: string,
+  ): Promise<EmployeeReportSummary> => {
+    const params = new URLSearchParams();
+    if (startDate) params.set("startDate", startDate);
+    if (endDate) params.set("endDate", endDate);
+    const query = params.toString() ? `?${params.toString()}` : "";
+    const response = await api.get(`/reports/employee/me/summary${query}`);
+    return response.data as EmployeeReportSummary;
+  },
+
   downloadEmployeeReport: async (
     startDate?: string,
     endDate?: string,
