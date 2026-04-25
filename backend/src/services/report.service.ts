@@ -69,3 +69,110 @@ export const getCustomerReport = async (
 
   return { customerName: customer.name, taskMap, start, end };
 };
+
+export type EmployeeTaskRow = {
+  taskId: string;
+  taskName: string;
+  seconds: number;
+};
+export type EmployeeCustomerRow = {
+  customerId: string;
+  customerName: string;
+  totalSeconds: number;
+  tasks: EmployeeTaskRow[];
+};
+export type EmployeeReportData = {
+  employeeName: string;
+  totalSeconds: number;
+  customers: EmployeeCustomerRow[];
+  start: Date;
+  end: Date;
+};
+
+export const getEmployeeReport = async (
+  userId: string,
+  startDate?: string,
+  endDate?: string,
+): Promise<EmployeeReportData> => {
+  const now = new Date();
+  const start = startDate
+    ? new Date(startDate)
+    : new Date(now.getFullYear(), now.getMonth(), 1);
+  const end = endDate ? new Date(endDate) : new Date(now);
+  end.setHours(23, 59, 59, 999);
+
+  const [user, entries] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { fullName: true, firstName: true, lastName: true, email: true },
+    }),
+    prisma.timeEntry.findMany({
+      where: {
+        userId,
+        startTime: { gte: start, lte: end },
+        endTime: { not: null },
+      },
+      include: {
+        customer: { select: { id: true, name: true } },
+        task: { select: { id: true, name: true } },
+      },
+      orderBy: { startTime: "asc" },
+    }),
+  ]);
+
+  const employeeName =
+    user?.fullName ||
+    `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() ||
+    user?.email ||
+    "Employee";
+
+  const customerMap = new Map<
+    string,
+    {
+      customerName: string;
+      tasks: Map<string, { taskName: string; seconds: number }>;
+    }
+  >();
+
+  for (const entry of entries) {
+    const customerId = entry.customerId ?? "__unknown__";
+    const customerName = entry.customer?.name ?? "Unknown";
+    const taskId = entry.taskId ?? "__unassigned__";
+    const taskName = entry.task?.name ?? "Unassigned";
+    const duration = entry.durationSeconds ?? 0;
+
+    if (!customerMap.has(customerId))
+      customerMap.set(customerId, { customerName, tasks: new Map() });
+
+    const customerRow = customerMap.get(customerId)!;
+    if (!customerRow.tasks.has(taskId))
+      customerRow.tasks.set(taskId, { taskName, seconds: 0 });
+    customerRow.tasks.get(taskId)!.seconds += duration;
+  }
+
+  let totalSeconds = 0;
+  const customers: EmployeeCustomerRow[] = [];
+
+  for (const [customerId, { customerName, tasks }] of customerMap) {
+    const taskList: EmployeeTaskRow[] = [];
+    let customerTotal = 0;
+
+    for (const [taskId, { taskName, seconds }] of tasks) {
+      taskList.push({ taskId, taskName, seconds });
+      customerTotal += seconds;
+    }
+
+    taskList.sort((a, b) => b.seconds - a.seconds);
+    customers.push({
+      customerId,
+      customerName,
+      totalSeconds: customerTotal,
+      tasks: taskList,
+    });
+    totalSeconds += customerTotal;
+  }
+
+  customers.sort((a, b) => b.totalSeconds - a.totalSeconds);
+
+  return { employeeName, totalSeconds, customers, start, end };
+};

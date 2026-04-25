@@ -6,6 +6,7 @@ import CustomersModal from "./../../components/CustomersModal/CustomersModal";
 import TasksModal from "./../../components/TasksModal/TasksModal";
 import HistoryModal from "./../../components/DashboardComponents/HistoryModal/HistoryModal";
 import ProfileModal from "./../../components/DashboardComponents/ProfileModal/ProfileModal";
+import EmployeeReport from "./../../components/DashboardComponents/EmployeeReport/EmployeeReport";
 
 function Dashboard() {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(
@@ -45,6 +46,7 @@ function Dashboard() {
           </div>
           <div className={styles.reportsTab}>
             <h2 className={titleStyles.subheading1}>Reports</h2>
+            <EmployeeReport />
           </div>
         </div>
       </div>
