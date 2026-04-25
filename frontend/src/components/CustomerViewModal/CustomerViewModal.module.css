@@ -261,6 +261,87 @@
   margin: 0.5rem 0;
 }
 
+/* Report Section */
+.reportSection {
+  padding: 1.25rem 1.5rem 1.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.reportControls {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.reportDateGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reportLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.reportDateInput {
+  padding: 6px 10px;
+  border-radius: 7px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #1a1a2e;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  cursor: pointer;
+}
+
+.reportDateInput:focus {
+  border-color: #3b6fd4;
+  box-shadow: 0 0 0 3px rgba(59, 111, 212, 0.15);
+}
+
+.reportDateInput:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.reportDownloadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  border: none;
+  background: #22c55e;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    opacity 0.15s;
+  white-space: nowrap;
+  height: 33px;
+}
+
+.reportDownloadBtn:hover:not(:disabled) {
+  background: #16a34a;
+}
+
+.reportDownloadBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Add task views */
 .addSection {
   padding: 16px 20px 20px;

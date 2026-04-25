@@ -7,6 +7,7 @@ import customerRoutes from "./routes/customer.routes";
 import taskRoutes from "./routes/task.routes";
 import timeEntryRoutes from "./routes/time-entry.routes";
 import taskTemplateRoutes from "./routes/task-template.routes";
+import reportRoutes from "./routes/report.routes";
 import { seedOwner } from "./utils/seed.owner";
 import { seedCompany } from "./utils/seed.company";
 import { errorHandler } from "./utils/errors";
@@ -32,6 +33,7 @@ app.use("/api", customerRoutes);
 app.use("/api", taskRoutes);
 app.use("/api", timeEntryRoutes);
 app.use("/api", taskTemplateRoutes);
+app.use("/api", reportRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Test database connection

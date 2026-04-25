@@ -14,6 +14,8 @@ import {
   PencilLine,
   CheckCircle2,
   Trash2,
+  FileSpreadsheet,
+  Download,
 } from "lucide-react";
 import type { Customer } from "./../../services/admin-customer.service";
 import { taskService, type Task } from "./../../services/task.service";
@@ -21,6 +23,7 @@ import {
   taskTemplateService,
   type TaskTemplate,
 } from "./../../services/task-template.service";
+import { reportService } from "./../../services/report.service";
 import styles from "./CustomerViewModal.module.css";
 
 // Types
@@ -47,6 +50,44 @@ function CustomerViewModal({ customer, onClose }: Props) {
   const [customDescription, setCustomDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Report state
+  const today = new Date().toISOString().slice(0, 10);
+  const firstOfMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1,
+  )
+    .toISOString()
+    .slice(0, 10);
+  const [reportStart, setReportStart] = useState(firstOfMonth);
+  const [reportEnd, setReportEnd] = useState(today);
+  const [reportLoading, setReportLoading] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
+
+  const handleDownloadReport = async () => {
+    setReportLoading(true);
+    setReportError(null);
+    try {
+      const { blob, filename } = await reportService.downloadCustomerReport(
+        customer.id,
+        reportStart,
+        reportEnd,
+      );
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      setReportError("Failed to generate report. Please try again.");
+    } finally {
+      setReportLoading(false);
+    }
+  };
 
   // Delete confirmation state
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
@@ -98,8 +139,8 @@ function CustomerViewModal({ customer, onClose }: Props) {
       setView("details");
     } catch (err: unknown) {
       console.error("Failed to assign template:", err);
-      const message =
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      const message = (err as { response?: { data?: { message?: string } } })
+        ?.response?.data?.message;
       setSubmitError(message ?? "Could not assign preset. Please try again.");
     } finally {
       setSubmitting(false);
@@ -287,6 +328,52 @@ function CustomerViewModal({ customer, onClose }: Props) {
                   </table>
                 </div>
               )}
+            </div>
+
+            {/* Report Section */}
+            <div className={styles.reportSection}>
+              <h3 className={styles.sectionTitle}>
+                <FileSpreadsheet size={15} />
+                Export Report
+              </h3>
+              <div className={styles.reportControls}>
+                <div className={styles.reportDateGroup}>
+                  <label className={styles.reportLabel}>From</label>
+                  <input
+                    type="date"
+                    className={styles.reportDateInput}
+                    value={reportStart}
+                    max={reportEnd}
+                    onChange={(e) => setReportStart(e.target.value)}
+                    disabled={reportLoading}
+                  />
+                </div>
+                <div className={styles.reportDateGroup}>
+                  <label className={styles.reportLabel}>To</label>
+                  <input
+                    type="date"
+                    className={styles.reportDateInput}
+                    value={reportEnd}
+                    min={reportStart}
+                    onChange={(e) => setReportEnd(e.target.value)}
+                    disabled={reportLoading}
+                  />
+                </div>
+                <button
+                  className={styles.reportDownloadBtn}
+                  onClick={handleDownloadReport}
+                  disabled={reportLoading || !reportStart || !reportEnd}
+                  title="Download Excel report"
+                >
+                  {reportLoading ? (
+                    <Loader2 size={14} className={styles.spin} />
+                  ) : (
+                    <Download size={14} />
+                  )}
+                  {reportLoading ? "Generating…" : "Download .xlsx"}
+                </button>
+              </div>
+              {reportError && <p className={styles.errorMsg}>{reportError}</p>}
             </div>
           </>
         )}
