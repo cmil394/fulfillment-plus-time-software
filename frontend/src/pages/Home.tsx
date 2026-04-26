@@ -8,6 +8,7 @@ import AdminCustomers from "./Admin/AdminCustomers/AdminCustomers";
 import Tasks from "./Tasks/Tasks";
 import AdminTasks from "./Admin/AdminTasks/AdminTasks";
 import Kiosk from "./Kiosk/Kiosk";
+import Profile from "./Profile/Profile";
 
 function Home() {
   const { user, loading } = useAuth();
@@ -58,6 +59,10 @@ function Home() {
             <Navigate to="/login" />
           )
         }
+      />
+      <Route
+        path="/profile"
+        element={user ? <Profile /> : <Navigate to="/login" />}
       />
       <Route
         path="/tasks/:customerId"

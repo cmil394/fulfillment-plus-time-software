@@ -62,15 +62,22 @@ export const authService = {
     return response.data;
   },
 
-  loginWithPin: async (employeeCode: string, pin: string): Promise<AuthResponse> => {
+  loginWithPin: async (
+    employeeCode: string,
+    pin: string,
+  ): Promise<AuthResponse> => {
     const response = await api.post("/auth/login/pin", { employeeCode, pin });
     return response.data;
   },
 
   clockOut: async (token: string): Promise<void> => {
-    await api.post("/auth/logout/pin", {}, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    await api.post(
+      "/auth/logout/pin",
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
   },
 
   getProfile: async (): Promise<{ status: string; data: { user: User } }> => {
@@ -108,6 +115,15 @@ export const authService = {
     } catch {
       return null;
     }
+  },
+
+  changePassword: async (data: {
+    currentPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+  }) => {
+    const response = await api.patch("/auth/change-password", data);
+    return response.data;
   },
 
   deleteUser: (userId: string) => api.delete(`/auth/admin/users/${userId}`),
