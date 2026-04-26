@@ -54,7 +54,7 @@ export const getEmployeeReport = async (
 
     sheet.mergeCells("A1:C1");
     const titleCell = sheet.getCell("A1");
-    titleCell.value = `Hours Report — ${employeeName}`;
+    titleCell.value = `Hours Report - ${employeeName}`;
     titleCell.font = { bold: true, size: 15, color: { argb: NAVY } };
     titleCell.alignment = { horizontal: "left", vertical: "middle" };
     titleCell.fill = fill(TITLE_BG);
@@ -94,17 +94,19 @@ export const getEmployeeReport = async (
     });
 
     const SUBTOTAL_BG = "FFE8F0FB";
+    const ROW_ALT = "FFF5F8FF";
 
     for (const customer of customers) {
-      for (const task of customer.tasks) {
+      customer.tasks.forEach((task, i) => {
+        const rowBg = i % 2 === 0 ? WHITE : ROW_ALT;
         const row = sheet.addRow([
           customer.customerName,
-          task.taskName,
+          ` ${task.taskName}`,
           task.seconds / 3600,
         ]);
-        row.height = 21;
+        row.height = 22;
 
-        row.getCell(1).fill = fill(WHITE);
+        row.getCell(1).fill = fill(rowBg);
         row.getCell(1).font = {
           bold: true,
           size: 10,
@@ -118,7 +120,7 @@ export const getEmployeeReport = async (
           right: thin(),
         };
 
-        row.getCell(2).fill = fill(WHITE);
+        row.getCell(2).fill = fill(rowBg);
         row.getCell(2).font = { size: 10, color: { argb: TEXT_DARK } };
         row.getCell(2).alignment = { vertical: "middle" };
         row.getCell(2).border = {
@@ -128,7 +130,7 @@ export const getEmployeeReport = async (
           right: thin(),
         };
 
-        row.getCell(3).fill = fill(WHITE);
+        row.getCell(3).fill = fill(rowBg);
         row.getCell(3).numFmt = "0.00";
         row.getCell(3).font = { size: 10, color: { argb: TEXT_DARK } };
         row.getCell(3).alignment = { horizontal: "right", vertical: "middle" };
@@ -136,32 +138,32 @@ export const getEmployeeReport = async (
           top: thin(),
           bottom: thin(),
           left: thin(),
-          right: thin(),
+          right: medium(),
         };
-      }
+      });
 
       // Customer subtotal row
       const subRow = sheet.addRow([
-        `${customer.customerName} — Total`,
+        `${customer.customerName} - Total`,
         "",
         customer.totalSeconds / 3600,
       ]);
-      subRow.height = 22;
+      subRow.height = 24;
 
       subRow.getCell(1).fill = fill(SUBTOTAL_BG);
       subRow.getCell(1).font = { bold: true, size: 10, color: { argb: NAVY } };
       subRow.getCell(1).alignment = { vertical: "middle" };
       subRow.getCell(1).border = {
-        top: medium(BLUE),
-        bottom: thin(),
+        top: thin(),
+        bottom: medium(BLUE),
         left: medium(),
         right: thin(),
       };
 
       subRow.getCell(2).fill = fill(SUBTOTAL_BG);
       subRow.getCell(2).border = {
-        top: medium(BLUE),
-        bottom: thin(),
+        top: thin(),
+        bottom: medium(BLUE),
         left: thin(),
         right: thin(),
       };
@@ -171,10 +173,10 @@ export const getEmployeeReport = async (
       subRow.getCell(3).font = { bold: true, size: 10, color: { argb: NAVY } };
       subRow.getCell(3).alignment = { horizontal: "right", vertical: "middle" };
       subRow.getCell(3).border = {
-        top: medium(BLUE),
-        bottom: thin(),
+        top: thin(),
+        bottom: medium(BLUE),
         left: thin(),
-        right: thin(),
+        right: medium(),
       };
     }
 
@@ -184,7 +186,7 @@ export const getEmployeeReport = async (
       cell.fill = fill(NAVY);
       cell.font = { bold: true, size: 12, color: { argb: WHITE } };
       cell.border = {
-        top: medium(),
+        top: thin(NAVY),
         bottom: medium(NAVY),
         left: thin(NAVY),
         right: thin(NAVY),
@@ -285,7 +287,7 @@ export const getCustomerReport = async (
 
     sheet.mergeCells("A1:B1");
     const titleCell = sheet.getCell("A1");
-    titleCell.value = `Hours Report — ${customerName}`;
+    titleCell.value = `Hours Report - ${customerName}`;
     titleCell.font = { bold: true, size: 15, color: { argb: NAVY } };
     titleCell.alignment = { horizontal: "left", vertical: "middle" };
     titleCell.fill = fill(TITLE_BG);
