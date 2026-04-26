@@ -1,10 +1,32 @@
-import { useState, useEffect } from "react";
-import { Download, ChevronRight, ChevronDown, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import {
+  Download,
+  ChevronRight,
+  ChevronDown,
+  ChevronLeft,
+  Loader2,
+  Calendar,
+} from "lucide-react";
 import styles from "./EmployeeReport.module.css";
 import {
   reportService,
   type EmployeeReportSummary,
 } from "../../../services/report.service";
+
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
 function fmtHours(seconds: number) {
   const h = Math.floor(seconds / 3600);
@@ -33,6 +55,21 @@ export default function EmployeeReport() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerYear, setPickerYear] = useState(() => new Date().getFullYear());
+  const pickerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!pickerOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        setPickerOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [pickerOpen]);
 
   useEffect(() => {
     const { start, end } = monthToRange(month);
@@ -75,14 +112,69 @@ export default function EmployeeReport() {
     }
   };
 
+  const selectMonth = (monthIndex: number) => {
+    setMonth(`${pickerYear}-${String(monthIndex + 1).padStart(2, "0")}`);
+    setPickerOpen(false);
+  };
+
+  const [selYear, selMon] = month.split("-").map(Number);
+  const monthLabel = new Date(selYear, selMon - 1, 1).toLocaleDateString(
+    "en-GB",
+    { month: "long", year: "numeric" },
+  );
+
   return (
     <div className={styles.root}>
-      <input
-        type="month"
-        className={styles.monthInput}
-        value={month}
-        onChange={(e) => setMonth(e.target.value)}
-      />
+      <div ref={pickerRef} className={styles.pickerWrap}>
+        <div
+          className={styles.monthBanner}
+          onClick={() => {
+            setPickerYear(selYear);
+            setPickerOpen((o) => !o);
+          }}
+        >
+          <Calendar size={13} className={styles.monthIcon} />
+          <span className={styles.monthLabel}>{monthLabel}</span>
+          <ChevronDown
+            size={13}
+            className={`${styles.monthChevron} ${pickerOpen ? styles.monthChevronOpen : ""}`}
+          />
+        </div>
+
+        {pickerOpen && (
+          <div className={styles.pickerPopover}>
+            <div className={styles.pickerHeader}>
+              <button
+                className={styles.pickerNavBtn}
+                onClick={() => setPickerYear((y) => y - 1)}
+              >
+                <ChevronLeft size={14} />
+              </button>
+              <span className={styles.pickerYear}>{pickerYear}</span>
+              <button
+                className={styles.pickerNavBtn}
+                onClick={() => setPickerYear((y) => y + 1)}
+              >
+                <ChevronRight size={14} />
+              </button>
+            </div>
+            <div className={styles.pickerGrid}>
+              {MONTHS.map((name, i) => {
+                const isSelected = pickerYear === selYear && i + 1 === selMon;
+                return (
+                  <button
+                    key={name}
+                    className={`${styles.pickerMonth} ${isSelected ? styles.pickerMonthSelected : ""}`}
+                    onClick={() => selectMonth(i)}
+                  >
+                    {name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
 
       {loading && (
         <div className={styles.loadingState}>

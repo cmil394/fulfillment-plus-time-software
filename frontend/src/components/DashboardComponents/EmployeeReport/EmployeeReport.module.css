@@ -8,29 +8,135 @@
   overflow: hidden;
 }
 
-.monthInput {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 7px;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 12px;
-  padding: 6px 10px;
-  outline: none;
-  color-scheme: dark;
-  font-family: inherit;
-  width: 100%;
-  box-sizing: border-box;
-  transition: border-color 0.15s;
+.pickerWrap {
+  position: relative;
   flex-shrink: 0;
 }
 
-.monthInput:hover {
-  border-color: rgba(255, 255, 255, 0.2);
+.monthBanner {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 
-.monthInput:focus {
-  border-color: rgba(99, 102, 241, 0.55);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+.monthBanner:hover {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.monthIcon {
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.monthLabel {
+  flex: 1;
+}
+
+.monthChevron {
+  opacity: 0.45;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.monthChevronOpen {
+  transform: rotate(180deg);
+}
+
+.pickerPopover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: #0d1826;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+
+.pickerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.pickerYear {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.pickerNavBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  padding: 3px 7px;
+  border-radius: 5px;
+  transition:
+    background 0.12s,
+    color 0.12s;
+}
+
+.pickerNavBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.pickerGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.pickerMonth {
+  padding: 7px 4px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: none;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  transition:
+    background 0.12s,
+    color 0.12s,
+    border-color 0.12s;
+}
+
+.pickerMonth:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.pickerMonthSelected {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.32);
+  color: #fff;
+  font-weight: 700;
 }
 
 .totalCard {
