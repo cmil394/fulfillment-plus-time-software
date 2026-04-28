@@ -240,10 +240,6 @@ export const adminCreateEntry = async (
   });
 };
 
-export const deleteAllEntries = async () => {
-  return prisma.timeEntry.deleteMany({});
-};
-
 export const deleteEntriesByUser = async (userId: string) => {
   return prisma.timeEntry.deleteMany({ where: { userId } });
 };

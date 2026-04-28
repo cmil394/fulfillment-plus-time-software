@@ -175,22 +175,6 @@ export const adminCreateEntry = async (
   }
 };
 
-export const deleteAllEntries = async (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const result = await timeEntryService.deleteAllEntries();
-    res.status(200).json({
-      status: "success",
-      message: `Deleted ${result.count} time entries`,
-      data: result,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
 
 export const deleteEntriesByUser = async (
   req: AuthRequest,

@@ -8,7 +8,7 @@ const router = Router();
 router.use(authMiddleware);
 
 // Timer(auth)
-router.post("/time-entries/start",authMiddleware, writeLimiter, timeEntryController.startTimer);
+router.post("/time-entries/start", authMiddleware, writeLimiter, timeEntryController.startTimer);
 router.patch("/time-entries/active/stop", authMiddleware, writeLimiter, timeEntryController.stopTimer);
 router.get("/time-entries/active", authMiddleware, readLimiter, timeEntryController.getActiveTimer);
 
@@ -22,7 +22,6 @@ router.get("/time-entries/active/all", adminMiddleware, readLimiter, timeEntryCo
 router.get("/time-entries/:entryId", adminMiddleware, readLimiter, timeEntryController.getEntryById);
 router.post("/time-entries/admin/create", adminMiddleware, writeLimiter, timeEntryController.adminCreateEntry);
 router.patch("/time-entries/:entryId", adminMiddleware, writeLimiter, timeEntryController.updateEntry);
-router.delete("/time-entries", adminMiddleware, writeLimiter, timeEntryController.deleteAllEntries);
 router.delete("/time-entries/:entryId", adminMiddleware, writeLimiter, timeEntryController.deleteEntry);
 router.delete("/time-entries/user/:userId", adminMiddleware, writeLimiter, timeEntryController.deleteEntriesByUser);
 router.delete("/time-entries/customer/:customerId", adminMiddleware, writeLimiter, timeEntryController.deleteEntriesByCustomer);
