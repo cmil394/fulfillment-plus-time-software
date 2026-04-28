@@ -45,4 +45,3 @@ export const seedCompany = async () => {
 
 seedCompany()
   .catch(console.error)
-  .finally(() => prisma.$disconnect());

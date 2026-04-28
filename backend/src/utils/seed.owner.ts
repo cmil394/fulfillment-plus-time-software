@@ -51,4 +51,3 @@ export const seedOwner = async () => {
 
 seedOwner()
   .catch(console.error)
-  .finally(() => prisma.$disconnect());
