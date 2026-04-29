@@ -44,9 +44,10 @@ export const registerUser = async (data: RegisterInput) => {
   if (existing) {
     throw new ConflictError("Email already registered");
   }
-
-  const firstName = data.firstname.trim();
-  const lastName = data.lastname.trim();
+  const firstLetterFirst = data.firstname.trim().substring(0, 1).toUpperCase();
+  const firstLetterLast = data.lastname.trim().substring(0, 1).toUpperCase();
+  const firstName = firstLetterFirst + data.firstname.trim().slice(1);
+  const lastName = firstLetterLast + data.lastname.trim().slice(1);
   const fullname = firstName + " " + lastName;
 
   const hashedPassword = await hashPassword(data.password);
@@ -56,8 +57,8 @@ export const registerUser = async (data: RegisterInput) => {
     data: {
       email: email,
       password: hashedPassword,
-      firstName: data.firstname,
-      lastName: data.lastname,
+      firstName: firstName,
+      lastName: lastName,
       fullName: fullname,
       employeeCode: generatedEmployeeCode,
       pin: generatedPin,
