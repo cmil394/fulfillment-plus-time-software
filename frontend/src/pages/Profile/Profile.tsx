@@ -4,6 +4,7 @@ import { authService } from "../../services/auth.service";
 import type { User } from "../../services/auth.service";
 import styles from "./Profile.module.css";
 import titleStyles from "../../components/CSS Components/titles.module.css";
+import { Eye, EyeOff, Lock } from "lucide-react";
 
 function Profile() {
   const [user, setUser] = useState<User | null>(null);
@@ -15,6 +16,12 @@ function Profile() {
   const [pwError, setPwError] = useState("");
   const [pwSuccess, setPwSuccess] = useState("");
   const [pwLoading, setPwLoading] = useState(false);
+
+  const [showPinPrompt, setShowPinPrompt] = useState(false);
+  const [pinPassword, setPinPassword] = useState("");
+  const [pinError, setPinError] = useState("");
+  const [pinLoading, setPinLoading] = useState(false);
+  const [revealedPin, setRevealedPin] = useState<string | null>(null);
 
   useEffect(() => {
     authService.getProfile().then((res) => setUser(res.data.user));
@@ -76,6 +83,39 @@ function Profile() {
     setConfirmNewPassword("");
   };
 
+  const handleRevealPin = () => {
+    if (revealedPin) {
+      setRevealedPin(null);
+      return;
+    }
+    setPinPassword("");
+    setPinError("");
+    setShowPinPrompt(true);
+  };
+
+  const handlePinPasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    setPinLoading(true);
+    setPinError("");
+    try {
+      await authService.login({ email: user.email, password: pinPassword });
+      setRevealedPin(user.pin ?? "—");
+      setShowPinPrompt(false);
+      setPinPassword("");
+    } catch {
+      setPinError("Incorrect password.");
+    } finally {
+      setPinLoading(false);
+    }
+  };
+
+  const handleCancelPinPrompt = () => {
+    setShowPinPrompt(false);
+    setPinPassword("");
+    setPinError("");
+  };
+
   return (
     <div className={styles.pageContainer}>
       <Navbar />
@@ -109,7 +149,19 @@ function Profile() {
           </div>
           <div className={styles.row}>
             <span className={styles.rowLabel}>PIN</span>
-            <span className={styles.rowValue}>••••</span>
+            <span className={styles.pinRowRight}>
+              <span className={styles.rowValue}>
+                {revealedPin ?? "••••"}
+              </span>
+              <button
+                type="button"
+                className={styles.eyeBtn}
+                onClick={handleRevealPin}
+                aria-label={revealedPin ? "Hide PIN" : "Show PIN"}
+              >
+                {revealedPin ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </span>
           </div>
           <div className={styles.row}>
             <span className={styles.rowLabel}>Password</span>
@@ -200,6 +252,52 @@ function Profile() {
           <p className={styles.success}>{pwSuccess}</p>
         )}
       </div>
+
+      {showPinPrompt && (
+        <div className={styles.pinModalOverlay} onClick={handleCancelPinPrompt}>
+          <div className={styles.pinModal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.pinModalIcon}>
+              <Lock size={22} />
+            </div>
+            <div className={styles.pinModalHeader}>
+              <p className={styles.pinModalTitle}>Verify your identity</p>
+              <p className={styles.pinModalSubtitle}>Enter your account password to reveal your PIN</p>
+            </div>
+            <form className={styles.pinModalForm} onSubmit={handlePinPasswordSubmit}>
+              <div className={styles.pinInputWrap}>
+                <label className={styles.label} htmlFor="pinConfirmPassword">Password</label>
+                <input
+                  id="pinConfirmPassword"
+                  type="password"
+                  className={styles.input}
+                  placeholder="••••••••"
+                  value={pinPassword}
+                  onChange={(e) => setPinPassword(e.target.value)}
+                  autoFocus
+                  required
+                />
+              </div>
+              {pinError && <p className={styles.error}>{pinError}</p>}
+              <div className={styles.pinModalActions}>
+                <button
+                  type="submit"
+                  className={styles.pinConfirmBtn}
+                  disabled={pinLoading}
+                >
+                  {pinLoading ? "Verifying..." : "Reveal PIN"}
+                </button>
+                <button
+                  type="button"
+                  className={styles.cancelBtn}
+                  onClick={handleCancelPinPrompt}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
