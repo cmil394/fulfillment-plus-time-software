@@ -158,6 +158,14 @@ function AdminCustomers() {
       setCreateError("Name is required.");
       return;
     }
+    if (!createDraft.ownerName?.trim()) {
+      setCreateError("Owner name is required.");
+      return;
+    }
+    if (!createDraft.email?.trim()) {
+      setCreateError("Email is required.");
+      return;
+    }
     setCreateLoading(true);
     setCreateError(null);
     try {
@@ -230,9 +238,9 @@ function AdminCustomers() {
         prev.map((c) =>
           c.id === customerId
             ? {
-                ...c,
-                ...editDraft,
-              }
+              ...c,
+              ...editDraft,
+            }
             : c,
         ),
       );
@@ -613,7 +621,7 @@ function AdminCustomers() {
                 />
               </div>
               <div className={styles.createFormField}>
-                <label className={styles.createFormLabel}>Email</label>
+                <label className={styles.createFormLabel}>Email <span className={styles.required}>*</span></label>
                 <input
                   className={styles.editInput}
                   type="email"
@@ -630,7 +638,7 @@ function AdminCustomers() {
                 <input
                   className={styles.editInput}
                   type="tel"
-                  placeholder="+027 123 4567"
+                  placeholder="027 123 4567"
                   value={createDraft.phone ?? ""}
                   onChange={(e) =>
                     handleCreateDraftChange("phone", e.target.value)
