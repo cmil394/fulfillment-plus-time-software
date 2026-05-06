@@ -260,6 +260,13 @@ export const adminUpdateUser = async (
   });
 };
 
+export const adminResetUserPassword = async (targetId: string, newPassword: string) => {
+  const user = await prisma.user.findUnique({ where: { id: targetId } });
+  if (!user) throw new NotFoundError("User not found");
+  const hashed = await hashPassword(newPassword);
+  await prisma.user.update({ where: { id: targetId }, data: { password: hashed } });
+};
+
 export const deleteUser = async (userId: string) => {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) throw new NotFoundError("User not found");

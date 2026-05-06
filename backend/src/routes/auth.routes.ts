@@ -8,6 +8,7 @@ import {
   getPendingUsers,
   approveUser,
   rejectUser,
+  resetUserPassword,
   adminUpdateUser,
   deleteUser,
   loginWithPin,
@@ -33,6 +34,7 @@ router.get("/auth/admin/users", authMiddleware, adminMiddleware, readLimiter, ge
 router.get("/auth/admin/users/pending", authMiddleware, adminMiddleware, readLimiter, getPendingUsers);
 router.patch("/auth/admin/users/:id/approve", authMiddleware, adminMiddleware, writeLimiter, approveUser);
 router.patch("/auth/admin/users/:id/reject", authMiddleware, adminMiddleware, writeLimiter, rejectUser);
+router.patch("/auth/admin/users/:id/reset-password", authMiddleware, adminMiddleware, writeLimiter, resetUserPassword);
 router.patch("/auth/admin/users/:id", authMiddleware, adminMiddleware, writeLimiter, adminUpdateUser);
 router.delete("/auth/admin/users/:id", authMiddleware, adminMiddleware, writeLimiter, deleteUser);
 

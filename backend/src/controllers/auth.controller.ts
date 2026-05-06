@@ -4,6 +4,7 @@ import {
   registerSchema,
   loginSchema,
   adminUpdateUserSchema,
+  adminResetPasswordSchema,
   pinLoginSchema,
   changePasswordSchema,
 } from "../validators/auth.validator";
@@ -159,6 +160,20 @@ export const approveUser = async (
       message: "User approved successfully",
       data: { user },
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const resetUserPassword = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { newPassword } = adminResetPasswordSchema.parse(req.body);
+    await authService.adminResetUserPassword(req.params.id as string, newPassword);
+    res.status(200).json({ status: "success", message: "Password reset successfully" });
   } catch (err) {
     next(err);
   }
