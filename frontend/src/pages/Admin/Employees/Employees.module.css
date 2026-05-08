@@ -485,6 +485,108 @@
   padding: 24px;
 }
 
+.emptyState {
+  position: relative;
+  padding: 32px 24px 40px;
+  overflow: hidden;
+}
+
+.ghostRows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.18) 0%,
+    rgba(0, 0, 0, 0.06) 60%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.18) 0%,
+    rgba(0, 0, 0, 0.06) 60%,
+    transparent 100%
+  );
+}
+
+.ghostRow {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ghostCell {
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.ghostCell:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.ghostCell:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.emptyOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.emptyOverlayIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb;
+  margin-bottom: 2px;
+}
+
+.emptyOverlayIconGreen {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #16a34a;
+}
+
+.emptyOverlayTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.emptyOverlaySubtitle {
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 0;
+}
+
 .resetPwInput {
   width: 100%;
   padding: 9px 12px;

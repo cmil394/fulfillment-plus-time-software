@@ -13,6 +13,8 @@ import {
   Trash2,
   RefreshCw,
   KeyRound,
+  UserCheck,
+  Clock,
 } from "lucide-react";
 import EmployeeTimeCalendar from "../../../components/EmployeeTimeCalendar/EmployeeTimeCalendar";
 import { timeEntryService } from "../../../services/time-entry.service";
@@ -212,9 +214,14 @@ function Employees() {
       const employee = employees.find((u) => u.id === userId);
       const payload =
         employee?.role === "Owner"
-          ? (({ role: _role, ...rest }) => rest)(editDraft as unknown as Record<string, unknown>)
+          ? (({ role: _role, ...rest }) => rest)(
+              editDraft as unknown as Record<string, unknown>,
+            )
           : editDraft;
-      await authService.updateUser(userId, payload as Partial<typeof editDraft>);
+      await authService.updateUser(
+        userId,
+        payload as Partial<typeof editDraft>,
+      );
       // Update local state so the table reflects changes immediately
       setEmployees((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, ...editDraft } : u)),
@@ -331,14 +338,14 @@ function Employees() {
       currentDir: SortDir,
       setDir: (d: SortDir) => void,
     ) =>
-      (field: SortField) => {
-        if (currentField === field) {
-          setDir(currentDir === "asc" ? "desc" : "asc");
-        } else {
-          setField(field);
-          setDir("asc");
-        }
-      };
+    (field: SortField) => {
+      if (currentField === field) {
+        setDir(currentDir === "asc" ? "desc" : "asc");
+      } else {
+        setField(field);
+        setDir("asc");
+      }
+    };
 
   const handleEmpSort = makeHandleSort(
     empSortField,
@@ -625,7 +632,11 @@ function Employees() {
                         {/* Employee Code */}
                         <td>
                           {employee.employeeCode ?? (
-                            <span style={{ color: "var(--color-text-muted, #aaa)" }}>—</span>
+                            <span
+                              style={{ color: "var(--color-text-muted, #aaa)" }}
+                            >
+                              —
+                            </span>
                           )}
                         </td>
 
@@ -685,7 +696,9 @@ function Employees() {
                             {isEditing && (
                               <button
                                 className={styles.resetPwBtn}
-                                onClick={() => handleRequestResetPassword(employee.id)}
+                                onClick={() =>
+                                  handleRequestResetPassword(employee.id)
+                                }
                                 disabled={isSaving}
                                 title="Reset password"
                               >
@@ -708,7 +721,7 @@ function Employees() {
                             }
                             title={
                               employee.role === "Admin" ||
-                                employee.role === "Owner"
+                              employee.role === "Owner"
                                 ? "Admins cannot be deleted"
                                 : "Delete employee"
                             }
@@ -728,9 +741,56 @@ function Employees() {
         {activeTab === "pending" && (
           <div>
             {loading ? (
-              <p>Loading pending users...</p>
+              <div className={styles.emptyState}>
+                <div className={styles.ghostRows}>
+                  {[140, 100, 120, 90].map((w, i) => (
+                    <div key={i} className={styles.ghostRow}>
+                      <div
+                        className={styles.ghostCell}
+                        style={{ width: `${w}px` }}
+                      />
+                      <div
+                        className={styles.ghostCell}
+                        style={{ width: `${w - 20}px` }}
+                      />
+                      <div
+                        className={styles.ghostCell}
+                        style={{ width: "80px" }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
             ) : pendingUsers.length === 0 ? (
-              <p>No pending users</p>
+              <div className={styles.emptyState}>
+                <div className={styles.ghostRows}>
+                  {[140, 100, 120, 90].map((w, i) => (
+                    <div key={i} className={styles.ghostRow}>
+                      <div
+                        className={styles.ghostCell}
+                        style={{ width: `${w}px` }}
+                      />
+                      <div
+                        className={styles.ghostCell}
+                        style={{ width: `${w - 20}px` }}
+                      />
+                      <div
+                        className={styles.ghostCell}
+                        style={{ width: "80px" }}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className={styles.emptyOverlay}>
+                  <div className={styles.emptyOverlayIcon}>
+                    <UserCheck size={26} strokeWidth={1.75} />
+                  </div>
+                  <p className={styles.emptyOverlayTitle}>All clear</p>
+                  <p className={styles.emptyOverlaySubtitle}>
+                    No pending approvals right now
+                  </p>
+                </div>
+              </div>
             ) : (
               /* Pending table */
               <table className={`${styles.table} ${styles.pendingTable}`}>
@@ -852,9 +912,58 @@ function Employees() {
             </div>
 
             {timersLoading ? (
-              <p>Loading active timers...</p>
+              <div className={styles.emptyState}>
+                <div className={styles.ghostRows}>
+                  {[140, 100, 120, 90].map((w, i) => (
+                    <div key={i} className={styles.ghostRow}>
+                      <div
+                        className={styles.ghostCell}
+                        style={{ width: `${w}px` }}
+                      />
+                      <div
+                        className={styles.ghostCell}
+                        style={{ width: `${w - 20}px` }}
+                      />
+                      <div
+                        className={styles.ghostCell}
+                        style={{ width: "80px" }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
             ) : activeTimers.length === 0 ? (
-              <p className={styles.noTimers}>No active timers running.</p>
+              <div className={styles.emptyState}>
+                <div className={styles.ghostRows}>
+                  {[140, 100, 120, 90].map((w, i) => (
+                    <div key={i} className={styles.ghostRow}>
+                      <div
+                        className={styles.ghostCell}
+                        style={{ width: `${w}px` }}
+                      />
+                      <div
+                        className={styles.ghostCell}
+                        style={{ width: `${w - 20}px` }}
+                      />
+                      <div
+                        className={styles.ghostCell}
+                        style={{ width: "80px" }}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className={styles.emptyOverlay}>
+                  <div
+                    className={`${styles.emptyOverlayIcon} ${styles.emptyOverlayIconGreen}`}
+                  >
+                    <Clock size={26} strokeWidth={1.75} />
+                  </div>
+                  <p className={styles.emptyOverlayTitle}>Nobody clocked in</p>
+                  <p className={styles.emptyOverlaySubtitle}>
+                    No active timers running right now
+                  </p>
+                </div>
+              </div>
             ) : (
               <table className={`${styles.table} ${styles.activeTimersTable}`}>
                 <thead>
