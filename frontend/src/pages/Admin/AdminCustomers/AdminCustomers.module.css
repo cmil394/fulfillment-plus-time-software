@@ -44,11 +44,12 @@
   background: #2563eb;
   color: #fff;
   border: none;
-  border-radius: 9px;
+  border-radius: 9px 9px 0 0;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s ease;
+  margin-bottom: 0;
 }
 
 .createBtn:hover {
