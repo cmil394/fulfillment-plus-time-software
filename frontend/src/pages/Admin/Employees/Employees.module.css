@@ -401,28 +401,38 @@
 .refreshBtn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  background: #fff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 8px;
+  gap: 7px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border: none;
+  border-radius: 10px;
   font-size: 13px;
-  font-weight: 500;
-  color: #374151;
+  font-weight: 600;
+  color: #fff;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
   transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease;
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.12s ease;
+  letter-spacing: 0.01em;
 }
 
-.refreshBtn:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
+.refreshBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+  transform: translateY(-1px);
+}
+
+.refreshBtn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
 }
 
 .refreshBtn:disabled {
-  opacity: 0.45;
+  opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .refreshBtnIcon {
