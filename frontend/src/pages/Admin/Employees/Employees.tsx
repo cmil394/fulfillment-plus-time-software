@@ -228,9 +228,9 @@ function Employees() {
       );
       setEditingId(null);
       setEditDraft(null);
-    } catch (err) {
-      console.error("Failed to update user:", err);
-      setSaveError("Failed to save changes. Please try again.");
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "Failed to save changes. Please try again.";
+      setSaveError(msg);
     } finally {
       setActionLoading(null);
     }
@@ -317,8 +317,9 @@ function Employees() {
       setShowResetPwModal(false);
       setPendingResetId(null);
       setResetNewPassword("");
-    } catch {
-      setResetPwError("Failed to reset password. Please try again.");
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "Failed to reset password. Please try again.";
+      setResetPwError(msg);
     } finally {
       setResetPwLoading(false);
     }
