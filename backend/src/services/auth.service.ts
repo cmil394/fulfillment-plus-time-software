@@ -104,7 +104,7 @@ export const loginUser = async (data: LoginInput) => {
 };
 
 export const loginWithPin = async (employeeCode: string, pin: string) => {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where: { employeeCode },
   });
 

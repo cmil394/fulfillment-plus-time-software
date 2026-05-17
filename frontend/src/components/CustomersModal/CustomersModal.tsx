@@ -84,7 +84,9 @@ function CustomersModal({ compact = false, onSelectCustomer }: Props) {
               <img
                 src={
                   customer.avatarUrl
-                    ? `${BASE_URL}${customer.avatarUrl}`
+                    ? customer.avatarUrl.startsWith("http")
+                      ? customer.avatarUrl
+                      : `${BASE_URL}${customer.avatarUrl}`
                     : defaultAvatar
                 }
                 alt="Customer"

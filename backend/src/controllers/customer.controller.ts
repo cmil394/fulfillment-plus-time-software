@@ -5,8 +5,28 @@ import {
   updateCustomerSchema,
 } from "../validators/customer.validator";
 import * as customerService from "../services/customer.service";
-import fs from "fs";
-import path from "path";
+import cloudinary from "../lib/cloudinary";
+
+const uploadToCloudinary = (buffer: Buffer): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream(
+        { folder: "customers/avatars", resource_type: "image" },
+        (error, result) => {
+          if (error || !result) return reject(error);
+          resolve(result.secure_url);
+        },
+      )
+      .end(buffer);
+  });
+};
+
+const deleteFromCloudinary = async (url: string) => {
+  const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[^.]+$/);
+  if (match) {
+    await cloudinary.uploader.destroy(match[1]);
+  }
+};
 
 // Read
 export const getCustomers = async (
@@ -53,9 +73,11 @@ export const createCustomer = async (
 ) => {
   try {
     const data = createCustomerSchema.parse(req.body);
-    const avatarUrl = req.file
-      ? `/uploads/avatars/${req.file.filename}`
-      : undefined;
+    let avatarUrl: string | undefined;
+
+    if (req.file) {
+      avatarUrl = await uploadToCloudinary(req.file.buffer);
+    }
 
     const customer = await customerService.createCustomer({
       ...data,
@@ -120,17 +142,13 @@ export const uploadCustomerAvatar = async (
     }
 
     const customerId = req.params.id as string;
-
-    // Build the public URL that the frontend can use
-    const avatarUrl = `/uploads/avatars/${req.file.filename}`;
-
-    // Fetch old avatar so we can delete it from disk
     const existing = await customerService.getCustomerById(customerId);
+
     if (existing.avatarUrl) {
-      const oldPath = path.join(process.cwd(), existing.avatarUrl);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      await deleteFromCloudinary(existing.avatarUrl);
     }
 
+    const avatarUrl = await uploadToCloudinary(req.file.buffer);
     const customer = await customerService.updateCustomer(customerId, {
       avatarUrl,
     });
