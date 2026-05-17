@@ -53,6 +53,10 @@ export const seedOwner = async () => {
     });
 
     if (existing) {
+      await prisma.user.update({
+        where: { email: owner.email },
+        data: { password: hashedPassword },
+      });
       continue;
     }
 
