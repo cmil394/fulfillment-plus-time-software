@@ -28,7 +28,7 @@ const formatTask = (task: any) => ({
 export const getTasks = async () => {
   const tasks = await prisma.task.findMany({
     select: taskSelect,
-    orderBy: { name: "asc" },
+    orderBy: { createdAt: "asc" },
   });
   return tasks.map(formatTask);
 };
@@ -51,7 +51,7 @@ export const getTasksByCustomer = async (customerId: string) => {
   const tasks = await prisma.task.findMany({
     where: { customerId },
     select: taskSelect,
-    orderBy: { name: "asc" },
+    orderBy: { createdAt: "asc" },
   });
   return tasks.map(formatTask);
 };

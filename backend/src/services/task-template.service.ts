@@ -19,7 +19,7 @@ const templateSelect = {
 export const getTaskTemplates = async () => {
   return prisma.taskTemplate.findMany({
     select: templateSelect,
-    orderBy: { name: "asc" },
+    orderBy: { createdAt: "asc" },
   });
 };
 
@@ -82,7 +82,10 @@ export const assignTaskTemplate = async (
   const existing = await prisma.task.findFirst({
     where: { customerId: data.customerId, name: template.name },
   });
-  if (existing) throw new ConflictError(`Task "${template.name}" already exists for this customer`);
+  if (existing)
+    throw new ConflictError(
+      `Task "${template.name}" already exists for this customer`,
+    );
 
   const task = await prisma.task.create({
     data: {
