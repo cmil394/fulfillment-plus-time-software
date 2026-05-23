@@ -1,54 +1,49 @@
-# FulfillmentPlus-Time-Software
+# FulfillmentPlus Time Software
 
-Time tracking software for Fulfillment Plus designed to track, manage and analyze data on customers, tasks and employees
+Time tracking software for Fulfillment Plus — track, manage, and analyze time across customers, tasks, and employees.
 
-### Features
+## Features
 
-- Employee time tracking and management
+- Employee time tracking with active timer widgets
 - Customer and task management
-- Data analytics and reporting via charts
-- Admin dashboard with role-based access
+- Reports and data exports
+- Admin dashboard with role-based access (Employee, Admin, Owner)
+- Kiosk mode for PIN-based clock in/out
 
 ## Local Setup
 
-- **Frontend:** http://localhost:5173/
+- **Frontend:** http://localhost:5173
 - **Backend:** http://localhost:3001
+- **Database:** postgresql://USERNAME:PASSWORD@localhost:5432/DATABASE_NAME?schema=public
 
 ### Prerequisites
 
 - Node.js
 - npm
-- PostgreSQL (local server)
+- A [Neon](https://neon.tech) PostgreSQL database (or any hosted Postgres) or a local postgres
+- A [Cloudinary](https://cloudinary.com) account (for avatar uploads)
 
 ### Environment Variables
 
-Both folders contain a `.env.sample` file. Copy each one and rename it to `.env`, then fill in your values.
+Both folders contain a `.env.sample` file. Copy each and rename to `.env`, then fill in your values.
 
 **Backend** (`/backend/.env`):
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | PostgreSQL connection string |
-| `ADMIN_EMAIL` | Default admin login email |
-| `ADMIN_PASSWORD` | Default admin login password |
+
+| Variable                | Description                                            |
+| ----------------------- | ------------------------------------------------------ |
+| `DATABASE_URL`          | Neon (or other hosted Postgres) connection string      |
+| `JWT_SECRET`            | Secret key for signing JWTs — use a long random string |
+| `OWNER_EMAIL`           | Email for the seeded owner account                     |
+| `OWNER_PASSWORD`        | Password for the seeded owner account                  |
+| `CLOUDINARY_CLOUD_NAME` | Your Cloudinary cloud name                             |
+| `CLOUDINARY_API_KEY`    | Your Cloudinary API key                                |
+| `CLOUDINARY_API_SECRET` | Your Cloudinary API secret                             |
 
 **Frontend** (`/frontend/.env`):
-| Variable | Description |
-|----------|-------------|
-| `VITE_API_BASE_URL` | Backend API URL |
-| `VITE_ADMIN_EMAIL` | Admin email (must match backend) |
-| `VITE_ADMIN_PASSWORD` | Admin password (must match backend) |
 
-**Setting up your `DATABASE_URL`:**
-
-The connection string follows this format:
-
-```
-postgresql://USERNAME:PASSWORD@localhost:5432/DATABASE_NAME?schema=public
-```
-
-1. Replace `USERNAME` and `PASSWORD` with your local PostgreSQL credentials
-2. Replace `DATABASE_NAME` with whatever you want to call the database (e.g. `timetracking_db`)
-3. Make sure PostgreSQL is running locally before starting the backend
+| Variable            | Description                                        |
+| ------------------- | -------------------------------------------------- |
+| `VITE_API_BASE_URL` | Backend API URL (e.g. `http://localhost:3001/api`) |
 
 ### Steps
 
@@ -64,7 +59,7 @@ postgresql://USERNAME:PASSWORD@localhost:5432/DATABASE_NAME?schema=public
 
 - **Node.js**
 - **TypeScript**
-- **NestJS**
+- **Express**
 - **Prisma**
 - **JWT**
 - **bcrypt**
@@ -74,9 +69,9 @@ postgresql://USERNAME:PASSWORD@localhost:5432/DATABASE_NAME?schema=public
 - **TypeScript**
 - **React**
 - **Recharts**
-- **CSS**
+- **CSS Modules**
 
-### Database
+### Database & Services
 
-- **PostgreSQL**
-- **Neon / Supabase**
+- **PostgreSQL** via [Neon](https://neon.tech) (cloud-hosted)
+- **Cloudinary** (image uploads)
