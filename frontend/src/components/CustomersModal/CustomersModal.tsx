@@ -23,9 +23,11 @@ function CustomersModal({ compact = false, onSelectCustomer }: Props) {
       try {
         const data = await customerService.getAll();
         setCustomers(data);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to fetch customers.");
+      } catch (err: unknown) {
+        const msg =
+          (err as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message ?? "Failed to fetch customers.";
+        setError(msg);
       } finally {
         setLoading(false);
       }

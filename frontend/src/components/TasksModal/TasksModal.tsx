@@ -42,9 +42,11 @@ function TasksModal({ customerId, onBack, compact = false }: Props) {
         ]);
         setTasks(data);
         setCustomerName(customer.name);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to fetch tasks.");
+      } catch (err: unknown) {
+        const msg =
+          (err as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message ?? "Failed to fetch tasks.";
+        setError(msg);
       } finally {
         setLoading(false);
       }

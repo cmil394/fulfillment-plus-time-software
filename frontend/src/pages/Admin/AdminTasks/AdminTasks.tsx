@@ -103,8 +103,11 @@ function AdminTasks() {
       const created = await taskTemplateService.create(payload);
       setTemplates((prev) => [...prev, created]);
       closeModal();
-    } catch {
-      setError("Failed to create template.");
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Failed to create template.";
+      setError(msg);
     } finally {
       setSaving(false);
     }
@@ -124,8 +127,11 @@ function AdminTasks() {
         prev.map((t) => (t.id === updated.id ? updated : t)),
       );
       closeModal();
-    } catch {
-      setError("Failed to update template.");
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Failed to update template.";
+      setError(msg);
     } finally {
       setSaving(false);
     }
@@ -138,8 +144,11 @@ function AdminTasks() {
       await taskTemplateService.delete(selected.id);
       setTemplates((prev) => prev.filter((t) => t.id !== selected.id));
       closeModal();
-    } catch {
-      setError("Failed to delete template.");
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Failed to delete template.";
+      setError(msg);
     } finally {
       setSaving(false);
     }
