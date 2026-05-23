@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.tsx";
 import styles from "./Navbar.module.css";
 
@@ -31,9 +31,9 @@ function Navbar() {
 
         <ul className={styles.navbarLinks}>
           <li>
-            <a href="/login" className={styles.navLink}>
+            <Link to="/login" className={styles.navLink}>
               Log In
-            </a>
+            </Link>
           </li>
         </ul>
       </nav>
@@ -64,76 +64,76 @@ function Navbar() {
       <ul className={`${styles.navbarLinks} ${isMenuOpen ? styles.open : ""}`}>
         {isAdmin && !isInAdminSection && (
           <li>
-            <a
-              href="/admin/employees"
+            <Link
+              to="/admin/employees"
               className={`${styles.navLink} ${
                 isInAdminSection ? styles.active : ""
               }`}
             >
               Admin
-            </a>
+            </Link>
           </li>
         )}
         <li>
-          <a
-            href="/dashboard"
+          <Link
+            to="/dashboard"
             className={`${styles.navLink} ${
               location.pathname === "/dashboard" ? styles.active : ""
             }`}
           >
             Dashboard
-          </a>
+          </Link>
         </li>
 
         {isInAdminSection ? (
           <>
             <li>
-              <a
-                href="/admin/employees"
+              <Link
+                to="/admin/employees"
                 className={`${styles.navLink} ${
                   location.pathname === "/admin/employees" ? styles.active : ""
                 }`}
               >
                 Employees
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="/admin/customers"
+              <Link
+                to="/admin/customers"
                 className={`${styles.navLink} ${
                   location.pathname === "/admin/customers" ? styles.active : ""
                 }`}
               >
                 Manage Customers
-              </a>
+              </Link>
             </li>
             <li className={styles.noRightBorder}>
-              <a
-                href="/admin/tasks"
+              <Link
+                to="/admin/tasks"
                 className={`${styles.navLink} ${
                   location.pathname === "/admin/tasks" ? styles.active : ""
                 }`}
               >
                 Manage Tasks
-              </a>
+              </Link>
             </li>
           </>
         ) : (
           <>
             <li>
-              <a href="/customers" className={styles.navLink}>
+              <Link to="/customers" className={styles.navLink}>
                 Customers
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/reports" className={styles.navLink}>
+              <Link to="/reports" className={styles.navLink}>
                 Reports
-              </a>
+              </Link>
             </li>
             <li className={user ? styles.noRightBorder : ""}>
-              <a href="/profile" className={styles.navLink}>
+              <Link to="/profile" className={styles.navLink}>
                 Profile
-              </a>
+              </Link>
             </li>
           </>
         )}
@@ -141,12 +141,12 @@ function Navbar() {
         {/* Kiosk */}
         {!user && isLoginPage && (
           <li className={styles.noRightBorder}>
-            <a
-              href="/kiosk"
+            <Link
+              to="/kiosk"
               className={`${styles.navLink} ${styles.noRightBorder}`}
             >
               Kiosk
-            </a>
+            </Link>
           </li>
         )}
 
