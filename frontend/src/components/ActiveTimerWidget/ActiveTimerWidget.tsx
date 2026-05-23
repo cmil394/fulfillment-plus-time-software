@@ -80,9 +80,19 @@ export default function ActiveTimerWidget() {
       style={{ left: pos.x, top: pos.y }}
       onMouseDown={onMouseDown}
     >
+      <div className={styles.dragHandle}>
+        <span className={styles.dragDot} />
+        <span className={styles.dragDot} />
+        <span className={styles.dragDot} />
+        <span className={styles.dragDot} />
+        <span className={styles.dragDot} />
+      </div>
+
       <div className={styles.header}>
-        <span className={styles.pulse} />
-        <span className={styles.label}>Live Timer</span>
+        <div className={styles.liveBadge}>
+          <span className={styles.pulse} />
+          <span className={styles.label}>Live</span>
+        </div>
         <button
           className={styles.closeBtn}
           onClick={() => setWidgetVisible(false)}
@@ -92,7 +102,11 @@ export default function ActiveTimerWidget() {
         </button>
       </div>
 
-      <div className={styles.time}>{formatTime(elapsedSeconds)}</div>
+      <div className={styles.timeRow}>
+        <div className={styles.time}>{formatTime(elapsedSeconds)}</div>
+      </div>
+
+      <div className={styles.divider} />
 
       <div className={styles.meta}>
         <span className={styles.taskName}>{activeTimer.taskName}</span>
@@ -104,7 +118,8 @@ export default function ActiveTimerWidget() {
       </div>
 
       <button className={styles.stopBtn} onClick={stopTimer}>
-        ■ Stop
+        <span className={styles.stopIcon} />
+        Stop Timer
       </button>
     </div>
   );
