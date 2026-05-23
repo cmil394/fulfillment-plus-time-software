@@ -78,7 +78,12 @@ export default function EmployeeReport() {
     reportService
       .getEmployeeReportSummary(start, end)
       .then(setSummary)
-      .catch(() => setError("Failed to load summary"))
+      .catch((err: unknown) =>
+        setError(
+          (err as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message ?? "Failed to load summary",
+        ),
+      )
       .finally(() => setLoading(false));
   }, [month]);
 
@@ -105,8 +110,11 @@ export default function EmployeeReport() {
       a.download = filename;
       a.click();
       URL.revokeObjectURL(url);
-    } catch {
-      setError("Failed to download report");
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Failed to download report.";
+      setError(msg);
     } finally {
       setDownloading(false);
     }
