@@ -64,7 +64,7 @@ export const getActiveTimer = async (
 };
 
 export const getAllActiveTimers = async (
-  req: AuthRequest,
+  _req: AuthRequest,
   res: Response,
   next: NextFunction,
 ) => {
@@ -186,6 +186,22 @@ export const adminCreateEntry = async (
   }
 };
 
+export const adminStopTimer = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const entry = await timeEntryService.stopTimer(req.params.userId as string);
+    res.status(200).json({
+      status: "success",
+      message: "Timer stopped",
+      data: entry,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 export const deleteEntriesByUser = async (
   req: AuthRequest,
