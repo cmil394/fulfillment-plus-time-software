@@ -36,23 +36,26 @@ export function ActiveTimerProvider({
   const [widgetVisible, setWidgetVisible] = useState(true);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const clearTick = () => {
+  const clearTick = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-  };
+  }, []);
 
-  const startTick = (startTime: string) => {
-    clearTick();
-    const tick = () => {
-      setElapsedSeconds(
-        Math.floor((Date.now() - new Date(startTime).getTime()) / 1000),
-      );
-    };
-    tick();
-    intervalRef.current = setInterval(tick, 1000);
-  };
+  const startTick = useCallback(
+    (startTime: string) => {
+      clearTick();
+      const tick = () => {
+        setElapsedSeconds(
+          Math.floor((Date.now() - new Date(startTime).getTime()) / 1000),
+        );
+      };
+      tick();
+      intervalRef.current = setInterval(tick, 1000);
+    },
+    [clearTick],
+  );
 
   // Hydrate from server on mount
   useEffect(() => {
@@ -68,32 +71,45 @@ export function ActiveTimerProvider({
         });
         setWidgetVisible(true);
         startTick(active.startTime);
-        console.log(`[Timer] Resumed — ${taskName} @ ${customerName} (started ${new Date(active.startTime).toLocaleTimeString()})`);
+        console.log(
+          `[Timer] Resumed — ${taskName} @ ${customerName} (started ${new Date(active.startTime).toLocaleTimeString()})`,
+        );
       }
     });
     return clearTick;
-  }, []);
+  }, [clearTick, startTick]);
 
-  const startTimer = useCallback(async (taskId: number) => {
-    const entry = await timeEntryService.startTimer(taskId);
-    const taskName = entry.task?.name ?? "Unknown task";
-    const customerName = entry.customer?.name ?? "";
-    setActiveTimer({
-      taskId: entry.taskId,
-      taskName,
-      customerName,
-      startTime: entry.startTime,
-    });
-    setWidgetVisible(true);
-    startTick(entry.startTime);
-    console.log(`[Timer] Started — ${taskName} @ ${customerName}`);
-  }, []);
+  const startTimer = useCallback(
+    async (taskId: number) => {
+      const entry = await timeEntryService.startTimer(taskId);
+      const taskName = entry.task?.name ?? "Unknown task";
+      const customerName = entry.customer?.name ?? "";
+      setActiveTimer({
+        taskId: entry.taskId,
+        taskName,
+        customerName,
+        startTime: entry.startTime,
+      });
+      setWidgetVisible(true);
+      startTick(entry.startTime);
+      console.log(`[Timer] Started — ${taskName} @ ${customerName}`);
+    },
+    [startTick],
+  );
 
   const stopTimer = useCallback(async () => {
-    const duration = Math.floor((Date.now() - (activeTimer ? new Date(activeTimer.startTime).getTime() : Date.now())) / 1000);
+    const duration = Math.floor(
+      (Date.now() -
+        (activeTimer
+          ? new Date(activeTimer.startTime).getTime()
+          : Date.now())) /
+        1000,
+    );
     const mins = Math.floor(duration / 60);
     const secs = duration % 60;
-    console.log(`[Timer] Stopped — ${activeTimer?.taskName} @ ${activeTimer?.customerName} (${mins}m ${secs}s)`);
+    console.log(
+      `[Timer] Stopped — ${activeTimer?.taskName} @ ${activeTimer?.customerName} (${mins}m ${secs}s)`,
+    );
     await timeEntryService.stopTimer();
     clearTick();
     setActiveTimer(null);

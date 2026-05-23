@@ -3,11 +3,12 @@ import api from "./api";
 export interface TimeEntry {
   id: string;
   userId: string;
+  taskId: number;
   startTime: string;
   endTime: string | null;
   notes?: string;
   durationSeconds?: number;
-  task: { name: string };
+  task: { id?: number; name: string };
   customer: { id?: string; name: string };
 }
 
