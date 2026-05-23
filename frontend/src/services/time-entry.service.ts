@@ -99,6 +99,11 @@ export const timeEntryService = {
     return res.data.data ?? [];
   },
 
+  adminStopTimer: async (userId: string): Promise<TimeEntry> => {
+    const res = await api.patch(`/time-entries/user/${userId}/stop`);
+    return res.data.data;
+  },
+
   adminCreateEntry: async (
     payload: AdminCreateEntryPayload,
   ): Promise<TimeEntry> => {

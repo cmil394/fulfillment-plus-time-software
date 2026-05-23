@@ -118,6 +118,13 @@ function Employees() {
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  // Stop timer modal
+  const [showStopTimerModal, setShowStopTimerModal] = useState(false);
+  const [pendingStopEntry, setPendingStopEntry] = useState<TimeEntry | null>(
+    null,
+  );
+  const [stopTimerLoading, setStopTimerLoading] = useState(false);
+
   const fetchActiveTimers = useCallback(async (isManual = false) => {
     if (isManual) setIsRefreshing(true);
     else setTimersLoading(true);
@@ -347,6 +354,38 @@ function Employees() {
     setPendingResetId(null);
     setResetNewPassword("");
     setResetPwError(null);
+  };
+
+  const handleRequestStopTimer = (entry: TimeEntry) => {
+    setPendingStopEntry(entry);
+    setShowStopTimerModal(true);
+  };
+
+  const handleConfirmStopTimer = async () => {
+    if (!pendingStopEntry) return;
+    setShowStopTimerModal(false);
+    setStopTimerLoading(true);
+    const entry = pendingStopEntry;
+    setPendingStopEntry(null);
+    try {
+      await timeEntryService.adminStopTimer(entry.userId);
+      setActiveTimers((prev) => prev.filter((t) => t.id !== entry.id));
+      const user = (entry as any).user as
+        | { firstName: string; lastName: string }
+        | undefined;
+      console.log(
+        `[Admin] Timer stopped for ${user?.firstName} ${user?.lastName} — ${entry.task?.name} @ ${entry.customer?.name}`,
+      );
+    } catch (err) {
+      console.error("Failed to stop timer:", err);
+    } finally {
+      setStopTimerLoading(false);
+    }
+  };
+
+  const handleCancelStopTimer = () => {
+    setShowStopTimerModal(false);
+    setPendingStopEntry(null);
   };
 
   const makeHandleSort =
@@ -991,6 +1030,7 @@ function Employees() {
                     <th>Customer</th>
                     <th>Task</th>
                     <th>Elapsed</th>
+                    <th>Stop</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1011,6 +1051,16 @@ function Employees() {
                         <td>
                           <span className={styles.activeIndicator} />
                           <ElapsedCell startTime={entry.startTime} />
+                        </td>
+                        <td>
+                          <button
+                            className={styles.rejectBtn}
+                            onClick={() => handleRequestStopTimer(entry)}
+                            disabled={stopTimerLoading}
+                            title="Force stop this timer"
+                          >
+                            Stop
+                          </button>
                         </td>
                       </tr>
                     );
@@ -1114,6 +1164,42 @@ function Employees() {
                 disabled={resetPwLoading}
               >
                 {resetPwLoading ? "Resetting..." : "Reset"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showStopTimerModal && pendingStopEntry && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalIconWrap}>
+              <AlertTriangle size={22} className={styles.modalIcon} />
+            </div>
+            <p className={styles.modalTitle}>Stop timer?</p>
+            <p className={styles.modalSubtitle}>
+              {(() => {
+                const u = (pendingStopEntry as any).user as
+                  | { firstName: string; lastName: string }
+                  | undefined;
+                return u
+                  ? `${u.firstName} ${u.lastName} — ${pendingStopEntry.task?.name} @ ${pendingStopEntry.customer?.name}`
+                  : "This employee's timer will be stopped.";
+              })()}
+            </p>
+            <p className={styles.modalSubtitle1}>Are you sure?</p>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.modalCancelBtn}
+                onClick={handleCancelStopTimer}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.modalConfirmBtn}
+                onClick={handleConfirmStopTimer}
+              >
+                Stop Timer
               </button>
             </div>
           </div>
