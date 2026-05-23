@@ -121,17 +121,26 @@ function Navbar() {
         ) : (
           <>
             <li>
-              <Link to="/customers" className={styles.navLink}>
+              <Link
+                to="/customers"
+                className={`${styles.navLink} ${location.pathname === "/customers" ? styles.active : ""}`}
+              >
                 Customers
               </Link>
             </li>
             <li>
-              <Link to="/reports" className={styles.navLink}>
+              <Link
+                to="/reports"
+                className={`${styles.navLink} ${location.pathname === "/reports" ? styles.active : ""}`}
+              >
                 Reports
               </Link>
             </li>
             <li className={user ? styles.noRightBorder : ""}>
-              <Link to="/profile" className={styles.navLink}>
+              <Link
+                to="/profile"
+                className={`${styles.navLink} ${location.pathname === "/profile" ? styles.active : ""}`}
+              >
                 Profile
               </Link>
             </li>
