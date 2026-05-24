@@ -30,12 +30,12 @@ Both folders contain a `.env.sample` file. Copy each and rename to `.env`, then 
 **Backend** (`/backend/.env`):
 
 | Variable                | Description                                            |
-| ----------------------- | ------------------------------------------------------ |
+| ----------------------- | ------------------------------------------------------ | --- |
 | `DATABASE_URL`          | Neon (or other hosted Postgres) connection string      |
-| `ALLOWED_ORIGIN`        | Frontend URL allowed by CORS (e.g. your Vercel URL)   |
+| `ALLOWED_ORIGIN`        | Frontend URL allowed by CORS (e.g. your Vercel URL)    |
 | `JWT_SECRET`            | Secret key for signing JWTs — use a long random string |
-| `OWNER_EMAIL`           | Email for the seeded owner account                     |
-| `OWNER_PASSWORD`        | Password for the seeded owner account                  |
+| `OWNER_EMAIL`           | Email for the seeded system owner account              |
+| `OWNER_PASSWORD`        | Password for the seeded system owner account           |     |
 | `CLOUDINARY_CLOUD_NAME` | Your Cloudinary cloud name                             |
 | `CLOUDINARY_API_KEY`    | Your Cloudinary API key                                |
 | `CLOUDINARY_API_SECRET` | Your Cloudinary API secret                             |
