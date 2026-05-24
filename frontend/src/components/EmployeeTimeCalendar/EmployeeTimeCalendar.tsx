@@ -20,10 +20,7 @@ import {
 } from "../../services/time-entry.service";
 import { customerService } from "../../services/customer.service";
 import { taskService } from "../../services/task.service";
-import type {
-  TimeEntry,
-  GroupedByCustomer,
-} from "../../services/time-entry.service";
+import type { TimeEntry } from "../../services/time-entry.service";
 import type { Customer } from "../../services/customer.service";
 import type { Task } from "../../services/task.service";
 
