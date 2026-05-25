@@ -3,6 +3,15 @@ config();
 
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
+
+const connectionString = process.env.DATABASE_URL!;
+console.log(`[DB] Host: ${new URL(connectionString).hostname}`);
+
+const pool = new Pool({
+  connectionString,
+  max: 10,
+});
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -11,16 +20,8 @@ const globalForPrisma = globalThis as unknown as {
 let prisma: PrismaClient;
 
 if (!globalForPrisma.prisma) {
-  const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL!,
-    min: 2,
-    max: 10,
-  });
-
-  globalForPrisma.prisma = new PrismaClient({
-    adapter,
-    // log: ["error", "warn", "query"],
-  });
+  const adapter = new PrismaPg(pool);
+  globalForPrisma.prisma = new PrismaClient({ adapter });
 }
 
 prisma = globalForPrisma.prisma;
