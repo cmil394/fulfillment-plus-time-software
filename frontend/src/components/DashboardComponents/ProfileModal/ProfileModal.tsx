@@ -1,23 +1,10 @@
-import { useEffect, useState } from "react";
-import { authService } from "./../../../services/auth.service";
-import type { User } from "./../../../services/auth.service";
+import { useAuth } from "../../../context/AuthContext";
 import styles from "./ProfileModal.module.css";
 
 export default function ProfileModal() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    authService
-      .getProfile()
-      .then((res) => setUser(res.data.user))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) return null;
-  if (error || !user)
+  if (!user)
     return (
       <p
         style={{
