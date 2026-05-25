@@ -7,10 +7,19 @@ export interface Customer {
   avatarUrl?: string;
 }
 
+let inflightGetAll: Promise<Customer[]> | null = null;
+
 export const customerService = {
-  getAll: async (): Promise<Customer[]> => {
-    const response = await api.get("/customers");
-    return response.data.data;
+  getAll: (): Promise<Customer[]> => {
+    if (!inflightGetAll) {
+      inflightGetAll = api
+        .get("/customers")
+        .then((r) => r.data.data as Customer[])
+        .finally(() => {
+          inflightGetAll = null;
+        });
+    }
+    return inflightGetAll;
   },
 
   getById: async (id: string): Promise<Customer> => {
