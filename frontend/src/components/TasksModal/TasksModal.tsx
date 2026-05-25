@@ -12,6 +12,7 @@ interface Props {
   customerId: string;
   onBack: () => void;
   compact?: boolean;
+  customerName?: string;
 }
 
 interface PopupState {
@@ -20,12 +21,19 @@ interface PopupState {
   y: number;
 }
 
-function TasksModal({ customerId, onBack, compact = false }: Props) {
+function TasksModal({
+  customerId,
+  onBack,
+  compact = false,
+  customerName: customerNameProp,
+}: Props) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [customerName, setCustomerName] = useState<string>("");
+  const [customerName, setCustomerName] = useState<string>(
+    customerNameProp ?? "",
+  );
   const [openPopup, setOpenPopup] = useState<PopupState | null>(null);
   const [shakeTaskId, setShakeTaskId] = useState<number | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
@@ -38,10 +46,12 @@ function TasksModal({ customerId, onBack, compact = false }: Props) {
       try {
         const [data, customer] = await Promise.all([
           taskService.getByCustomer(customerId),
-          customerService.getById(customerId),
+          customerNameProp
+            ? Promise.resolve(null)
+            : customerService.getById(customerId),
         ]);
         setTasks(data);
-        setCustomerName(customer.name);
+        if (customer) setCustomerName(customer.name);
       } catch (err: unknown) {
         const msg =
           (err as { response?: { data?: { message?: string } } })?.response

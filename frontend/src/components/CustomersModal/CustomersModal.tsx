@@ -8,7 +8,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3001";
 
 interface Props {
   compact?: boolean;
-  onSelectCustomer?: (id: string) => void;
+  onSelectCustomer?: (id: string, name: string) => void;
 }
 
 function CustomersModal({ compact = false, onSelectCustomer }: Props) {
@@ -40,9 +40,9 @@ function CustomersModal({ compact = false, onSelectCustomer }: Props) {
     c.name.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const handleTasksClick = (id: string) => {
+  const handleTasksClick = (id: string, name: string) => {
     if (compact && onSelectCustomer) {
-      onSelectCustomer(id);
+      onSelectCustomer(id, name);
     } else {
       navigate(`/tasks/${id}`);
     }
@@ -105,7 +105,9 @@ function CustomersModal({ compact = false, onSelectCustomer }: Props) {
               </p>
               <button
                 className={compact ? styles.viewBtnCompact : styles.viewBtn}
-                onClick={() => handleTasksClick(String(customer.id))}
+                onClick={() =>
+                  handleTasksClick(String(customer.id), customer.name)
+                }
               >
                 Tasks
               </button>

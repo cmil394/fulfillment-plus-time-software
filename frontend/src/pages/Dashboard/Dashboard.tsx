@@ -12,6 +12,7 @@ function Dashboard() {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(
     null,
   );
+  const [selectedCustomerName, setSelectedCustomerName] = useState<string>("");
 
   return (
     <div className={styles.dashboardContainer}>
@@ -26,12 +27,19 @@ function Dashboard() {
             <TasksModal
               compact
               customerId={selectedCustomerId}
-              onBack={() => setSelectedCustomerId(null)}
+              customerName={selectedCustomerName}
+              onBack={() => {
+                setSelectedCustomerId(null);
+                setSelectedCustomerName("");
+              }}
             />
           ) : (
             <CustomersModal
               compact
-              onSelectCustomer={(id) => setSelectedCustomerId(id)}
+              onSelectCustomer={(id, name) => {
+                setSelectedCustomerId(id);
+                setSelectedCustomerName(name);
+              }}
             />
           )}
         </div>
