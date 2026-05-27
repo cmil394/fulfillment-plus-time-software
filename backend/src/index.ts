@@ -49,8 +49,7 @@ const startServer = async () => {
     await prisma.$connect();
     console.log("Database connected");
 
-    await seedOwner();
-    await seedCompany();
+    await Promise.all([seedOwner(), seedCompany()]);
 
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server running on http://localhost:${PORT}`);

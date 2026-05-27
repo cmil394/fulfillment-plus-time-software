@@ -278,9 +278,15 @@ export const adminUpdateUser = async (
 export const adminResetUserPassword = async (
   targetId: string,
   newPassword: string,
+  requesterRole: string,
 ) => {
   const user = await prisma.user.findUnique({ where: { id: targetId } });
   if (!user) throw new NotFoundError("User not found");
+  if (user.role === "Owner" && requesterRole !== "Owner") {
+    throw new ForbiddenError(
+      "Only an Owner can reset another Owner's password",
+    );
+  }
   const hashed = await hashPassword(newPassword);
   await prisma.user.update({
     where: { id: targetId },

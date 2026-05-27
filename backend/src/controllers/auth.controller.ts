@@ -193,6 +193,7 @@ export const resetUserPassword = async (
     await authService.adminResetUserPassword(
       req.params.id as string,
       newPassword,
+      req.user!.role,
     );
     res
       .status(200)
