@@ -91,11 +91,11 @@ export const getMyEntries = async (
       userId,
       ...(startDate || endDate
         ? {
-            startTime: {
-              ...(startDate && { gte: new Date(startDate) }),
-              ...(endDate && { lte: new Date(endDate) }),
-            },
-          }
+          startTime: {
+            ...(startDate && { gte: new Date(startDate) }),
+            ...(endDate && { lte: new Date(endDate) }),
+          },
+        }
         : {}),
     },
     orderBy: { startTime: "desc" },
@@ -118,11 +118,11 @@ export const getEntriesByUser = async (
       endTime: { not: null },
       ...(startDate || endDate
         ? {
-            startTime: {
-              ...(startDate && { gte: new Date(startDate) }),
-              ...(endDate && { lte: new Date(endDate) }),
-            },
-          }
+          startTime: {
+            ...(startDate && { gte: new Date(startDate) }),
+            ...(endDate && { lte: new Date(endDate) }),
+          },
+        }
         : {}),
     },
     orderBy: { startTime: "desc" },
@@ -132,30 +132,14 @@ export const getEntriesByUser = async (
     },
   });
 
-  // Group by customer
-  const grouped = entries.reduce(
-    (acc, entry) => {
-      const customerId = entry.customer.id;
-      if (!acc[customerId]) {
-        acc[customerId] = {
-          customer: entry.customer,
-          totalSeconds: 0,
-          entries: [],
-        };
-      }
-      acc[customerId].entries.push(entry);
-      acc[customerId].totalSeconds += entry.durationSeconds ?? 0;
-      return acc;
-    },
-    {} as Record<
-      string,
-      {
-        customer: { id: string; name: string };
-        totalSeconds: number;
-        entries: typeof entries;
-      }
-    >,
-  );
+  const grouped: Record<string, { customer: { id: string; name: string }; totalSeconds: number; entries: typeof entries }> = {};
+
+  for (const entry of entries) {
+    const cid = entry.customer.id;
+    if (!grouped[cid]) grouped[cid] = { customer: entry.customer, totalSeconds: 0, entries: [] };
+    grouped[cid].entries.push(entry);
+    grouped[cid].totalSeconds += entry.durationSeconds ?? 0;
+  }
 
   return Object.values(grouped);
 };
@@ -171,11 +155,11 @@ export const getEntriesByCustomer = async (
       endTime: { not: null },
       ...(startDate || endDate
         ? {
-            startTime: {
-              ...(startDate && { gte: new Date(startDate) }),
-              ...(endDate && { lte: new Date(endDate) }),
-            },
-          }
+          startTime: {
+            ...(startDate && { gte: new Date(startDate) }),
+            ...(endDate && { lte: new Date(endDate) }),
+          },
+        }
         : {}),
     },
     orderBy: { startTime: "desc" },
@@ -185,30 +169,14 @@ export const getEntriesByCustomer = async (
     },
   });
 
-  // Group by user
-  const grouped = entries.reduce(
-    (acc, entry) => {
-      const userId = entry.user.id;
-      if (!acc[userId]) {
-        acc[userId] = {
-          user: entry.user,
-          totalSeconds: 0,
-          entries: [],
-        };
-      }
-      acc[userId].entries.push(entry);
-      acc[userId].totalSeconds += entry.durationSeconds ?? 0;
-      return acc;
-    },
-    {} as Record<
-      string,
-      {
-        user: { id: string; fullName: string };
-        totalSeconds: number;
-        entries: typeof entries;
-      }
-    >,
-  );
+  const grouped: Record<string, { user: { id: string; fullName: string }; totalSeconds: number; entries: typeof entries }> = {};
+
+  for (const entry of entries) {
+    const uid = entry.user.id;
+    if (!grouped[uid]) grouped[uid] = { user: entry.user, totalSeconds: 0, entries: [] };
+    grouped[uid].entries.push(entry);
+    grouped[uid].totalSeconds += entry.durationSeconds ?? 0;
+  }
 
   return Object.values(grouped);
 };
@@ -276,7 +244,7 @@ export const adminCreateEntry = async (
     },
     include: {
       task: { select: { name: true } },
-      customer: { select: { name: true } },
+      customer: { select: { id: true, name: true } },
       user: { select: { id: true, firstName: true, lastName: true } },
     },
   });
@@ -351,7 +319,7 @@ export const updateEntry = async (
     },
     include: {
       task: { select: { name: true } },
-      customer: { select: { name: true } },
+      customer: { select: { id: true, name: true } },
       user: { select: { id: true, firstName: true, lastName: true } },
     },
   });
