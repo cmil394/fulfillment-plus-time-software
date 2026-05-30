@@ -24,10 +24,10 @@ function Navbar() {
         <div className={styles.navbarBrand}>
           <img
             src={logoWhite}
-            alt="Fulfillment Plus Logo"
+            alt="Fulfilment Plus Logo"
             className={styles.logoIcon}
           />
-          <span className={styles.brandText}>Fulfillment Plus</span>
+          <span className={styles.brandText}>Fulfilment Plus</span>
         </div>
 
         <ul className={styles.navbarLinks}>
@@ -46,10 +46,10 @@ function Navbar() {
       <div className={styles.navbarBrand}>
         <img
           src={logoWhite}
-          alt="Fulfillment Plus Logo"
+          alt="Fulfilment Plus Logo"
           className={styles.logoIcon}
         />
-        <span className={styles.brandText}>Fulfillment Plus</span>
+        <span className={styles.brandText}>Fulfilment Plus</span>
       </div>
 
       <button

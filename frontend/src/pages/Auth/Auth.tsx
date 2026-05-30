@@ -94,7 +94,7 @@ function Auth() {
       <div className={styles.brand}>
         <img
           src={logoBlue}
-          alt="Fulfillment Plus Logo"
+          alt="Fulfilment Plus Logo"
           className={styles.brandLogo}
         />
         <h1 className={styles.title}>

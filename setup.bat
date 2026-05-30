@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo Setting up Fulfillment Plus Time Software
+echo Setting up Fulfilment Plus Time Software
 echo ========================================
 echo.
 

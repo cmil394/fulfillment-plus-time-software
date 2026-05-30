@@ -1,6 +1,6 @@
 # FulfillmentPlus Time Software
 
-Time tracking software for Fulfillment Plus — track, manage, and analyze time across customers, tasks, and employees.
+Time tracking software for Fulfilment Plus — track, manage, and analyze time across customers, tasks, and employees.
 
 ## Features
 
