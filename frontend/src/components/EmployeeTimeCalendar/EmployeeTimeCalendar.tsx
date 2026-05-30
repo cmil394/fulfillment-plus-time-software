@@ -450,7 +450,7 @@ function FilterPopover({
                     : "All tasks"}
               </option>
               {tasks.map((t) => (
-                <option key={t.id} value={t.id}>
+                <option key={t.id} value={t.name}>
                   {t.name}
                 </option>
               ))}
