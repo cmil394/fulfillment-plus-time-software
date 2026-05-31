@@ -1,4 +1,5 @@
 import { prisma } from "../lib/prisma";
+import { Prisma } from "@prisma/client";
 import {
   hashPassword,
   comparePassword,
@@ -56,26 +57,46 @@ export const registerUser = async (data: RegisterInput) => {
   const fullname = firstName + " " + lastName;
 
   const hashedPassword = await hashPassword(data.password);
-  const generatedEmployeeCode = Math.floor(Math.random() * 10000)
-    .toString()
-    .padStart(4, "0");
   const generatedPin = Math.floor(Math.random() * 10000)
     .toString()
     .padStart(4, "0");
-  const user = await prisma.user.create({
-    data: {
-      email: email,
-      password: hashedPassword,
-      firstName: firstName,
-      lastName: lastName,
-      fullName: fullname,
-      employeeCode: generatedEmployeeCode,
-      pin: encryptPin(generatedPin),
-      role: "Employee",
-      status: "PENDING",
-    },
-    select: publicUserSelect,
-  });
+  const encryptedPin = encryptPin(generatedPin);
+
+  let user: Prisma.UserGetPayload<{ select: typeof publicUserSelect }> | null =
+    null;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const employeeCode = Math.floor(Math.random() * 10000)
+      .toString()
+      .padStart(4, "0");
+    try {
+      user = await prisma.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          firstName,
+          lastName,
+          fullName: fullname,
+          employeeCode,
+          pin: encryptedPin,
+          role: "Employee",
+          status: "PENDING",
+        },
+        select: publicUserSelect,
+      });
+      break;
+    } catch (err) {
+      const isCodeCollision =
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2002" &&
+        (err.meta?.target as string[] | undefined)?.includes("employeeCode");
+      if (!isCodeCollision) throw err;
+    }
+  }
+  if (!user)
+    throw new AppError(
+      500,
+      "Could not generate a unique employee code. Please try again.",
+    );
 
   return { user };
 };
